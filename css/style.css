@@ -1,0 +1,16 @@
+/**
+ * The following styles get applied both on the front of your site
+ * and in the editor.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-itmar-markdown-block {
+  background-color: #e6f2f8;
+  color: #000000;
+}
+.wp-block-itmar-markdown-block .table-of-contents {
+  padding: 1.5em 0.5em;
+  background-color: #fff;
+  border-radius: 10px;
+}
+/*# sourceMappingURL=style.css.map */

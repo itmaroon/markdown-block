@@ -1,0 +1,31 @@
+{
+	"name": "markdown-block",
+	"version": "0.1.0",
+	"description": "マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです",
+	"author": "WebクリエイターITmaroon",
+	"license": "GPL-2.0-or-later",
+	"homepage": "https://itmaroon.net",
+	"main": "build/index.js",
+	"scripts": {
+		"build": "wp-scripts build",
+		"format": "wp-scripts format",
+		"lint:css": "wp-scripts lint-style",
+		"lint:js": "wp-scripts lint-js",
+		"packages-update": "wp-scripts packages-update",
+		"plugin-zip": "wp-scripts plugin-zip",
+		"start": "wp-scripts start"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^26.6.0"
+	},
+	"dependencies": {
+		"codemirror": "5",
+		"easymde": "^2.18.0",
+		"highlight": "^0.2.4",
+		"marked": "^5.1.0",
+		"react-codemirror2": "^7.2.1",
+		"react-markdown": "^8.0.7",
+		"react-simplemde-editor": "^5.2.0",
+		"react-syntax-highlighter": "^15.5.0"
+	}
+}

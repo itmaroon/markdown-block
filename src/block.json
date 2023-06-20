@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schemas.wp.org/trunk/block.json",
+	"apiVersion": 2,
+	"name": "itmar/markdown-block",
+	"version": "0.1.0",
+	"title": "Mark Down",
+	"category": "widgets",
+	"description": "マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"content": {
+			"type": "string"
+		}
+	},
+	"textdomain": "markdown-block",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css"
+}
