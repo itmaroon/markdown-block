@@ -25,7 +25,10 @@
 		"marked": "^5.1.0",
 		"react-codemirror2": "^7.2.1",
 		"react-markdown": "^8.0.7",
+		"react-select": "^5.7.3",
 		"react-simplemde-editor": "^5.2.0",
-		"react-syntax-highlighter": "^15.5.0"
+		"react-syntax-highlighter": "^15.5.0",
+		"showdown": "^2.1.0",
+		"styled-components": "^6.0.0-rc.3"
 	}
 }

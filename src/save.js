@@ -4,12 +4,18 @@ import ReactMarkdown from 'react-markdown';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
+
 const anckerRender = ({ node, level, ...props }) => {
-	const Tag = `h${level}`;
+	const Tag = `h${level}`
 	return (
-		<Tag id={`toc-${node.position?.start.line.toString()}`}>{props.children}</Tag>
-	);
+		<Tag tag={`h${level}`} id={`toc-${node.position?.start.line.toString()}`}>
+			{props.children}
+		</Tag>
+	)
+
 };
+
+
 
 const linkRender = ({ node, level, ...props }) => {
 	return (
@@ -48,17 +54,18 @@ const tocRender = {
 }
 
 export default function save({ attributes }) {
-	const { content } = attributes;
+	const { mdContent } = attributes;
 	return (
 		<div {...useBlockProps.save()}>
 			<div className='table-of-contents'>
 				<h3>Table of Contents</h3>
 				<ReactMarkdown components={tocRender} allowedElements={["h1", "h2", "h3", "h4", "h5", "h6"]} >
-					{content}
+					{mdContent}
 				</ReactMarkdown>
 			</div>
+			<InnerBlocks.Content />
 			<ReactMarkdown components={bodyRender}>
-				{content}
+				{mdContent}
 			</ReactMarkdown>
 		</div>
 

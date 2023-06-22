@@ -10,8 +10,12 @@
     "html": false
   },
   "attributes": {
-    "content": {
+    "mdContent": {
       "type": "string"
+    },
+    "blockArray": {
+      "type": "array",
+      "default": []
     }
   },
   "textdomain": "markdown-block",
