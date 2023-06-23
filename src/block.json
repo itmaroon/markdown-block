@@ -16,6 +16,10 @@
 		"blockArray": {
 			"type": "array",
 			"default": []
+		},
+		"element_style_obj": {
+			"type": "object",
+			"default": {}
 		}
 	},
 	"textdomain": "markdown-block",

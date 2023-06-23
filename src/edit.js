@@ -5,10 +5,8 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import styled, { css } from 'styled-components';
 import showdown from 'showdown';
 import { useDispatch, useSelect } from '@wordpress/data';
-import { createBlock } from '@wordpress/blocks';
 
 import {
 	Button,
@@ -39,23 +37,6 @@ import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 
 import './editor.scss';
 
-const StyledDiv = styled.div.attrs(props => ({
-	as: props.tag || 'div',
-}))`
-  color: red;
-`;
-
-const blockRender = ({ node, level, ...props }) => {
-	return (
-		<InnerBlocks
-			template={[
-				['itmar/design-title', { headingContent: props.children }],
-			]}
-		/>
-	)
-
-};
-
 
 //シンタックスハイライトのレンダリング設定
 const components = {
@@ -71,20 +52,18 @@ const components = {
 			</code>
 		)
 	},
-	//h1: blockRender,
-	// h2: blockRender2,
-	// h3: blockRender,
-	// h4: blockRender,
-	// h5: blockRender,
-	// h6: blockRender,
 
 }
 
-export default function Edit({ attributes, setAttributes }) {
+export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
 		mdContent,
 		blockArray,
+		element_style_obj
 	} = attributes;
+
+	const blockProps = useBlockProps();
+
 
 	//エディタの参照を取得
 	const simpleMdeRef = useRef();
@@ -129,9 +108,52 @@ export default function Edit({ attributes, setAttributes }) {
 		};
 	}, []);
 
-	const { replaceInnerBlocks } = useDispatch('core/block-editor');
-	const blockProps = useBlockProps();
+	//removeBlocks関数の取得
+	const { removeBlocks } = useDispatch('core/block-editor');
 
+	//インナーブロックの監視
+	const innerBlockIds = useSelect((select) =>
+		select('core/block-editor').getBlocks(clientId).map((block) => block.clientId)
+	);
+	const innerBlocks = useSelect(
+		(select) => select('core/block-editor').getBlocks(clientId),
+		[clientId]
+	);
+
+
+	//インナーブロックの変化による属性値の記録
+	useEffect(() => {
+		if (innerBlocks.length > 0) {
+			const newAttributes = { ...element_style_obj };
+			innerBlocks.forEach(block => {
+				const tagMap = {
+					'itmar/design-title': block.attributes.headingType,
+					'core/paragraph': 'P',
+					// 以下同様に続く
+				};
+				const key = tagMap[block.name];
+				//同じキー（タグ名）をもつオブジェクトは上書きされる
+				newAttributes[key] = block.attributes;
+			});
+
+			setAttributes({
+				element_style_obj: newAttributes
+			});
+
+		}
+
+	}, [innerBlocks]);
+
+	//ブロックのテンプレート要素の変化を検証する配列
+	const [tempBlockArray, setTempBlockArray] = useState([]);
+	// useRefを使用して前回のblockArrayを保持します
+	const prevBlockArrayRef = useRef();
+	useEffect(() => {
+		prevBlockArrayRef.current = blockArray;
+	}, [blockArray]);
+	const prevBlockArray = prevBlockArrayRef.current;
+
+	//DOM要素の再生成
 	useEffect(() => {
 		const converter = new showdown.Converter();
 		const html = converter.makeHtml(mdContent);
@@ -147,20 +169,39 @@ export default function Edit({ attributes, setAttributes }) {
 			}
 		}
 		traverseDOM(doc.documentElement, (element) => {
-			if (element.tagName.match(/^H[1-6]$/)) {
-				newblockArray.push(['itmar/design-title', { headingContent: element.textContent }]);
-			} else if (element.tagName.match(/^P$/)) {
-				newblockArray.push(['core/paragraph', { content: element.textContent }]);
-			}
+			const elementType = element.tagName;
 
+			if (elementType.match(/^H[1-6]$/)) {
+				const attributes = element_style_obj[elementType];
+				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName }]);
+			} else if (elementType.match(/^P$/)) {
+				const attributes = element_style_obj[elementType];
+				newblockArray.push(['core/paragraph', { ...attributes, content: element.textContent }]);
+			}
 		});
-		//setAttributes({ blockArray: newblockArray });
-		//replaceInnerBlocks(blockProps.id, newblockArray, false);
-	}, [mdContent, replaceInnerBlocks, blockProps.id]);
+
+		if (JSON.stringify(newblockArray) !== JSON.stringify(prevBlockArray)) {
+			setTempBlockArray(newblockArray);
+		}
+	}, [mdContent])
+
+	//tempBlockArrayに変化があればブロックを一旦削除
+	useEffect(() => {
+		if (innerBlockIds !== 0) {
+			removeBlocks(innerBlockIds);
+		}
+	}, [tempBlockArray]);
+
+	//ブロックの削除を確認して再度ブロックをレンダリング
+	useEffect(() => {
+		if (innerBlockIds.length === 0) {
+			setAttributes({ blockArray: tempBlockArray });
+		}
+	}, [tempBlockArray, innerBlockIds.length]);
 
 	return (
 		<>
-			<div {...useBlockProps()}>
+			<div {...blockProps}>
 				<div className='area_wrapper'>
 					<div className='edit_area'>
 						<SimpleMDE
@@ -173,7 +214,7 @@ export default function Edit({ attributes, setAttributes }) {
 					<div className='previw_area'>
 						<InnerBlocks
 							template={blockArray}
-							templateLock="all"
+						//templateLock="all"
 						/>
 						<ReactMarkdown components={components}>
 							{mdContent}
