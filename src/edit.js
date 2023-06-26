@@ -39,23 +39,6 @@ import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import './editor.scss';
 
 
-//シンタックスハイライトのレンダリング設定
-const components = {
-	code({ node, inline, className, children, ...props }) {
-		const match = /language-(\w+)/.exec(className || '')
-		return !inline && match ? (
-			<SyntaxHighlighter style={dark} language={match[1]} PreTag="div" {...props}>
-				{String(children).replace(/\n$/, '')}
-			</SyntaxHighlighter>
-		) : (
-			<code className={className} {...props}>
-				{children}
-			</code>
-		)
-	},
-
-}
-
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
 		mdContent,
@@ -110,7 +93,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	}, []);
 
 	//removeBlocks関数の取得
-	const { removeBlocks } = useDispatch('core/block-editor');
+	const { removeBlocks, updateBlockAttributes } = useDispatch('core/block-editor');
 
 	//インナーブロックの監視
 	const innerBlockIds = useSelect((select) =>
@@ -140,7 +123,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				};
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
-				const { headingContent, content, ...styleAttributes } = block.attributes;
+				const { headingContent, content, headingID, ...styleAttributes } = block.attributes;
 				//'itmar/design-title'のクラス名とoptionStyleのクラス名が不一致の時は再レンダリングさせない(まだoptionStyleがセット未了の段階)
 				if (
 					block.name === 'itmar/design-title'
@@ -167,13 +150,11 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			}
 
 			//ブロック属性に登録
-			if (!equal(newAttributes, element_style_obj)) {
+			if (!equal(newAttributes, element_style_obj)) {//スタイルに変化があるときのみ
 				setAttributes({
 					element_style_obj: newAttributes
 				});
 			}
-
-
 		}
 
 	}, [innerBlocks]);
@@ -194,20 +175,24 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
-		const traverseDOM = (element, callback) => {
-			callback(element);
+		const traverseDOM = (() => {
+			let counter = 0;
+			return (element, callback) => {
+				callback(element, counter++);
 
-			const children = element.children;
-			for (let i = 0; i < children.length; i++) {
-				traverseDOM(children[i], callback);
-			}
-		}
-		traverseDOM(doc.documentElement, (element) => {
+				const children = element.children;
+				for (let i = 0; i < children.length; i++) {
+					traverseDOM(children[i], callback);
+				}
+			};
+		})();
+
+		traverseDOM(doc.documentElement, (element, count) => {
 			const elementType = element.tagName;
 
 			if (elementType.match(/^H[1-6]$/)) {
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName }]);
+				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName, headingID: `toc-${count}` }]);
 			} else if (elementType.match(/^P$/)) {
 				const attributes = element_style_obj[elementType];
 				newblockArray.push(['core/paragraph', { ...attributes, content: element.textContent }]);
@@ -250,9 +235,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							template={blockArray}
 						//templateLock="all"
 						/>
-						<ReactMarkdown components={components}>
-							{mdContent}
-						</ReactMarkdown>
+
 					</div>
 				</div>
 			</div>
