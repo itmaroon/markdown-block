@@ -7,6 +7,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import showdown from 'showdown';
 import { useDispatch, useSelect } from '@wordpress/data';
+import equal from 'fast-deep-equal';
 
 import {
 	Button,
@@ -119,26 +120,59 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		(select) => select('core/block-editor').getBlocks(clientId),
 		[clientId]
 	);
-
+	//選択中のブロック
+	const selectedBlock = useSelect(
+		(select) => select('core/block-editor').getSelectedBlock(),
+		[]
+	);
 
 	//インナーブロックの変化による属性値の記録
 	useEffect(() => {
 		if (innerBlocks.length > 0) {
-			const newAttributes = { ...element_style_obj };
-			innerBlocks.forEach(block => {
+			//登録済みのスタイルを展開
+			let newAttributes = { ...element_style_obj };
+			let stockStyle = null;
+			for (let block of innerBlocks) {
 				const tagMap = {
 					'itmar/design-title': block.attributes.headingType,
 					'core/paragraph': 'P',
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
-				//同じキー（タグ名）をもつオブジェクトは上書きされる
-				newAttributes[key] = block.attributes;
-			});
+				//スタイル以外の属性を削除
+				const { headingContent, content, ...styleAttributes } = block.attributes;
+				//'itmar/design-title'のクラス名とoptionStyleのクラス名が不一致の時は再レンダリングさせない(まだoptionStyleがセット未了の段階)
+				if (
+					block.name === 'itmar/design-title'
+					&& styleAttributes.className
+					&& styleAttributes.className != 'is-style-nomal'
+					&& (!styleAttributes.optionStyle || (styleAttributes.optionStyle && (styleAttributes.className != styleAttributes.optionStyle.styleName)))
+				) continue;
 
-			setAttributes({
-				element_style_obj: newAttributes
-			});
+				//新しいスタイルを上書き
+				newAttributes[key] = styleAttributes;
+				//選択中のブロックのスタイルをストック
+				if (selectedBlock && (block.clientId === selectedBlock.clientId)) {
+					stockStyle = { [key]: styleAttributes };
+				}
+
+			};
+
+			//ストックしたスタイルがあれば上書き
+			if (stockStyle) {
+				newAttributes = {
+					...newAttributes,
+					...stockStyle
+				};
+			}
+
+			//ブロック属性に登録
+			if (!equal(newAttributes, element_style_obj)) {
+				setAttributes({
+					element_style_obj: newAttributes
+				});
+			}
+
 
 		}
 
@@ -180,10 +214,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			}
 		});
 
-		if (JSON.stringify(newblockArray) !== JSON.stringify(prevBlockArray)) {
+		if (!equal(newblockArray, prevBlockArray)) {
 			setTempBlockArray(newblockArray);
 		}
-	}, [mdContent])
+	}, [mdContent, element_style_obj])
 
 	//tempBlockArrayに変化があればブロックを一旦削除
 	useEffect(() => {

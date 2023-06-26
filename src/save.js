@@ -15,8 +15,6 @@ const anckerRender = ({ node, level, ...props }) => {
 
 };
 
-
-
 const linkRender = ({ node, level, ...props }) => {
 	return (
 		<a href={`#toc-${node.position?.start.line.toString()}`} className={`lv-${level}`}>{props.children}</a>
@@ -36,12 +34,7 @@ const bodyRender = {
 			</code>
 		)
 	},
-	h1: anckerRender,
-	h2: anckerRender,
-	h3: anckerRender,
-	h4: anckerRender,
-	h5: anckerRender,
-	h6: anckerRender,
+
 }
 
 const tocRender = {
