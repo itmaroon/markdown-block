@@ -112,6 +112,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	//インナーブロックの変化による属性値の記録
 	useEffect(() => {
 		if (innerBlocks.length > 0) {
+			//選択されたブロックの情報を収集
+			const selectTagMap = {
+				'itmar/design-title': selectedBlock?.attributes.headingType,
+				'core/paragraph': 'P',
+				// 以下同様に続く
+			};
+			const select_key = selectTagMap[selectedBlock?.name]
+
 			//登録済みのスタイルを展開
 			let newAttributes = { ...element_style_obj };
 			let stockStyle = null;
@@ -124,13 +132,15 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
 				const { headingContent, content, headingID, ...styleAttributes } = block.attributes;
-				//'itmar/design-title'のクラス名とoptionStyleのクラス名が不一致の時は再レンダリングさせない(まだoptionStyleがセット未了の段階)
-				if (
-					block.name === 'itmar/design-title'
-					&& styleAttributes.className
-					&& styleAttributes.className != 'is-style-nomal'
-					&& (!styleAttributes.optionStyle || (styleAttributes.optionStyle && (styleAttributes.className != styleAttributes.optionStyle.styleName)))
-				) continue;
+				// 更新対象のブロックが選択中のブロックでなく、
+				// かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
+				if (block.clientId !== selectedBlock?.clientId && key === select_key
+				) {
+					const { headingContent, content, headingID, ...selectAttributes } = selectedBlock.attributes;
+					if (styleAttributes !== selectAttributes) { // 既に更新されたブロックを再度更新しないようにする
+						updateBlockAttributes(block.clientId, { ...block.attributes, ...selectAttributes });
+					}
+				}
 
 				//新しいスタイルを上書き
 				newAttributes[key] = styleAttributes;
@@ -150,11 +160,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			}
 
 			//ブロック属性に登録
-			if (!equal(newAttributes, element_style_obj)) {//スタイルに変化があるときのみ
-				setAttributes({
-					element_style_obj: newAttributes
-				});
-			}
+			setAttributes({
+				element_style_obj: newAttributes
+			});
 		}
 
 	}, [innerBlocks]);
@@ -202,7 +210,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		if (!equal(newblockArray, prevBlockArray)) {
 			setTempBlockArray(newblockArray);
 		}
-	}, [mdContent, element_style_obj])
+	}, [mdContent])
 
 	//tempBlockArrayに変化があればブロックを一旦削除
 	useEffect(() => {

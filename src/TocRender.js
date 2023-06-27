@@ -1,5 +1,4 @@
 const TocRender = ({ attributes }) => {
-  console.log(attributes);
   return (
     <div className="toc_section">
       <h1>Table of content</h1>

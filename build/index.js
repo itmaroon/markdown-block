@@ -48,7 +48,6 @@ __webpack_require__.r(__webpack_exports__);
 const TocRender = ({
   attributes
 }) => {
-  console.log(attributes);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "toc_section"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h1", null, "Table of content"), attributes.filter(attr => attr[0] === "itmar/design-title").map(attribute => {
@@ -172,6 +171,15 @@ function Edit({
   //インナーブロックの変化による属性値の記録
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (innerBlocks.length > 0) {
+      //選択されたブロックの情報を収集
+      const selectTagMap = {
+        'itmar/design-title': selectedBlock?.attributes.headingType,
+        'core/paragraph': 'P'
+        // 以下同様に続く
+      };
+
+      const select_key = selectTagMap[selectedBlock?.name];
+
       //登録済みのスタイルを展開
       let newAttributes = {
         ...element_style_obj
@@ -192,8 +200,23 @@ function Edit({
           headingID,
           ...styleAttributes
         } = block.attributes;
-        //'itmar/design-title'のクラス名とoptionStyleのクラス名が不一致の時は再レンダリングさせない(まだoptionStyleがセット未了の段階)
-        if (block.name === 'itmar/design-title' && styleAttributes.className && styleAttributes.className != 'is-style-nomal' && (!styleAttributes.optionStyle || styleAttributes.optionStyle && styleAttributes.className != styleAttributes.optionStyle.styleName)) continue;
+        // 更新対象のブロックが選択中のブロックでなく、
+        // かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
+        if (block.clientId !== selectedBlock?.clientId && key === select_key) {
+          const {
+            headingContent,
+            content,
+            headingID,
+            ...selectAttributes
+          } = selectedBlock.attributes;
+          if (styleAttributes !== selectAttributes) {
+            // 既に更新されたブロックを再度更新しないようにする
+            updateBlockAttributes(block.clientId, {
+              ...block.attributes,
+              ...selectAttributes
+            });
+          }
+        }
 
         //新しいスタイルを上書き
         newAttributes[key] = styleAttributes;
@@ -215,12 +238,9 @@ function Edit({
       }
 
       //ブロック属性に登録
-      if (!fast_deep_equal__WEBPACK_IMPORTED_MODULE_6___default()(newAttributes, element_style_obj)) {
-        //スタイルに変化があるときのみ
-        setAttributes({
-          element_style_obj: newAttributes
-        });
-      }
+      setAttributes({
+        element_style_obj: newAttributes
+      });
     }
   }, [innerBlocks]);
 
@@ -271,7 +291,7 @@ function Edit({
     if (!fast_deep_equal__WEBPACK_IMPORTED_MODULE_6___default()(newblockArray, prevBlockArray)) {
       setTempBlockArray(newblockArray);
     }
-  }, [mdContent, element_style_obj]);
+  }, [mdContent]);
 
   //tempBlockArrayに変化があればブロックを一旦削除
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
