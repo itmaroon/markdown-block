@@ -174,7 +174,9 @@ function Edit({
       //選択されたブロックの情報を収集
       const selectTagMap = {
         'itmar/design-title': selectedBlock?.attributes.headingType,
-        'core/paragraph': 'P'
+        'core/paragraph': 'P',
+        'itmar/code-highlight': 'PRE',
+        'core/image': 'IMG'
         // 以下同様に続く
       };
 
@@ -188,7 +190,9 @@ function Edit({
       for (let block of innerBlocks) {
         const tagMap = {
           'itmar/design-title': block.attributes.headingType,
-          'core/paragraph': 'P'
+          'core/paragraph': 'P',
+          'itmar/code-highlight': 'PRE',
+          'core/image': 'IMG'
           // 以下同様に続く
         };
 
@@ -198,6 +202,8 @@ function Edit({
           headingContent,
           content,
           headingID,
+          codeArea,
+          fileName,
           ...styleAttributes
         } = block.attributes;
         // 更新対象のブロックが選択中のブロックでなく、
@@ -207,6 +213,8 @@ function Edit({
             headingContent,
             content,
             headingID,
+            codeArea,
+            fileName,
             ...selectAttributes
           } = selectedBlock.attributes;
           if (styleAttributes !== selectAttributes) {
@@ -260,8 +268,9 @@ function Edit({
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const newblockArray = [];
+    let block_count = 0; //追加されるブロックのカウント
     const traverseDOM = (() => {
-      let counter = 0;
+      let counter = 0; //走査されるDOM要素のカウント
       return (element, callback) => {
         callback(element, counter++);
         const children = element.children;
@@ -273,6 +282,7 @@ function Edit({
     traverseDOM(doc.documentElement, (element, count) => {
       const elementType = element.tagName;
       if (elementType.match(/^H[1-6]$/)) {
+        block_count++;
         const attributes = element_style_obj[elementType];
         newblockArray.push(['itmar/design-title', {
           ...attributes,
@@ -281,10 +291,26 @@ function Edit({
           headingID: `toc-${count}`
         }]);
       } else if (elementType.match(/^P$/)) {
+        block_count++;
         const attributes = element_style_obj[elementType];
         newblockArray.push(['core/paragraph', {
           ...attributes,
-          content: element.textContent
+          content: element.innerHTML
+        }]);
+      } else if (elementType.match(/^PRE$/)) {
+        block_count++;
+        const attributes = element_style_obj[elementType];
+        newblockArray.push(['itmar/code-highlight', {
+          ...attributes,
+          codeArea: element.textContent,
+          fileName: innerBlocks[block_count - 1].attributes.fileName
+        }]);
+      } else if (elementType.match(/^IMG$/)) {
+        block_count++;
+        const attributes = element_style_obj[elementType];
+        newblockArray.push(['core/image', {
+          ...attributes,
+          url: element.src
         }]);
       }
     });

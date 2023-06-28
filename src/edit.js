@@ -116,6 +116,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			const selectTagMap = {
 				'itmar/design-title': selectedBlock?.attributes.headingType,
 				'core/paragraph': 'P',
+				'itmar/code-highlight': 'PRE',
+				'core/image': 'IMG',
 				// 以下同様に続く
 			};
 			const select_key = selectTagMap[selectedBlock?.name]
@@ -127,16 +129,18 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				const tagMap = {
 					'itmar/design-title': block.attributes.headingType,
 					'core/paragraph': 'P',
+					'itmar/code-highlight': 'PRE',
+					'core/image': 'IMG',
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
-				const { headingContent, content, headingID, ...styleAttributes } = block.attributes;
+				const { headingContent, content, headingID, codeArea, fileName, ...styleAttributes } = block.attributes;
 				// 更新対象のブロックが選択中のブロックでなく、
 				// かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
 				if (block.clientId !== selectedBlock?.clientId && key === select_key
 				) {
-					const { headingContent, content, headingID, ...selectAttributes } = selectedBlock.attributes;
+					const { headingContent, content, headingID, codeArea, fileName, ...selectAttributes } = selectedBlock.attributes;
 					if (styleAttributes !== selectAttributes) { // 既に更新されたブロックを再度更新しないようにする
 						updateBlockAttributes(block.clientId, { ...block.attributes, ...selectAttributes });
 					}
@@ -183,8 +187,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
+		let block_count = 0;//追加されるブロックのカウント
 		const traverseDOM = (() => {
-			let counter = 0;
+			let counter = 0;//走査されるDOM要素のカウント
 			return (element, callback) => {
 				callback(element, counter++);
 
@@ -199,12 +204,23 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			const elementType = element.tagName;
 
 			if (elementType.match(/^H[1-6]$/)) {
+				block_count++;
 				const attributes = element_style_obj[elementType];
 				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName, headingID: `toc-${count}` }]);
 			} else if (elementType.match(/^P$/)) {
+				block_count++;
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['core/paragraph', { ...attributes, content: element.textContent }]);
+				newblockArray.push(['core/paragraph', { ...attributes, content: element.innerHTML }]);
+			} else if (elementType.match(/^PRE$/)) {
+				block_count++;
+				const attributes = element_style_obj[elementType];
+				newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent, fileName: innerBlocks[block_count - 1].attributes.fileName }]);
+			} else if (elementType.match(/^IMG$/)) {
+				block_count++;
+				const attributes = element_style_obj[elementType];
+				newblockArray.push(['core/image', { ...attributes, url: element.src }]);
 			}
+
 		});
 
 		if (!equal(newblockArray, prevBlockArray)) {
