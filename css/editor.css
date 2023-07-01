@@ -5,6 +5,8 @@
  */
 .wp-block-itmar-markdown-block {
   border: 1px dotted #f00;
+  max-width: none !important;
+  width: 100%;
 }
 .wp-block-itmar-markdown-block .area_wrapper {
   width: 100%;

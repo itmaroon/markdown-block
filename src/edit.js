@@ -1,11 +1,10 @@
 
 import { __ } from '@wordpress/i18n';
-import ReactMarkdown from 'react-markdown';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
-import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import showdown from 'showdown';
+import { marked } from 'marked';
 import { useDispatch, useSelect } from '@wordpress/data';
 import equal from 'fast-deep-equal';
 
@@ -91,6 +90,26 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "unordered-list", "ordered-list", "guide"]
 		};
 	}, []);
+	//スクロールイベントの登録（クリーンアップも含む）
+	useEffect(() => {
+		if (simpleMdeRef.current) {
+			const editorInstance = simpleMdeRef.current;
+			const codemirror = editorInstance.codemirror;
+
+			codemirror.on('scroll', handleScroll);
+
+			return () => {
+				codemirror.off('scroll', handleScroll);
+			};
+		}
+	}, [simpleMdeRef.current]);
+
+	//スクロールのハンドラ
+	const handleScroll = () => {
+		const editorInstance = simpleMdeRef.current;
+		const scrollInfo = editorInstance.codemirror.getScrollInfo();
+		//console.log('Scroll Position:', scrollInfo.top);
+	};
 
 	//removeBlocks関数の取得
 	const { removeBlocks, updateBlockAttributes } = useDispatch('core/block-editor');
@@ -118,6 +137,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				'core/paragraph': 'P',
 				'itmar/code-highlight': 'PRE',
 				'core/image': 'IMG',
+				'core/quote': 'BLOCKQUOTE',
+				'core/list': 'UL'
 				// 以下同様に続く
 			};
 			const select_key = selectTagMap[selectedBlock?.name]
@@ -131,6 +152,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					'core/paragraph': 'P',
 					'itmar/code-highlight': 'PRE',
 					'core/image': 'IMG',
+					'core/quote': 'BLOCKQUOTE',
+					'core/list': 'UL'
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
@@ -182,12 +205,53 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	//DOM要素の再生成
 	useEffect(() => {
-		const converter = new showdown.Converter();
-		const html = converter.makeHtml(mdContent);
+		if (!mdContent) return;//mdContent文書がなければ処理しない
+		//const converter = new showdown.Converter({ simpleLineBreaks: true });
+		//const html = converter.makeHtml(mdContent);
+		marked.use({//markedのオプション設定
+			breaks: true,
+			gfm: true,
+			mangle: false,
+			headerIds: false
+		});
+		const html = marked.parse(mdContent);
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
 		let block_count = 0;//追加されるブロックのカウント
+
+		//リスト要素をgutenbergのブロックにする
+		function listDOMToBlocks(element, attributes) {
+			const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === 'li');//element要素直下のli要素を取得
+			const listArray = listItems.map(listItem => {
+				const nestedList = listItem.querySelector('ul, ol');//li要素の下にul,ol要素があるか
+				let nestedBlocks = [];
+
+				if (nestedList) {
+					nestedBlocks = listDOMToBlocks(nestedList);//li要素の下にul,ol要素がある場合は再帰処理
+				}
+
+				const textNode = Array.from(listItem.childNodes).find(node => node.nodeType === Node.TEXT_NODE);//li要素内の最初のテキストノード
+				const listItemBlock = [
+					'core/list-item',
+					{
+						content: textNode ? textNode.textContent : '', // テキストノードの内容を取得
+					},
+				];
+
+				if (nestedBlocks.length > 0) {
+					listItemBlock.push([
+						['core/list',
+							{ attributes },
+							nestedBlocks]
+					]);
+				}
+				return listItemBlock;
+			})
+			return listArray
+		}
+
+
 		const traverseDOM = (() => {
 			let counter = 0;//走査されるDOM要素のカウント
 			return (element, callback) => {
@@ -195,13 +259,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 				const children = element.children;
 				for (let i = 0; i < children.length; i++) {
-					traverseDOM(children[i], callback);
+					//traverseDOM(children[i], callback);
+					callback(children[i], counter++);
 				}
 			};
 		})();
 
-		traverseDOM(doc.documentElement, (element, count) => {
-			const elementType = element.tagName;
+		traverseDOM(doc.body, (element, count) => {//body直下のDOMのみ走査
+			let elementType = element.tagName;
 
 			if (elementType.match(/^H[1-6]$/)) {
 				block_count++;
@@ -209,17 +274,33 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName, headingID: `toc-${count}` }]);
 			} else if (elementType.match(/^P$/)) {
 				block_count++;
-				const attributes = element_style_obj[elementType];
-				newblockArray.push(['core/paragraph', { ...attributes, content: element.innerHTML }]);
+				if (element.children[0]?.tagName.match(/^IMG$/)) {
+					elementType = element.children[0].tagName;
+					const attributes = element_style_obj[elementType];
+					newblockArray.push(['core/image', { ...attributes, url: element.children[0].src }]);
+				} else {
+					const attributes = element_style_obj[elementType];
+					newblockArray.push(['core/paragraph', { ...attributes, content: element.innerHTML }]);
+				}
 			} else if (elementType.match(/^PRE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent, fileName: innerBlocks[block_count - 1].attributes.fileName }]);
-			} else if (elementType.match(/^IMG$/)) {
+				if (innerBlocks.length >= block_count) {
+					newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent, fileName: innerBlocks[block_count - 1].attributes.fileName }]);
+				} else {
+					newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent }]);
+				}
+			} else if (elementType.match(/^UL|OL$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['core/image', { ...attributes, url: element.src }]);
+				const list_Array = listDOMToBlocks(element, attributes);
+				newblockArray.push(['core/list', { attributes }, list_Array,]);
+			} else if (elementType.match(/^BLOCKQUOTE$/)) {
+				block_count++;
+				const attributes = element_style_obj[elementType];
+				newblockArray.push(['core/quote', { ...attributes, citation: element.innerHTML }]);
 			}
+
 
 		});
 
@@ -246,7 +327,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		<>
 			<div {...blockProps}>
 				<div className='area_wrapper'>
-					<div className='edit_area'>
+					<div className='edit_area' onScroll={handleScroll}>
 						<SimpleMDE
 							getMdeInstance={instance => { simpleMdeRef.current = instance; }}
 							value={mdContent}
