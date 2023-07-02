@@ -138,7 +138,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				'itmar/code-highlight': 'PRE',
 				'core/image': 'IMG',
 				'core/quote': 'BLOCKQUOTE',
-				'core/list': 'UL'
+				'core/list': selectedBlock?.attributes.list_type
 				// 以下同様に続く
 			};
 			const select_key = selectTagMap[selectedBlock?.name]
@@ -153,7 +153,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					'itmar/code-highlight': 'PRE',
 					'core/image': 'IMG',
 					'core/quote': 'BLOCKQUOTE',
-					'core/list': 'UL'
+					'core/list': block.attributes.list_type
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
@@ -206,15 +206,16 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	//DOM要素の再生成
 	useEffect(() => {
 		if (!mdContent) return;//mdContent文書がなければ処理しない
-		//const converter = new showdown.Converter({ simpleLineBreaks: true });
-		//const html = converter.makeHtml(mdContent);
-		marked.use({//markedのオプション設定
-			breaks: true,
-			gfm: true,
-			mangle: false,
-			headerIds: false
-		});
-		const html = marked.parse(mdContent);
+
+		const converter = new showdown.Converter({ simpleLineBreaks: true });
+		const html = converter.makeHtml(mdContent);
+		// marked.use({//markedのオプション設定
+		// 	breaks: true,
+		// 	gfm: true,
+		// 	mangle: false,
+		// 	headerIds: false
+		// });
+		//const html = marked.parse(mdContent);
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
@@ -240,15 +241,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				];
 
 				if (nestedBlocks.length > 0) {
+					const { className, ...filter_class_attr } = attributes;
 					listItemBlock.push([
 						['core/list',
-							{ attributes },
+							{ ...filter_class_attr, list_type: element.tagName },
 							nestedBlocks]
 					]);
 				}
 				return listItemBlock;
 			})
 			return listArray
+
 		}
 
 
@@ -280,7 +283,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					newblockArray.push(['core/image', { ...attributes, url: element.children[0].src }]);
 				} else {
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/paragraph', { ...attributes, content: element.innerHTML }]);
+					newblockArray.push(['core/paragraph', { ...attributes, className: 'itmar_md_block', content: element.innerHTML }]);
 				}
 			} else if (elementType.match(/^PRE$/)) {
 				block_count++;
@@ -294,7 +297,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
 				const list_Array = listDOMToBlocks(element, attributes);
-				newblockArray.push(['core/list', { attributes }, list_Array,]);
+				newblockArray.push(['core/list', { ...attributes, className: 'itmar_md_block', list_type: element.tagName }, list_Array,]);
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];

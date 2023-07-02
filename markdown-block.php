@@ -39,6 +39,21 @@ function itmar_markdown_block_add_plugin() {
 	wp_localize_script( 'markdown_plugin_handle', 'itmar_option', array(
 		'nonce' => wp_create_nonce('wp_rest'),
 	));
+
+	//コアブロックカスタマイズスクリプトのエンキュー
+	wp_enqueue_script(
+		'itmar-gutenberg-extensions-script',
+		plugins_url('build/gutenberg-ex.js', __FILE__),
+		array(
+				'wp-blocks',
+				'wp-i18n',
+				'wp-element',
+				'wp-editor',
+				'wp-plugins',
+				'wp-edit-post',
+				'wp-compose'
+		)
+	);
 }
 
 	

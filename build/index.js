@@ -195,7 +195,7 @@ function Edit({
         'itmar/code-highlight': 'PRE',
         'core/image': 'IMG',
         'core/quote': 'BLOCKQUOTE',
-        'core/list': 'UL'
+        'core/list': selectedBlock?.attributes.list_type
         // 以下同様に続く
       };
 
@@ -213,7 +213,7 @@ function Edit({
           'itmar/code-highlight': 'PRE',
           'core/image': 'IMG',
           'core/quote': 'BLOCKQUOTE',
-          'core/list': 'UL'
+          'core/list': block.attributes.list_type
           // 以下同様に続く
         };
 
@@ -285,16 +285,18 @@ function Edit({
   //DOM要素の再生成
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!mdContent) return; //mdContent文書がなければ処理しない
-    //const converter = new showdown.Converter({ simpleLineBreaks: true });
-    //const html = converter.makeHtml(mdContent);
-    marked__WEBPACK_IMPORTED_MODULE_5__.marked.use({
-      //markedのオプション設定
-      breaks: true,
-      gfm: true,
-      mangle: false,
-      headerIds: false
+
+    const converter = new (showdown__WEBPACK_IMPORTED_MODULE_4___default().Converter)({
+      simpleLineBreaks: true
     });
-    const html = marked__WEBPACK_IMPORTED_MODULE_5__.marked.parse(mdContent);
+    const html = converter.makeHtml(mdContent);
+    // marked.use({//markedのオプション設定
+    // 	breaks: true,
+    // 	gfm: true,
+    // 	mangle: false,
+    // 	headerIds: false
+    // });
+    //const html = marked.parse(mdContent);
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const newblockArray = [];
@@ -316,8 +318,13 @@ function Edit({
         }];
 
         if (nestedBlocks.length > 0) {
+          const {
+            className,
+            ...filter_class_attr
+          } = attributes;
           listItemBlock.push([['core/list', {
-            attributes
+            ...filter_class_attr,
+            list_type: element.tagName
           }, nestedBlocks]]);
         }
         return listItemBlock;
@@ -360,6 +367,7 @@ function Edit({
           const attributes = element_style_obj[elementType];
           newblockArray.push(['core/paragraph', {
             ...attributes,
+            className: 'itmar_md_block',
             content: element.innerHTML
           }]);
         }
@@ -383,7 +391,9 @@ function Edit({
         const attributes = element_style_obj[elementType];
         const list_Array = listDOMToBlocks(element, attributes);
         newblockArray.push(['core/list', {
-          attributes
+          ...attributes,
+          className: 'itmar_md_block',
+          list_type: element.tagName
         }, list_Array]);
       } else if (elementType.match(/^BLOCKQUOTE$/)) {
         block_count++;
