@@ -20,6 +20,17 @@
     "element_style_obj": {
       "type": "object",
       "default": {}
+    },
+    "is_toc": {
+      "type": "boolean",
+      "default": true
+    },
+    "toc_set_array": {
+      "type": "array",
+      "default": [
+        "header",
+        "sidebar"
+      ]
     }
   },
   "textdomain": "markdown-block",

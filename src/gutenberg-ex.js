@@ -25,6 +25,9 @@ import {
 
 import BorderProperty from './borderProperty';
 
+// カスタマイズ対象とするブロック
+const allowedBlocks = ['core/paragraph', 'core/list', 'core/image'];
+
 //BlockEditカスタムフック（インスペクターの追加）
 const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
   //スペースのリセットバリュー
@@ -43,7 +46,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
 
   return (props) => {
     if (props.attributes.className === 'itmar_md_block') {//markdown-block内のブロックに限定
-      if (props.name === 'core/paragraph' || props.name === 'core/list') {
+      if (allowedBlocks.includes(props.name)) {
         const {
           lineHeight,
           margin_val,
@@ -55,18 +58,8 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
         return (
           <>
             <BlockEdit {...props} />
+
             <InspectorControls group="styles">
-              <PanelBody title="行間設定">
-                <RangeControl
-                  value={lineHeight}
-                  label="lineHeight"
-                  max={3}
-                  min={1}
-                  step={.1}
-                  onChange={(val) => setAttributes({ lineHeight: val })}
-                  withInputField={true}
-                />
-              </PanelBody>
               <PanelBody title="間隔設定" initialOpen={false}>
                 <BoxControl
                   label="マージン設定"
@@ -89,6 +82,22 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
                 />
 
               </PanelBody>
+              {(props.name === 'core/paragraph' || props.name === 'core/list') &&
+                <>
+                  <PanelBody title="行間設定">
+                    <RangeControl
+                      value={lineHeight}
+                      label="lineHeight"
+                      max={3}
+                      min={1}
+                      step={.1}
+                      onChange={(val) => setAttributes({ lineHeight: val })}
+                      withInputField={true}
+                    />
+                  </PanelBody>
+
+                </>
+              }
               {props.name === 'core/list' &&
                 <PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
                   <BorderBoxControl
@@ -119,12 +128,9 @@ addFilter('editor.BlockEdit', 'block-collections/with-inspector-control', withIn
 
 //block登録フック（カスタム属性の追加）
 function addLineHeightAttribute(settings, name) {
-  if (name === 'core/paragraph' || name === 'core/list') {
-    let newAttributes = {
-      lineHeight: {
-        type: 'number',
-        default: 1.6,
-      },
+  if (allowedBlocks.includes(name)) {
+    let newAttributes = {};
+    newAttributes = {
       margin_val: {
         type: "object",
         default: {
@@ -144,6 +150,16 @@ function addLineHeightAttribute(settings, name) {
         }
       }
     };
+    if (name === 'core/paragraph' || name === 'core/list') {
+      newAttributes = {
+        ...newAttributes,
+        lineHeight: {
+          type: 'number',
+          default: 1.6,
+        },
+
+      };
+    }
 
     if (name === 'core/list') {
       newAttributes = {
@@ -195,7 +211,7 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
     } = props;
 
     if (attributes.className === 'itmar_md_block') {//markdown-block内のブロックに限定
-      if (name === 'core/paragraph' || name === 'core/list') {
+      if (allowedBlocks.includes(name)) {
         if (isValid) {
           //属性の取り出し
           const {
@@ -207,22 +223,34 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
           } = attributes;
 
           //拡張したスタイル
-          let extraStyle = {
-            lineHeight: lineHeight,
+
+          let extraStyle = {};
+          extraStyle = {
             margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
             padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`,
+          }
+          if (name === 'core/paragraph' || name === 'core/list') {
+            extraStyle = {
+              ...extraStyle, lineHeight: lineHeight,
+            }
           }
 
           if (name === 'core/list') {
             //角丸の設定
             const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
             const list_border = BorderProperty(border_list);
-            console.log(list_border)
             extraStyle = {
               ...extraStyle, borderRadius: list_radius_prm, ...list_border
             }
           }
 
+          if (name === 'core/image') {
+            if (attributes.align === 'center') {//中央ぞろえの時
+              extraStyle = {
+                ...extraStyle, margin: `${margin_val.top} auto ${margin_val.bottom}`
+              }
+            }
+          }
 
           //既存スタイルとマージ
           let blockWrapperProps = wrapperProps;
@@ -260,21 +288,47 @@ addFilter(
 //blocks.getSaveContent.extraPropsフック（フロントエンドへの反映）
 const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
   if (props.className?.match(/itmar_md_block/)) {//markdown-block内のブロックに限定
-    //core/paragraphの場合
-    if (blockType.name === 'core/paragraph' || blockType.name === 'core/list') {
+    if (allowedBlocks.includes(blockType.name)) {
       //属性の取り出し
       const {
         lineHeight,
         margin_val,
-        padding_val
+        padding_val,
+        radius_list,
+        border_list,
       } = attributes;
 
       //拡張したスタイル
-      const extraStyle = {
-        lineHeight: lineHeight,
+      let extraStyle = {};
+      extraStyle = {
         margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
         padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`,
       }
+      if (blockType.name === 'core/paragraph' || blockType.name === 'core/list') {
+        extraStyle = {
+          ...extraStyle, lineHeight: lineHeight,
+        }
+      }
+
+      if (blockType.name === 'core/list') {
+        //角丸の設定
+        const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
+        //ボーダーの設定
+        const list_border = BorderProperty(border_list);
+
+        extraStyle = {
+          ...extraStyle, borderRadius: list_radius_prm, ...list_border
+        }
+      }
+
+      if (blockType.name === 'core/image') {
+        if (attributes.align === 'center') {//中央ぞろえの時
+          extraStyle = {
+            ...extraStyle, margin: `${margin_val.top} auto ${margin_val.bottom}`
+          }
+        }
+      }
+
       return Object.assign(props, { style: { ...props.style, ...extraStyle } });
     }
   }

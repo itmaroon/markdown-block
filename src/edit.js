@@ -7,6 +7,7 @@ import showdown from 'showdown';
 import { marked } from 'marked';
 import { useDispatch, useSelect } from '@wordpress/data';
 import equal from 'fast-deep-equal';
+import MultiSelect from './MultiSelect';
 
 import {
 	Button,
@@ -42,7 +43,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
 		mdContent,
 		blockArray,
-		element_style_obj
+		element_style_obj,
+		is_toc,
+		toc_set_array
 	} = attributes;
 
 	const blockProps = useBlockProps();
@@ -158,12 +161,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				};
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
-				const { headingContent, content, headingID, codeArea, fileName, ...styleAttributes } = block.attributes;
+				const { headingContent, content, url, headingID, codeArea, fileName, ...styleAttributes } = block.attributes;
 				// 更新対象のブロックが選択中のブロックでなく、
 				// かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
 				if (block.clientId !== selectedBlock?.clientId && key === select_key
 				) {
-					const { headingContent, content, headingID, codeArea, fileName, ...selectAttributes } = selectedBlock.attributes;
+					const { headingContent, content, url, headingID, codeArea, fileName, ...selectAttributes } = selectedBlock.attributes;
 					if (styleAttributes !== selectAttributes) { // 既に更新されたブロックを再度更新しないようにする
 						updateBlockAttributes(block.clientId, { ...block.attributes, ...selectAttributes });
 					}
@@ -241,10 +244,11 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				];
 
 				if (nestedBlocks.length > 0) {
-					const { className, ...filter_class_attr } = attributes;
+					//const { className, ...filter_class_attr } = attributes || {};
+					const ordered = nestedList.tagName === 'OL';//順序付きか
 					listItemBlock.push([
 						['core/list',
-							{ ...filter_class_attr, list_type: element.tagName },
+							{ ordered: ordered },
 							nestedBlocks]
 					]);
 				}
@@ -280,7 +284,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				if (element.children[0]?.tagName.match(/^IMG$/)) {
 					elementType = element.children[0].tagName;
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/image', { ...attributes, url: element.children[0].src }]);
+					newblockArray.push(['core/image', { ...attributes, className: 'itmar_md_block', url: element.children[0].src }]);
 				} else {
 					const attributes = element_style_obj[elementType];
 					newblockArray.push(['core/paragraph', { ...attributes, className: 'itmar_md_block', content: element.innerHTML }]);
@@ -295,9 +299,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				}
 			} else if (elementType.match(/^UL|OL$/)) {
 				block_count++;
+				const ordered = elementType === 'OL';//順序付きか
 				const attributes = element_style_obj[elementType];
 				const list_Array = listDOMToBlocks(element, attributes);
-				newblockArray.push(['core/list', { ...attributes, className: 'itmar_md_block', list_type: element.tagName }, list_Array,]);
+				newblockArray.push(['core/list', { ...attributes, ordered: ordered, className: 'itmar_md_block', list_type: element.tagName }, list_Array,]);
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
@@ -328,6 +333,32 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	return (
 		<>
+			<InspectorControls>
+				<PanelBody
+					title={__('Table of Content', 'block-location')}
+					initialOpen={true}
+				>
+					<PanelRow>
+						<ToggleControl
+							label={__('Table of Content Render', 'block-location')}
+							checked={is_toc}
+							onChange={(val) => setAttributes({ is_toc: val })}
+						/>
+					</PanelRow>
+					{is_toc &&  //上記が true の場合に表示
+						<PanelRow>
+							<MultiSelect
+								stockArrayName="toc_set_array"
+								stokArray={toc_set_array}
+								type='checkBox'
+								option={[{ title: 'ヘッダー部分', value: 'header' }, { title: 'サイドバー部分', value: 'sidebar' }]}
+								setAttributes={setAttributes}
+							/>
+						</PanelRow>
+					}
+				</PanelBody>
+			</InspectorControls>
+
 			<div {...blockProps}>
 				<div className='area_wrapper'>
 					<div className='edit_area' onScroll={handleScroll}>

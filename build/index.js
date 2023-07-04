@@ -31,6 +31,110 @@ var SvgMarkdown = function SvgMarkdown(props) {
 
 /***/ }),
 
+/***/ "./src/MultiSelect.js":
+/*!****************************!*\
+  !*** ./src/MultiSelect.js ***!
+  \****************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__);
+
+
+
+const MultiSelect = ({
+  stockArrayName,
+  stokArray,
+  type,
+  option,
+  setAttributes
+}) => {
+  //チェックボックスクリック時にstokArrayの内容を書き換え
+  const handleOptionChange = (optionValue, checked) => {
+    if (checked) {
+      setAttributes({
+        [stockArrayName]: [...stokArray, optionValue]
+      });
+    } else {
+      setAttributes({
+        [stockArrayName]: stokArray.filter(value => value !== optionValue)
+      });
+    }
+  };
+
+  //選択されたColorItemの色を保持する状態変数
+  const [activeColorIndex, setActiveColorIndex] = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useState)(null);
+  //ColorItemがクリックされたときの処理
+  const handleColorItemClick = index => {
+    //同じ色見本が押されたらピッカーを消す
+    setActiveColorIndex(index === activeColorIndex ? null : index);
+  };
+  //ColorPickerで色が設定されたときの処理
+  const handleColorPickerChange = color => {
+    let updatedArray;
+    if (activeColorIndex >= stokArray.length) {
+      updatedArray = [...stokArray, color.hex];
+    } else {
+      updatedArray = [...stokArray];
+      updatedArray[activeColorIndex] = color.hex;
+    }
+    setAttributes({
+      [stockArrayName]: updatedArray
+    });
+  };
+  //ColorDeleteがクリックされたときの処理
+  const handleColorDelete = indexToRemove => {
+    setAttributes({
+      [stockArrayName]: stokArray.filter((item, index) => index !== indexToRemove)
+    });
+  };
+  //ColorPlusがクリックされたときの処理
+  const handleColorAdd = () => {
+    setActiveColorIndex(stokArray.length);
+  };
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", null, type === 'checkBox' && option.map((label, index) => {
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.CheckboxControl, {
+      key: index,
+      label: label.title,
+      checked: stokArray.includes(label.value),
+      onChange: checked => handleOptionChange(label.value, checked)
+    });
+  }), type === 'colorPicker' && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, stokArray.map((color, index) => (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "color_item"
+  }, index == activeColorIndex && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "color_circle checked",
+    style: {
+      backgroundColor: color
+    },
+    onClick: () => handleColorItemClick(index)
+  }), index != activeColorIndex && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "color_circle",
+    style: {
+      backgroundColor: color
+    },
+    onClick: () => handleColorItemClick(index)
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "color_delete",
+    onClick: () => handleColorDelete(index)
+  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "color_item color_plus",
+    onClick: () => handleColorAdd()
+  }), activeColorIndex !== null && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_1__.ColorPicker, {
+    color: stokArray[activeColorIndex],
+    onChangeComplete: handleColorPickerChange
+  })));
+};
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (MultiSelect);
+
+/***/ }),
+
 /***/ "./src/TocRender.js":
 /*!**************************!*\
   !*** ./src/TocRender.js ***!
@@ -88,11 +192,13 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_data__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_data__WEBPACK_IMPORTED_MODULE_6__);
 /* harmony import */ var fast_deep_equal__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! fast-deep-equal */ "./node_modules/fast-deep-equal/index.js");
 /* harmony import */ var fast_deep_equal__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(fast_deep_equal__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
-/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
-/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
+/* harmony import */ var _MultiSelect__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./MultiSelect */ "./src/MultiSelect.js");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
+
 
 
 
@@ -113,9 +219,11 @@ function Edit({
   const {
     mdContent,
     blockArray,
-    element_style_obj
+    element_style_obj,
+    is_toc,
+    toc_set_array
   } = attributes;
-  const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_9__.useBlockProps)();
+  const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10__.useBlockProps)();
 
   //エディタの参照を取得
   const simpleMdeRef = (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useRef)();
@@ -222,6 +330,7 @@ function Edit({
         const {
           headingContent,
           content,
+          url,
           headingID,
           codeArea,
           fileName,
@@ -233,6 +342,7 @@ function Edit({
           const {
             headingContent,
             content,
+            url,
             headingID,
             codeArea,
             fileName,
@@ -318,13 +428,10 @@ function Edit({
         }];
 
         if (nestedBlocks.length > 0) {
-          const {
-            className,
-            ...filter_class_attr
-          } = attributes;
+          //const { className, ...filter_class_attr } = attributes || {};
+          const ordered = nestedList.tagName === 'OL'; //順序付きか
           listItemBlock.push([['core/list', {
-            ...filter_class_attr,
-            list_type: element.tagName
+            ordered: ordered
           }, nestedBlocks]]);
         }
         return listItemBlock;
@@ -361,6 +468,7 @@ function Edit({
           const attributes = element_style_obj[elementType];
           newblockArray.push(['core/image', {
             ...attributes,
+            className: 'itmar_md_block',
             url: element.children[0].src
           }]);
         } else {
@@ -388,10 +496,12 @@ function Edit({
         }
       } else if (elementType.match(/^UL|OL$/)) {
         block_count++;
+        const ordered = elementType === 'OL'; //順序付きか
         const attributes = element_style_obj[elementType];
         const list_Array = listDOMToBlocks(element, attributes);
         newblockArray.push(['core/list', {
           ...attributes,
+          ordered: ordered,
           className: 'itmar_md_block',
           list_type: element.tagName
         }, list_Array]);
@@ -424,7 +534,30 @@ function Edit({
       });
     }
   }, [tempBlockArray, innerBlockIds.length]);
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", blockProps, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10__.InspectorControls, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.PanelBody, {
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Table of Content', 'block-location'),
+    initialOpen: true
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.ToggleControl, {
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Table of Content Render', 'block-location'),
+    checked: is_toc,
+    onChange: val => setAttributes({
+      is_toc: val
+    })
+  })), is_toc &&
+  //上記が true の場合に表示
+  (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_9__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_MultiSelect__WEBPACK_IMPORTED_MODULE_8__["default"], {
+    stockArrayName: "toc_set_array",
+    stokArray: toc_set_array,
+    type: "checkBox",
+    option: [{
+      title: 'ヘッダー部分',
+      value: 'header'
+    }, {
+      title: 'サイドバー部分',
+      value: 'sidebar'
+    }],
+    setAttributes: setAttributes
+  })))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", blockProps, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "area_wrapper"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "edit_area",
@@ -440,7 +573,7 @@ function Edit({
     options: autoUploadImage
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "previw_area"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_9__.InnerBlocks, {
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_10__.InnerBlocks, {
     template: blockArray
     //templateLock="all"
   })))));
@@ -506,8 +639,12 @@ __webpack_require__.r(__webpack_exports__);
 function save({
   attributes
 }) {
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "table-of-contents"
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), attributes.is_toc && attributes.toc_set_array.includes('header') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "table-of-contents header"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
+    attributes: attributes.blockArray
+  })), attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "table-of-contents sidebar"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
     attributes: attributes.blockArray
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null));
@@ -28540,7 +28677,7 @@ var SimpleMdeReact_default = SimpleMdeReact;
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","description":"マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}}},"textdomain":"markdown-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","description":"マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}},"is_toc":{"type":"boolean","default":true},"toc_set_array":{"type":"array","default":["header","sidebar"]}},"textdomain":"markdown-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
 
 /***/ })
 
