@@ -1,6 +1,7 @@
 /*!***************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss ***!
   \***************************************************************************************************************************************************************************************************************************************/
+@charset "UTF-8";
 /**
  * The following styles get applied both on the front of your site
  * and in the editor.
@@ -8,13 +9,236 @@
  * Replace them with your own styles or remove the file completely.
  */
 .wp-block-itmar-markdown-block {
-  background-color: #e6f2f8;
-  color: #000000;
+  background-color: transparent;
 }
 .wp-block-itmar-markdown-block .table-of-contents {
+  background-color: #e6f2f8;
   padding: 1.5em 0.5em;
-  background-color: #fff;
+  border: rgba(3, 39, 105, 0.5215686275) 2px solid;
   border-radius: 10px;
+}
+.wp-block-itmar-markdown-block .table-of-contents ul {
+  list-style-type: none !important;
+  position: relative;
+}
+.wp-block-itmar-markdown-block .table-of-contents li {
+  position: relative;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+.wp-block-itmar-markdown-block .table-of-contents li:not(:first-child) {
+  margin-top: 1.2em;
+}
+.wp-block-itmar-markdown-block .table-of-contents a {
+  display: block;
+  text-decoration: none;
+  color: #000000;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header {
+  margin-bottom: 3em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header ul {
+  counter-reset: number;
+  /*数字をリセット*/
+  margin-top: 2em;
+  display: none;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header ul::after {
+  content: "";
+  position: absolute;
+  width: 90%;
+  height: 1px;
+  left: 50%;
+  transform: translateX(-50%);
+  top: -1em;
+  background-color: #3F51B5;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2::after, .wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::after {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 1px;
+  left: 0;
+  bottom: 0em;
+  background-color: #3F51B5;
+  transition: 0.3s;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2:hover::after, .wp-block-itmar-markdown-block .table-of-contents.header a.lv-3:hover::after {
+  width: 100%;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2 {
+  font-size: 1.2em;
+  padding-left: 2em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2::before {
+  position: absolute;
+  counter-increment: number;
+  content: counter(number);
+  /*以下数字のデザイン変える*/
+  display: inline-block;
+  background: #5c9ee7;
+  color: white;
+  font-family: "Avenir", "Arial Black", "Arial", sans-serif;
+  font-weight: bold;
+  font-size: 1em;
+  border-radius: 50%;
+  left: 0;
+  width: 1.2em;
+  height: 1.2em;
+  line-height: 1.2em;
+  text-align: center;
+  /*以下 上下中央寄せのため*/
+  top: 50%;
+  transform: translateY(-50%);
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3 {
+  font-size: 1em;
+  margin-left: 4em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::before {
+  content: "\f0da";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  /* これを追加 */
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 2em;
+  width: 1.2em;
+  height: 1.2em;
+  line-height: 1.2em;
+  text-align: center;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::after {
+  left: 2em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3:hover::after {
+  width: calc(100% - 2em);
+}
+.wp-block-itmar-markdown-block .table-of-contents.header h2 {
+  position: relative;
+  padding-left: 3em;
+  margin-left: 1em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header h2::before {
+  content: "\f0c9";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0.6em;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+  background-color: #9493f5;
+  border-radius: 50%;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open::before {
+  content: "\f107";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 2em;
+  width: 2em;
+  height: 2em;
+  line-height: 2em;
+  text-align: center;
+  background-color: #9493f5;
+  border-radius: 50%;
+  pointer-events: auto;
+  transition: all 0.3s ease 0s;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open:hover {
+  cursor: pointer;
+}
+.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open.is_open::before {
+  transform: translateY(-50%) rotate(180deg);
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar {
+  position: sticky;
+  top: 5em;
+  margin-top: 3em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar h2 {
+  font-size: 1.2em;
+  position: relative;
+  padding-left: 2em;
+  margin: 0 0 1em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar h2::before {
+  content: "\f0c9";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  width: 1.5em;
+  height: 1.5em;
+  line-height: 1.5em;
+  text-align: center;
+  background-color: #9493f5;
+  border-radius: 50%;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2, .wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3 {
+  font-size: 1em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2::before, .wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3::before {
+  content: "";
+  position: absolute;
+  display: block;
+  top: 50%;
+  transform: translateY(-50%);
+  left: -2.2em;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: hsla(0, 0%, 100%, 0.15) 0 1px 1px, inset hsla(0, 0%, 0%, 0.5) 0 0 0 1px;
+  background-color: hsla(0, 0%, 0%, 0.2);
+  background-size: 0;
+  background-image: -webkit-radial-gradient(hsl(200, 100%, 90%) 0%, rgb(40, 127, 170) 30%, hsla(200, 100%, 60%, 0.3) 38%, hsla(200, 100%, 30%, 0) 70%);
+  background-repeat: no-repeat;
+  transition: background-position 0.15s cubic-bezier(0.8, 0, 1, 1), transform 0.25s cubic-bezier(0.8, 0, 1, 1);
+  outline: none;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2 {
+  font-weight: 600;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3 {
+  margin-left: 1.5em;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3::before {
+  left: -0.5em;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li.ready a::before {
+  background-size: 100%;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li.check_prev a::before {
+  background-position: 0 3rem;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li.checked a::before {
+  background-position: 0 0;
+}
+.wp-block-itmar-markdown-block .table-of-contents.sidebar li.check_next a::before {
+  background-position: 0 -3rem;
+}
+.wp-block-itmar-markdown-block .md_block_content {
+  background-color: #e6f2f8;
+  display: flex;
+  flex-wrap: nowrap;
+}
+.wp-block-itmar-markdown-block .md_block_content .main_md_content {
+  flex: 1 1 0;
+}
+.wp-block-itmar-markdown-block .md_block_content .side_md_content {
+  flex: 0 0 30%;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

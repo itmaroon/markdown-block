@@ -225,7 +225,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		let block_count = 0;//追加されるブロックのカウント
 
 		//リスト要素をgutenbergのブロックにする
-		function listDOMToBlocks(element, attributes) {
+		function listDOMToBlocks(element) {
 			const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === 'li');//element要素直下のli要素を取得
 			const listArray = listItems.map(listItem => {
 				const nestedList = listItem.querySelector('ul, ol');//li要素の下にul,ol要素があるか
@@ -301,7 +301,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				block_count++;
 				const ordered = elementType === 'OL';//順序付きか
 				const attributes = element_style_obj[elementType];
-				const list_Array = listDOMToBlocks(element, attributes);
+				const list_Array = listDOMToBlocks(element);
 				newblockArray.push(['core/list', { ...attributes, ordered: ordered, className: 'itmar_md_block', list_type: element.tagName }, list_Array,]);
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;

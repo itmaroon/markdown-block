@@ -154,15 +154,17 @@ const TocRender = ({
 }) => {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "toc_section"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h1", null, "Table of content"), attributes.filter(attr => attr[0] === "itmar/design-title").map(attribute => {
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Table of Content", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "btn_open"
+  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", null, attributes.filter(attr => attr[0] === "itmar/design-title").map(attribute => {
     // Get the level from the headingType.
     const level = attribute[1].headingType.slice(1);
-    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
       key: attribute[1].headingID,
       href: `#${attribute[1].headingID}`,
       className: `lv-${level}`
-    }, attribute[1].headingContent);
-  }));
+    }, attribute[1].headingContent));
+  })));
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (TocRender);
 
@@ -413,7 +415,7 @@ function Edit({
     let block_count = 0; //追加されるブロックのカウント
 
     //リスト要素をgutenbergのブロックにする
-    function listDOMToBlocks(element, attributes) {
+    function listDOMToBlocks(element) {
       const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === 'li'); //element要素直下のli要素を取得
       const listArray = listItems.map(listItem => {
         const nestedList = listItem.querySelector('ul, ol'); //li要素の下にul,ol要素があるか
@@ -498,7 +500,7 @@ function Edit({
         block_count++;
         const ordered = elementType === 'OL'; //順序付きか
         const attributes = element_style_obj[elementType];
-        const list_Array = listDOMToBlocks(element, attributes);
+        const list_Array = listDOMToBlocks(element);
         newblockArray.push(['core/list', {
           ...attributes,
           ordered: ordered,
@@ -643,11 +645,17 @@ function save({
     className: "table-of-contents header"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
     attributes: attributes.blockArray
-  })), attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "md_block_content"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "main_md_content"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null)), attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "side_md_content"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "table-of-contents sidebar"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
     attributes: attributes.blockArray
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null));
+  })))));
 }
 
 /***/ }),

@@ -1,18 +1,27 @@
 const TocRender = ({ attributes }) => {
   return (
     <div className="toc_section">
-      <h1>Table of content</h1>
-      {attributes
-        .filter(attr => attr[0] === "itmar/design-title")
-        .map(attribute => {
-          // Get the level from the headingType.
-          const level = attribute[1].headingType.slice(1);
-          return (
-            <a key={attribute[1].headingID} href={`#${attribute[1].headingID}`} className={`lv-${level}`}>
-              {attribute[1].headingContent}
-            </a>
-          );
-        })}
+      <h2>
+        Table of Content
+        <div className="btn_open"></div>
+      </h2>
+
+      <ul>
+        {attributes
+          .filter(attr => attr[0] === "itmar/design-title")
+          .map(attribute => {
+            // Get the level from the headingType.
+            const level = attribute[1].headingType.slice(1);
+            return (
+              <li>
+                <a key={attribute[1].headingID} href={`#${attribute[1].headingID}`} className={`lv-${level}`}>
+                  {attribute[1].headingContent}
+                </a>
+              </li>
+            );
+          })}
+      </ul>
+
     </div>
   );
 };
