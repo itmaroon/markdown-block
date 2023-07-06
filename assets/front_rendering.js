@@ -8,7 +8,13 @@ jQuery(function ($) {
     let id = $(this).attr("href");
     let target = $("#" === id ? "html" : id);
     let position = $(target).offset().top - (headerHeight + 50);
-    $('body,html').animate({ scrollTop: position }, speed);
+    $('body,html').animate({ scrollTop: position }, speed, "linear",
+      function () {
+        //スマホ対応のボタン類を消去
+        hanberger_btn.removeClass("is-active");
+        $("#itmar_mdBlock_drawer_background").removeClass("is-active");
+        $(".side_md_content").removeClass("is-active");
+      });
   });
 
   //tocのアコーデオン
@@ -42,10 +48,10 @@ jQuery(function ($) {
       var elementId = topElement.attr('id');
       var anchorElement = $('.sidebar a[href="#' + elementId + '"]').parents('li');
 
-      $('.sidebar li').removeClass('checked check_prev check_next');
-      anchorElement.addClass('checked ready')
-      anchorElement.prevAll('li').addClass('check_prev');
-      anchorElement.nextAll('li').addClass('check_next');
+      $('.sidebar li').removeClass('checked check_prev check_next');//全ての要素からクラスを外す
+      anchorElement.addClass('checked ready')//チェックされた要素
+      anchorElement.prevAll('li').addClass('check_prev');//それより前の要素
+      anchorElement.nextAll('li').addClass('check_next');//それより後の要素
 
     } else {
       console.log("No visible element found");
@@ -54,5 +60,39 @@ jQuery(function ($) {
 
   $(document).ready(findTopElement);
   $(window).on('scroll', findTopElement);
+
+  //ドロワーボタン
+  let hanberger_btn = $('#itmar_mdBlock_hanberger');
+
+  $(window).scroll(function () {
+    if ($('html').width() < 768) {//スマホの場合
+      if ($(this).scrollTop() >= 500) {
+        hanberger_btn.fadeIn(500);
+      } else {
+        if (!hanberger_btn.hasClass('is-active')) {
+          hanberger_btn.fadeOut(500);
+        }
+      }
+    } else {
+      hanberger_btn.hide();
+    }
+  });
+
+  hanberger_btn.click(function () {
+    $(this).toggleClass("is-active");
+    $('.side_md_content').toggleClass("is-active");
+    $("#itmar_mdBlock_drawer_background").toggleClass("is-active");
+  });
+
+  $("#itmar_mdBlock_drawer_background").click(function (e) {
+    //e.preventDefault();
+
+    hanberger_btn.removeClass("is-active");
+    $("#itmar_mdBlock_drawer_background").removeClass("is-active");
+    $(".side_md_content").removeClass("is-active");
+
+    //return false;
+  });
+
 
 });

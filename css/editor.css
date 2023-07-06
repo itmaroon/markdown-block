@@ -1,0 +1,34 @@
+/**
+ * The following styles get applied inside the editor only.
+ *
+ * Replace them with your own styles or remove the file completely.
+ */
+.wp-block-itmar-markdown-block {
+  border: 1px dotted #f00;
+  max-width: none !important;
+  width: 100%;
+  padding: 0;
+}
+.wp-block-itmar-markdown-block .area_wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5em;
+}
+.wp-block-itmar-markdown-block .area_wrapper .edit_area,
+.wp-block-itmar-markdown-block .area_wrapper .previw_area {
+  box-sizing: border-box;
+  width: 48%;
+  padding: 0.5em 1.5em;
+  max-height: 78vh;
+  overflow: scroll;
+  border: 1px #000 solid;
+  background-color: #fff;
+  border-radius: 10px;
+}
+.wp-block-itmar-markdown-block .area_wrapper .edit_area .input_area {
+  font-size: 1.2em;
+  height: 100%;
+  border: rgb(7, 7, 7) 1px solid;
+}
+/*# sourceMappingURL=editor.css.map */

@@ -213,6 +213,17 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
+
+// エクステンションの定義(引用元の表現)
+showdown__WEBPACK_IMPORTED_MODULE_4___default().extension('quoteCitation', function () {
+  return [{
+    type: 'lang',
+    regex: /(^|\n)> --( .+?\n)/gm,
+    replace: function (match, prefix, citation) {
+      return prefix + '> <cite>' + citation.trim() + '</cite>\n';
+    }
+  }];
+});
 function Edit({
   attributes,
   setAttributes,
@@ -399,7 +410,8 @@ function Edit({
     if (!mdContent) return; //mdContent文書がなければ処理しない
 
     const converter = new (showdown__WEBPACK_IMPORTED_MODULE_4___default().Converter)({
-      simpleLineBreaks: true
+      simpleLineBreaks: true,
+      extensions: ['quoteCitation']
     });
     const html = converter.makeHtml(mdContent);
     // marked.use({//markedのオプション設定
@@ -510,10 +522,20 @@ function Edit({
       } else if (elementType.match(/^BLOCKQUOTE$/)) {
         block_count++;
         const attributes = element_style_obj[elementType];
+        //DOM要素をP要素とcite要素に分ける
+        const parser = new DOMParser();
+        const quote_doc = parser.parseFromString(element.innerHTML, 'text/html');
+        const cite = quote_doc.querySelector('cite');
+        cite.remove(); //元の要素からcite要素を削除する
+        const quote_dom = quote_doc.body.querySelector('p');
+        const quote_str = quote_dom.innerHTML.replace(/[\s\n]/g, '');
+        ;
         newblockArray.push(['core/quote', {
           ...attributes,
-          citation: element.innerHTML
-        }]);
+          citation: cite.textContent
+        }, [['core/paragraph', {
+          content: quote_str
+        }]]]);
       }
     });
     if (!fast_deep_equal__WEBPACK_IMPORTED_MODULE_7___default()(newblockArray, prevBlockArray)) {
@@ -641,7 +663,9 @@ __webpack_require__.r(__webpack_exports__);
 function save({
   attributes
 }) {
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), attributes.is_toc && attributes.toc_set_array.includes('header') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  const titles_num = attributes.blockArray.filter(attr => attr[0] === "itmar/design-title").length; //タイトルがブロックに含まれているか
+
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), titles_num > 0 && attributes.is_toc && attributes.toc_set_array.includes('header') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "table-of-contents header"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
     attributes: attributes.blockArray
@@ -649,13 +673,27 @@ function save({
     className: "md_block_content"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "main_md_content"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null)), attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null)), titles_num > 0 && attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "side_md_content"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "table-of-contents sidebar"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
     attributes: attributes.blockArray
-  })))));
+  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_icon",
+    id: "itmar_mdBlock_hanberger"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_icon_bars"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_icon_bar1"
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_icon_bar2"
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_icon_bar3"
+  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    class: "drawer_background",
+    id: "itmar_mdBlock_drawer_background"
+  })));
 }
 
 /***/ }),

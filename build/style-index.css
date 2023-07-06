@@ -1,7 +1,13 @@
 /*!***************************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss ***!
   \***************************************************************************************************************************************************************************************************************************************/
+@import url(https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@300;400;500;600;700;900&family=Zen+Maru+Gothic:wght@400;500;700;900&family=M+PLUS+1+Code:wght@300;400;500;600;700&display=swap);
+/*!*******************************************************************************************************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[4].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[4].use[2]!./node_modules/sass-loader/dist/cjs.js??ruleSet[1].rules[4].use[3]!./src/style.scss (1) ***!
+  \*******************************************************************************************************************************************************************************************************************************************/
 @charset "UTF-8";
+/* リセットCSS
+  ===================================== */
 /**
  * The following styles get applied both on the front of your site
  * and in the editor.
@@ -9,7 +15,18 @@
  * Replace them with your own styles or remove the file completely.
  */
 .wp-block-itmar-markdown-block {
+  font-size: clamp(4.5px, 1.67vw, 16px);
   background-color: transparent;
+  padding: 0 4em;
+  /*************
+  ドロワーアイコン
+  **************/
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block {
+    padding: 0 1em;
+    font-size: clamp(4.5px, 4.1vw, 16px);
+  }
 }
 .wp-block-itmar-markdown-block .table-of-contents {
   background-color: #e6f2f8;
@@ -42,6 +59,11 @@
   /*数字をリセット*/
   margin-top: 2em;
   display: none;
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .table-of-contents.header ul {
+    padding-left: 1em;
+  }
 }
 .wp-block-itmar-markdown-block .table-of-contents.header ul::after {
   content: "";
@@ -120,6 +142,12 @@
   padding-left: 3em;
   margin-left: 1em;
 }
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .table-of-contents.header h2 {
+    padding-left: 2.3em;
+    margin-left: 0;
+  }
+}
 .wp-block-itmar-markdown-block .table-of-contents.header h2::before {
   content: "\f0c9";
   font-family: "Font Awesome 5 Free";
@@ -134,6 +162,11 @@
   text-align: center;
   background-color: #9493f5;
   border-radius: 50%;
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .table-of-contents.header h2::before {
+    left: 0em;
+  }
 }
 .wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open::before {
   content: "\f107";
@@ -152,6 +185,11 @@
   pointer-events: auto;
   transition: all 0.3s ease 0s;
 }
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open::before {
+    right: 0em;
+  }
+}
 .wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open:hover {
   cursor: pointer;
 }
@@ -160,14 +198,29 @@
 }
 .wp-block-itmar-markdown-block .table-of-contents.sidebar {
   position: sticky;
-  top: 5em;
-  margin-top: 3em;
+  top: 8em;
+  margin-top: 5em;
+  border-radius: 0 10px 10px 10px;
+  box-sizing: border-box;
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .table-of-contents.sidebar {
+    position: relative;
+    top: 0;
+    margin-top: 2rem;
+  }
 }
 .wp-block-itmar-markdown-block .table-of-contents.sidebar h2 {
+  position: absolute;
+  box-sizing: border-box;
+  bottom: 100%;
+  left: -2px;
   font-size: 1.2em;
-  position: relative;
-  padding-left: 2em;
-  margin: 0 0 1em;
+  padding: 0.5em 1rem 0.5rem 3.5rem;
+  margin: 0;
+  background-color: rgba(3, 39, 105, 0.5215686275);
+  border-radius: 10px 10px 0 0;
+  color: #fff;
 }
 .wp-block-itmar-markdown-block .table-of-contents.sidebar h2::before {
   content: "\f0c9";
@@ -176,7 +229,7 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  left: 0;
+  left: 0.5em;
   width: 1.5em;
   height: 1.5em;
   line-height: 1.5em;
@@ -234,11 +287,115 @@
   display: flex;
   flex-wrap: nowrap;
 }
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .md_block_content {
+    display: block;
+  }
+}
 .wp-block-itmar-markdown-block .md_block_content .main_md_content {
   flex: 1 1 0;
 }
 .wp-block-itmar-markdown-block .md_block_content .side_md_content {
   flex: 0 0 30%;
+  margin-right: 2em;
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .md_block_content .side_md_content {
+    box-sizing: border-box;
+    margin-right: 0;
+    padding: 0 2em;
+    width: 100%;
+    position: fixed;
+    display: block;
+    top: 8em;
+    left: -100%;
+    height: auto;
+    max-height: 50%;
+    z-index: 40;
+    transition: all 0.5s ease 0s;
+  }
+  .wp-block-itmar-markdown-block .md_block_content .side_md_content.is-active {
+    transform: translateX(100%);
+  }
+}
+.wp-block-itmar-markdown-block .drawer_icon {
+  display: none;
+  position: fixed;
+  top: 2em;
+  right: 1.6em;
+  width: 2.5em;
+  height: 2.5em;
+  border: 1px solid #000;
+  border-radius: 50%;
+  transition: all 0.5s ease 0s;
+  z-index: 110;
+}
+.wp-block-itmar-markdown-block .drawer_icon:hover {
+  cursor: pointer;
+}
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bars {
+  position: relative;
+  height: 100%;
+}
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar1,
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar2,
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar3 {
+  position: absolute;
+  left: 15%;
+  width: 70%;
+  height: 3px;
+  background-color: #000;
+  opacity: 1;
+  border-radius: 3px;
+  transition: all 0.5s ease 0s;
+}
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar1 {
+  top: 30%;
+}
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar2 {
+  top: 48%;
+}
+.wp-block-itmar-markdown-block .drawer_icon .drawer_icon_bar3 {
+  top: 66%;
+}
+.wp-block-itmar-markdown-block .drawer_icon.is-active {
+  border: 1px solid #fff;
+}
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar1,
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar2,
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar3 {
+  background-color: #fff;
+}
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar1 {
+  width: 70%;
+  top: 45%;
+  left: 15%;
+  transform: rotate(45deg);
+}
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar2 {
+  display: none;
+}
+.wp-block-itmar-markdown-block .drawer_icon.is-active .drawer_icon_bar3 {
+  width: 70%;
+  top: 45%;
+  left: 15%;
+  transform: rotate(-45deg);
+}
+.wp-block-itmar-markdown-block .drawer_background {
+  display: none;
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 15;
+  background-color: transparent;
+  transition: all 0.5s ease 0s;
+}
+.wp-block-itmar-markdown-block .drawer_background.is-active {
+  display: block;
+  background-color: #3E3E3E;
+  opacity: 0.7;
 }
 
 /*# sourceMappingURL=style-index.css.map*/

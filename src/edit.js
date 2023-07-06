@@ -38,6 +38,17 @@ import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 
 import './editor.scss';
 
+// エクステンションの定義(引用元の表現)
+showdown.extension('quoteCitation', function () {
+	return [{
+		type: 'lang',
+		regex: /(^|\n)> --( .+?\n)/gm,
+		replace: function (match, prefix, citation) {
+			return prefix + '> <cite>' + citation.trim() + '</cite>\n';
+		}
+	}];
+});
+
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -210,7 +221,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	useEffect(() => {
 		if (!mdContent) return;//mdContent文書がなければ処理しない
 
-		const converter = new showdown.Converter({ simpleLineBreaks: true });
+		const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation'] });
 		const html = converter.makeHtml(mdContent);
 		// marked.use({//markedのオプション設定
 		// 	breaks: true,
@@ -306,7 +317,22 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['core/quote', { ...attributes, citation: element.innerHTML }]);
+				//DOM要素をP要素とcite要素に分ける
+				const parser = new DOMParser();
+				const quote_doc = parser.parseFromString(element.innerHTML, 'text/html');
+				const cite = quote_doc.querySelector('cite');
+				cite.remove();//元の要素からcite要素を削除する
+				const quote_dom = quote_doc.body.querySelector('p');
+				const quote_str = quote_dom.innerHTML.replace(/[\s\n]/g, '');;
+				newblockArray.push(
+					[
+						'core/quote',
+						{ ...attributes, citation: cite.textContent },
+						[
+							['core/paragraph', { content: quote_str }]
+						]
+					]
+				);
 			}
 
 
