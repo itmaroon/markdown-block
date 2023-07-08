@@ -5,6 +5,7 @@ import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import showdown from 'showdown';
 import { marked } from 'marked';
+import MarkdownIt from 'markdown-it';
 import { useDispatch, useSelect } from '@wordpress/data';
 import equal from 'fast-deep-equal';
 import MultiSelect from './MultiSelect';
@@ -39,16 +40,30 @@ import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import './editor.scss';
 
 // エクステンションの定義(引用元の表現)
-showdown.extension('quoteCitation', function () {
-	return [{
-		type: 'lang',
-		regex: /(^|\n)> --( .+?\n)/gm,
-		replace: function (match, prefix, citation) {
-			return prefix + '> <cite>' + citation.trim() + '</cite>\n';
-		}
-	}];
-});
+// showdown.extension('quoteCitation', function () {
+// 	return [{
+// 		type: 'lang',
+// 		regex: /(^|\n)> --( .+?\n)/gm,
+// 		replace: function (match, prefix, citation) {
+// 			return prefix + '> <cite>' + citation.trim() + '</cite>\n';
+// 		}
+// 	}];
+// });
 
+// HTMLからセルを抽出する関数
+function extractCells(rowElement, cellTagName) {
+	const cells = Array.from(rowElement.querySelectorAll(cellTagName));
+	return cells.map(cell => ({ content: cell.textContent, tag: cellTagName }));
+}
+
+// HTMLから行を抽出する関数
+function extractRows(sectionElement, rowTagName, cellTagName) {
+	if (!sectionElement) {
+		return []
+	}
+	const rows = Array.from(sectionElement.querySelectorAll(rowTagName));
+	return rows.map(row => ({ cells: extractCells(row, cellTagName) }));
+}
 
 export default function Edit({ attributes, setAttributes, clientId }) {
 	const {
@@ -101,7 +116,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			uploadImage: true,
 			imageUploadFunction,
 			maxHeight: '60vh',
-			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "unordered-list", "ordered-list", "guide"]
+			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "unordered-list", "ordered-list", "table", "|", "guide"]
 		};
 	}, []);
 	//スクロールイベントの登録（クリーンアップも含む）
@@ -152,7 +167,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				'itmar/code-highlight': 'PRE',
 				'core/image': 'IMG',
 				'core/quote': 'BLOCKQUOTE',
-				'core/list': selectedBlock?.attributes.list_type
+				'core/list': selectedBlock?.attributes.list_type,
+				'core/table': 'TABLE',
 				// 以下同様に続く
 			};
 			const select_key = selectTagMap[selectedBlock?.name]
@@ -167,17 +183,18 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					'itmar/code-highlight': 'PRE',
 					'core/image': 'IMG',
 					'core/quote': 'BLOCKQUOTE',
-					'core/list': block.attributes.list_type
+					'core/list': block.attributes.list_type,
+					'core/table': 'TABLE',
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
-				const { headingContent, content, url, headingID, codeArea, fileName, ...styleAttributes } = block.attributes;
+				const { headingContent, content, url, headingID, codeArea, fileName, citation, head, body, foot, ...styleAttributes } = block.attributes;
 				// 更新対象のブロックが選択中のブロックでなく、
 				// かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
 				if (block.clientId !== selectedBlock?.clientId && key === select_key
 				) {
-					const { headingContent, content, url, headingID, codeArea, fileName, ...selectAttributes } = selectedBlock.attributes;
+					const { headingContent, content, url, headingID, codeArea, fileName, citation, head, body, foot, ...selectAttributes } = selectedBlock.attributes;
 					if (styleAttributes !== selectAttributes) { // 既に更新されたブロックを再度更新しないようにする
 						updateBlockAttributes(block.clientId, { ...block.attributes, ...selectAttributes });
 					}
@@ -221,15 +238,19 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	useEffect(() => {
 		if (!mdContent) return;//mdContent文書がなければ処理しない
 
-		const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation'] });
-		const html = converter.makeHtml(mdContent);
+		//const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation', 'splitQuoteBlocks'] });
+		//const html = converter.makeHtml(mdContent);
 		// marked.use({//markedのオプション設定
 		// 	breaks: true,
 		// 	gfm: true,
 		// 	mangle: false,
 		// 	headerIds: false
 		// });
-		//const html = marked.parse(mdContent);
+		// const html = marked.parse(mdContent);
+		const converter = new MarkdownIt({
+			breaks: true,  // これにより、単一の改行が <br> に変換されるようになります
+		});
+		const html = converter.render(mdContent);
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
@@ -317,21 +338,35 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
-				//DOM要素をP要素とcite要素に分ける
-				const parser = new DOMParser();
-				const quote_doc = parser.parseFromString(element.innerHTML, 'text/html');
-				const cite = quote_doc.querySelector('cite');
-				cite.remove();//元の要素からcite要素を削除する
-				const quote_dom = quote_doc.body.querySelector('p');
-				const quote_str = quote_dom.innerHTML.replace(/[\s\n]/g, '');;
+				const block_content = element.children[0].innerHTML;
+				//引用元（cite）の文字列を取得
+				const match = block_content.match(/-- (.+?)(<|$)/);
+				const citation = match ? match[1] : null;  // 引用元のテキスト
+
+				const quote_str = element.children[0].innerHTML.replace(/-- .+?(?=<|$)/, '');
 				newblockArray.push(
 					[
 						'core/quote',
-						{ ...attributes, citation: cite.textContent },
+						{ ...attributes, className: 'itmar_md_block', citation: citation },
 						[
 							['core/paragraph', { content: quote_str }]
 						]
 					]
+				);
+			} else if (elementType.match(/^TABLE$/)) {
+				block_count++;
+				const attributes = element_style_obj[elementType];
+
+				// テーブルヘッダーとテーブルボディを抽出
+				const tableHead = extractRows(element.querySelector("thead"), 'tr', 'th');
+				const tableBody = extractRows(element.querySelector("tbody"), 'tr', 'td');
+				const tablefoot = extractRows(element.querySelector("tfoot"), 'tr', 'td');
+				// 抽出したデータを使ってcore/tableブロックを初期化
+				const blockArray =
+					['core/table', { ...attributes, className: 'itmar_md_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }]
+					;
+				newblockArray.push(
+					blockArray
 				);
 			}
 

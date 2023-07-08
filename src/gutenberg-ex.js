@@ -26,7 +26,87 @@ import {
 import BorderProperty from './borderProperty';
 
 // カスタマイズ対象とするブロック
-const allowedBlocks = ['core/paragraph', 'core/list', 'core/image'];
+const allowedBlocks = ['core/paragraph', 'core/list', 'core/image', 'core/quote', 'core/table'];
+
+//block登録フック（カスタム属性の追加）
+function addLineHeightAttribute(settings, name) {
+  if (allowedBlocks.includes(name)) {
+    let newAttributes = {};
+    newAttributes = {
+      margin_val: {
+        type: "object",
+        default: {
+          top: "1em",
+          left: "1em",
+          bottom: "1em",
+          right: "1em"
+        }
+      },
+      padding_val: {
+        type: "object",
+        default: {
+          top: "1em",
+          left: "1em",
+          bottom: "1em",
+          right: "1em"
+        }
+      }
+    };
+    if (name === 'core/paragraph' || name === 'core/list' || name === 'core/quote') {
+      newAttributes = {
+        ...newAttributes,
+        lineHeight: {
+          type: 'number',
+          default: 1.6,
+        },
+
+      };
+    }
+
+    if (name === 'core/list' || name === 'core/quote') {
+      newAttributes = {
+        ...newAttributes,
+        radius_list: {
+          type: "object",
+          default: {
+            topLeft: "0px",
+            topRight: "0px",
+            bottomRight: "0px",
+            bottomLeft: "0px",
+            value: "0px"
+          }
+        },
+        border_list: {
+          type: "object"
+        },
+
+      };
+    }
+
+    if (name === 'core/list') {
+      newAttributes = {
+        ...newAttributes,
+        list_type: {
+          type: "string",
+          default: "UL"
+        },
+      };
+    }
+
+    return lodash.assign({}, settings, {
+      attributes: lodash.assign({}, settings.attributes, newAttributes),
+    });
+  }
+
+  //その他のブロック
+  return settings;;
+}
+
+addFilter(
+  'blocks.registerBlockType',
+  'block-collections/add-attribute',
+  addLineHeightAttribute
+);
 
 //BlockEditカスタムフック（インスペクターの追加）
 const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
@@ -82,7 +162,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
                 />
 
               </PanelBody>
-              {(props.name === 'core/paragraph' || props.name === 'core/list') &&
+              {(props.name === 'core/paragraph' || props.name === 'core/list' || props.name === 'core/quote') &&
                 <>
                   <PanelBody title="行間設定">
                     <RangeControl
@@ -98,7 +178,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
 
                 </>
               }
-              {props.name === 'core/list' &&
+              {props.name === 'core/list' || props.name === 'core/quote' &&
                 <PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
                   <BorderBoxControl
                     colors={[{ color: '#72aee6' }, { color: '#000' }, { color: '#fff' }]}
@@ -126,80 +206,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
 
 addFilter('editor.BlockEdit', 'block-collections/with-inspector-control', withInspectorControl);
 
-//block登録フック（カスタム属性の追加）
-function addLineHeightAttribute(settings, name) {
-  if (allowedBlocks.includes(name)) {
-    let newAttributes = {};
-    newAttributes = {
-      margin_val: {
-        type: "object",
-        default: {
-          top: "1em",
-          left: "1em",
-          bottom: "1em",
-          right: "1em"
-        }
-      },
-      padding_val: {
-        type: "object",
-        default: {
-          top: "1em",
-          left: "1em",
-          bottom: "1em",
-          right: "1em"
-        }
-      }
-    };
-    if (name === 'core/paragraph' || name === 'core/list') {
-      newAttributes = {
-        ...newAttributes,
-        lineHeight: {
-          type: 'number',
-          default: 1.6,
-        },
-
-      };
-    }
-
-    if (name === 'core/list') {
-      newAttributes = {
-        ...newAttributes,
-        list_type: {
-          type: "string",
-          default: "UL"
-        },
-        radius_list: {
-          type: "object",
-          default: {
-            topLeft: "0px",
-            topRight: "0px",
-            bottomRight: "0px",
-            bottomLeft: "0px",
-            value: "0px"
-          }
-        },
-        border_list: {
-          type: "object"
-        },
-      };
-    }
-
-    return lodash.assign({}, settings, {
-      attributes: lodash.assign({}, settings.attributes, newAttributes),
-    });
-  }
-
-  //その他のブロック
-  return settings;;
-}
-
-addFilter(
-  'blocks.registerBlockType',
-  'block-collections/add-attribute',
-  addLineHeightAttribute
-);
-
-//BlockListBlockフック（ブロックの外観等の反映）
+//BlockListBlockフック（編集画面のブロックの外観等の反映）
 const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock) => {
   return (props) => {
     //propsを展開
@@ -229,13 +236,13 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
             margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
             padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`,
           }
-          if (name === 'core/paragraph' || name === 'core/list') {
+          if (name === 'core/paragraph' || name === 'core/list' || name === 'core/quote') {
             extraStyle = {
               ...extraStyle, lineHeight: lineHeight,
             }
           }
 
-          if (name === 'core/list') {
+          if (name === 'core/list' || name === 'core/quote') {
             //角丸の設定
             const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
             const list_border = BorderProperty(border_list);
@@ -304,13 +311,13 @@ const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
         margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
         padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`,
       }
-      if (blockType.name === 'core/paragraph' || blockType.name === 'core/list') {
+      if (blockType.name === 'core/paragraph' || blockType.name === 'core/list' || blockType.name === 'core/quote') {
         extraStyle = {
           ...extraStyle, lineHeight: lineHeight,
         }
       }
 
-      if (blockType.name === 'core/list') {
+      if (blockType.name === 'core/list' || blockType.name === 'core/quote') {
         //角丸の設定
         const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
         //ボーダーの設定

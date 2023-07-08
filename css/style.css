@@ -22,6 +22,13 @@
     font-size: clamp(4.5px, 4.1vw, 16px);
   }
 }
+.wp-block-itmar-markdown-block .wp-block-quote cite {
+  display: block;
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  margin-left: auto;
+}
 .wp-block-itmar-markdown-block .table-of-contents {
   background-color: #e6f2f8;
   padding: 1.5em 0.5em;

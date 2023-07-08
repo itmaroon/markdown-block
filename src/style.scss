@@ -16,6 +16,16 @@
 		font-size: clamp(4.5px, 4.1vw, 16px);
 	}
 
+	//引用の共通設定
+	.wp-block-quote {
+		cite {
+			display: block;
+			width: fit-content;
+			margin-left: auto;
+		}
+	}
+
+	//Tabel OF Content（目次）
 	.table-of-contents {
 		background-color: #e6f2f8;
 		padding: 1.5em 0.5em;
