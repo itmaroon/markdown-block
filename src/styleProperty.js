@@ -4,7 +4,7 @@ const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-const BorderProperty = (borderObj) => {
+export function borderProperty(borderObj) {
   if (borderObj) {//borderObjがundefinedでない
     let keys = ['top', 'bottom', 'left', 'right'];
     let ret_prop = null;
@@ -38,4 +38,27 @@ const BorderProperty = (borderObj) => {
   }
 
 }
-export default BorderProperty
+
+//角丸の設定
+export function radiusProperty(radiusObj) {
+  const ret_prop = (radiusObj && Object.keys(radiusObj).length === 1)
+    ? radiusObj.value :
+    `${(radiusObj && radiusObj.topLeft) || ''} ${(radiusObj && radiusObj.topRight) || ''} ${(radiusObj && radiusObj.bottomRight) || ''} ${(radiusObj && radiusObj.bottomLeft) || ''}`
+  const ret_val = { borderRadius: ret_prop };
+  return ret_val;
+}
+
+//マージンの設定
+export function marginProperty(marginObj) {
+  const ret_prop = `${marginObj.top} ${marginObj.right} ${marginObj.bottom} ${marginObj.left}`
+
+  const ret_val = { margin: ret_prop };
+  return ret_val;
+}
+//パディングの設定
+export function paddingProperty(paddingObj) {
+  const ret_prop = `${paddingObj.top} ${paddingObj.right} ${paddingObj.bottom} ${paddingObj.left}`
+
+  const ret_val = { padding: ret_prop };
+  return ret_val;
+}

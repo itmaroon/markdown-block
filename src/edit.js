@@ -19,23 +19,20 @@ import {
 	RangeControl,
 	RadioControl,
 	TextControl,
+	Notice,
 	__experimentalBoxControl as BoxControl,
-	__experimentalUnitControl as UnitControl,
+	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
 import {
 	useBlockProps,
-	useInnerBlocksProps,
-	RichText,
-	BlockAlignmentControl,
-	BlockControls,
 	InnerBlocks,
 	InspectorControls,
-	PanelColorSettings,
 	__experimentalPanelColorGradientSettings as PanelColorGradientSettings,
 	__experimentalBorderRadiusControl as BorderRadiusControl
 } from '@wordpress/block-editor';
 
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
+import { borderProperty, radiusProperty, marginProperty, paddingProperty } from './styleProperty';
 
 import './editor.scss';
 
@@ -70,9 +67,48 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		mdContent,
 		blockArray,
 		element_style_obj,
+		backgroundColor,
+		backgroundGradient,
+		margin_value,
+		padding_value,
+		radius_value,
+		border_value,
 		is_toc,
 		toc_set_array
 	} = attributes;
+
+	//単色かグラデーションかの選択
+	const bgColor = backgroundColor || backgroundGradient;
+
+	//ブロックのスタイル設定
+	const margin_obj = marginProperty(margin_value);
+	const padding_obj = paddingProperty(padding_value);
+	const radius_obj = radiusProperty(radius_value);
+	const border_obj = borderProperty(border_value);
+	const blockStyle = { background: bgColor, ...margin_obj, ...padding_obj, ...radius_obj, ...border_obj };
+
+	//スペースのリセットバリュー
+	const padding_resetValues = {
+		top: '10px',
+		left: '10px',
+		right: '10px',
+		bottom: '10px',
+	}
+
+	//ボーダーのリセットバリュー
+	const border_resetValues = {
+		top: '0px',
+		left: '0px',
+		right: '0px',
+		bottom: '0px',
+	}
+
+	const units = [
+		{ value: 'px', label: 'px' },
+		{ value: 'em', label: 'em' },
+		{ value: 'rem', label: 'rem' },
+	];
+
 
 	const blockProps = useBlockProps();
 
@@ -238,19 +274,19 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	useEffect(() => {
 		if (!mdContent) return;//mdContent文書がなければ処理しない
 
-		//const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation', 'splitQuoteBlocks'] });
-		//const html = converter.makeHtml(mdContent);
-		// marked.use({//markedのオプション設定
-		// 	breaks: true,
-		// 	gfm: true,
-		// 	mangle: false,
-		// 	headerIds: false
-		// });
-		// const html = marked.parse(mdContent);
-		const converter = new MarkdownIt({
-			breaks: true,  // これにより、単一の改行が <br> に変換されるようになります
+		// const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation'] });
+		// const html = converter.makeHtml(mdContent);
+		marked.use({//markedのオプション設定
+			breaks: true,
+			gfm: true,
+			mangle: false,
+			headerIds: false
 		});
-		const html = converter.render(mdContent);
+		const html = marked.parse(mdContent);
+		// const converter = new MarkdownIt({
+		// 	breaks: true,  // これにより、単一の改行が <br> に変換されるようになります
+		// });
+		// const html = converter.render(mdContent);
 		const parser = new DOMParser();
 		const doc = parser.parseFromString(html, 'text/html');
 		const newblockArray = [];
@@ -396,6 +432,29 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		<>
 			<InspectorControls>
 				<PanelBody
+					title={__('Set Styel HTML Tag', 'block-location')}
+					initialOpen={false}
+				>
+					{Object.keys(element_style_obj).map(style_elm => {
+						const actions = [
+							{
+								label: '×',
+								onClick: () => {
+									const newElementStyleObj = { ...element_style_obj };
+									delete newElementStyleObj[style_elm];
+									setAttributes({ element_style_obj: newElementStyleObj });
+								}
+							},
+						];
+						return (
+							<Notice actions={actions} isDismissible={false}>
+								<p>{style_elm}</p>
+							</Notice>
+						);
+					})}
+
+				</PanelBody>
+				<PanelBody
 					title={__('Table of Content', 'block-location')}
 					initialOpen={true}
 				>
@@ -418,6 +477,54 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						</PanelRow>
 					}
 				</PanelBody>
+				<PanelBody title="スタイル設定" initialOpen={false} className="style_ctrl">
+					<PanelColorGradientSettings
+						title={__("Background Color Setting")}
+						settings={[
+							{
+								colorValue: backgroundColor,
+								gradientValue: backgroundGradient,
+
+								label: __("Choose Background color"),
+								onColorChange: (newValue) => setAttributes({ backgroundColor: newValue }),
+								onGradientChange: (newValue) => setAttributes({ backgroundGradient: newValue }),
+							},
+						]}
+					/>
+					<BoxControl
+						label="マージン設定"
+						values={margin_value}
+						onChange={value => setAttributes({ margin_value: value })}
+						units={units}	// 許可する単位
+						allowReset={true}	// リセットの可否
+						resetValues={padding_resetValues}	// リセット時の値
+
+					/>
+
+					<BoxControl
+						label="パティング設定"
+						values={padding_value}
+						onChange={value => setAttributes({ padding_value: value })}
+						units={units}	// 許可する単位
+						allowReset={true}	// リセットの可否
+						resetValues={padding_resetValues}	// リセット時の値
+
+					/>
+					<PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
+						<BorderBoxControl
+							colors={[{ color: '#72aee6' }, { color: '#000' }, { color: '#fff' }]}
+							onChange={(newValue) => setAttributes({ border_value: newValue })}
+							value={border_value}
+							allowReset={true}	// リセットの可否
+							resetValues={border_resetValues}	// リセット時の値
+						/>
+						<BorderRadiusControl
+							values={radius_value}
+							onChange={(newBrVal) =>
+								setAttributes({ radius_value: typeof newBrVal === 'string' ? { "value": newBrVal } : newBrVal })}
+						/>
+					</PanelBody>
+				</PanelBody>
 			</InspectorControls>
 
 			<div {...blockProps}>
@@ -430,7 +537,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							options={autoUploadImage}
 						/>
 					</div>
-					<div className='previw_area'>
+					<div className='previw_area' style={blockStyle}>
 						<InnerBlocks
 							template={blockArray}
 						//templateLock="all"

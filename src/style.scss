@@ -27,9 +27,7 @@
 
 	//Tabel OF Content（目次）
 	.table-of-contents {
-		background-color: #e6f2f8;
 		padding: 1.5em 0.5em;
-		border: #03276985 2px solid;
 		border-radius: 10px;
 
 		ul {
@@ -54,6 +52,7 @@
 
 		&.header {
 			margin-bottom: 3em;
+			border: #000 2px solid;
 
 			ul {
 				counter-reset: number;
@@ -73,7 +72,7 @@
 					left: 50%;
 					transform: translateX(-50%);
 					top: -1em;
-					background-color: #3F51B5;
+					background-color: #bdc0ce;
 				}
 			}
 
@@ -88,7 +87,7 @@
 						height: 1px;
 						left: 0;
 						bottom: 0em;
-						background-color: #3F51B5;
+						background-color: #bdc0ce;
 						transition: 0.3s;
 					}
 
@@ -99,7 +98,7 @@
 
 				&.lv-2 {
 					font-size: 1.2em;
-					padding-left: 2em;
+					padding-left: 2.5em;
 
 					&::before {
 						position: absolute;
@@ -107,16 +106,16 @@
 						content: counter(number);
 						/*以下数字のデザイン変える*/
 						display: inline-block;
-						background: #5c9ee7;
+						background: #717579;
 						color: white;
 						font-family: 'Avenir', 'Arial Black', 'Arial', sans-serif;
 						font-weight: bold;
 						font-size: 1em;
 						border-radius: 50%;
 						left: 0;
-						width: 1.2em;
-						height: 1.2em;
-						line-height: 1.2em;
+						width: 1.8em;
+						height: 1.8em;
+						line-height: 1.8em;
 						text-align: center;
 						/*以下 上下中央寄せのため*/
 						top: 50%;
@@ -176,7 +175,7 @@
 					height: 2em;
 					line-height: 2em;
 					text-align: center;
-					background-color: #9493f5;
+					background-color: #d1d1e2;
 					border-radius: 50%;
 
 					@include reset.mq(sp) {
@@ -197,7 +196,7 @@
 						height: 2em;
 						line-height: 2em;
 						text-align: center;
-						background-color: #9493f5;
+						background-color: #d1d1e2;
 						border-radius: 50%;
 						pointer-events: auto;
 						transition: all 0.3s ease 0s;
@@ -223,10 +222,10 @@
 
 		&.sidebar {
 			position: sticky;
-			top: 8em;
-			margin-top: 5em;
-			border-radius: 0 10px 10px 10px;
+			top: 5em;
+			margin-top: 3em;
 			box-sizing: border-box;
+			padding: 0;
 
 			@include reset.mq(sp) {
 				position: relative;
@@ -235,9 +234,10 @@
 			}
 
 			h2 {
-				position: absolute;
+				top: 0;
+				position: sticky;
 				box-sizing: border-box;
-				bottom: 100%;
+				width: fit-content;
 				left: -2px;
 				font-size: 1.2em;
 				padding: 0.5em 1rem 0.5rem 3.5rem;
@@ -259,9 +259,19 @@
 					height: 1.5em;
 					line-height: 1.5em;
 					text-align: center;
-					background-color: #9493f5;
+					border: 1px #fff solid;
 					border-radius: 50%;
 				}
+			}
+
+			ul {
+				position: relative;
+				max-height: 80vh;
+				overflow-y: scroll;
+				border-radius: 0 10px 10px 10px;
+				border: #000 2px solid;
+				margin: 0;
+				padding: 1.5em 3em;
 			}
 
 			li {
@@ -351,6 +361,10 @@
 
 		@include reset.mq(sp) {
 			display: block;
+			margin-right: 0 !important;
+			margin-left: 0 !important;
+			padding-right: 0 !important;
+			padding-left: 0 !important;
 		}
 
 		.main_md_content {
@@ -368,7 +382,7 @@
 				width: 100%;
 				position: fixed;
 				display: block;
-				top: 8em;
+				top: 4em;
 				left: -100%;
 				height: auto;
 				max-height: 50%;
@@ -383,8 +397,8 @@
 	}
 
 	/*************
-	ドロワーアイコン
-	**************/
+	 ドロワーアイコン
+	 **************/
 	.drawer_icon {
 		display: none;
 		position: fixed;

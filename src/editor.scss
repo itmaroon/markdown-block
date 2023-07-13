@@ -21,21 +21,23 @@
 		.previw_area {
 			box-sizing: border-box;
 			width: 48%;
-			padding: 0.5em 1.5em;
 			max-height: 78vh;
 			overflow: scroll;
-			border: 1px #000 solid;
-			background-color: #fff;
-			border-radius: 10px;
 		}
 
 		.edit_area {
-			.input_area {
-				font-size: 1.2em;
-				height: 100%;
-				border: rgb(7, 7, 7) 1px solid;
-
-			}
+			padding: 0.5em 1.5em;
+			border: 1px #000 solid;
+			border-radius: 10px;
 		}
+	}
+}
+
+.components-notice {
+	background-color: #dbf5f1;
+
+	.components-notice__content {
+		display: flex;
+		justify-content: space-between;
 	}
 }

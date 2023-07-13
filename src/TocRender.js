@@ -1,4 +1,4 @@
-const TocRender = ({ attributes }) => {
+const TocRender = ({ attributes, style }) => {
   return (
     <div className="toc_section">
       <h2>
@@ -6,7 +6,7 @@ const TocRender = ({ attributes }) => {
         <div className="btn_open"></div>
       </h2>
 
-      <ul>
+      <ul style={style}>
         {attributes
           .filter(attr => attr[0] === "itmar/design-title")
           .map(attribute => {
@@ -19,7 +19,9 @@ const TocRender = ({ attributes }) => {
                 </a>
               </li>
             );
-          })}
+          }
+
+          )}
       </ul>
 
     </div>

@@ -23,7 +23,7 @@ import {
   __experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
 
-import BorderProperty from './borderProperty';
+import { borderProperty } from './styleProperty';
 
 // カスタマイズ対象とするブロック
 const allowedBlocks = ['core/paragraph', 'core/list', 'core/image', 'core/quote', 'core/table'];
@@ -178,7 +178,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
 
                 </>
               }
-              {props.name === 'core/list' || props.name === 'core/quote' &&
+              {(props.name === 'core/list' || props.name === 'core/quote') &&
                 <PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
                   <BorderBoxControl
                     colors={[{ color: '#72aee6' }, { color: '#000' }, { color: '#fff' }]}
@@ -245,7 +245,7 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
           if (name === 'core/list' || name === 'core/quote') {
             //角丸の設定
             const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
-            const list_border = BorderProperty(border_list);
+            const list_border = borderProperty(border_list);
             extraStyle = {
               ...extraStyle, borderRadius: list_radius_prm, ...list_border
             }
@@ -321,7 +321,7 @@ const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
         //角丸の設定
         const list_radius_prm = (radius_list && Object.keys(radius_list).length === 1) ? radius_list.value : `${(radius_list && radius_list.topLeft) || ''} ${(radius_list && radius_list.topRight) || ''} ${(radius_list && radius_list.bottomRight) || ''} ${(radius_list && radius_list.bottomLeft) || ''}`
         //ボーダーの設定
-        const list_border = BorderProperty(border_list);
+        const list_border = borderProperty(border_list);
 
         extraStyle = {
           ...extraStyle, borderRadius: list_radius_prm, ...list_border

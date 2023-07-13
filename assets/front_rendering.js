@@ -53,8 +53,18 @@ jQuery(function ($) {
       anchorElement.prevAll('li').addClass('check_prev');//それより前の要素
       anchorElement.nextAll('li').addClass('check_next');//それより後の要素
 
-    } else {
-      console.log("No visible element found");
+      var $parent = anchorElement.closest('ul');//anchorElementの親要素（ul）を取得
+      // anchorElementと親要素の各辺の位置を取得
+      var anchorTop = anchorElement.offset().top;
+      var anchorBottom = anchorTop + anchorElement.outerHeight();
+      var parentTop = $parent.offset().top;
+      var parentBottom = parentTop + $parent.innerHeight();
+
+      // ターゲット要素が親要素の表示範囲をオーバーフローしているかを検査
+      if (anchorTop < parentTop || anchorBottom > parentBottom) {
+        //オーバーフローしていればスクロール
+        $parent.animate({ scrollTop: anchorElement.position().top }, 500);
+      }
     }
   }
 

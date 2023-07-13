@@ -2,21 +2,24 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/borderProperty.js":
-/*!*******************************!*\
-  !*** ./src/borderProperty.js ***!
-  \*******************************/
+/***/ "./src/styleProperty.js":
+/*!******************************!*\
+  !*** ./src/styleProperty.js ***!
+  \******************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   borderProperty: () => (/* binding */ borderProperty),
+/* harmony export */   marginProperty: () => (/* binding */ marginProperty),
+/* harmony export */   paddingProperty: () => (/* binding */ paddingProperty),
+/* harmony export */   radiusProperty: () => (/* binding */ radiusProperty)
 /* harmony export */ });
 // sideの最初の文字を大文字にする関数
 const capitalizeFirstLetter = string => {
   return string.charAt(0).toUpperCase() + string.slice(1);
 };
-const BorderProperty = borderObj => {
+function borderProperty(borderObj) {
   if (borderObj) {
     //borderObjがundefinedでない
     let keys = ['top', 'bottom', 'left', 'right'];
@@ -54,8 +57,33 @@ const BorderProperty = borderObj => {
   } else {
     return null;
   }
-};
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (BorderProperty);
+}
+
+//角丸の設定
+function radiusProperty(radiusObj) {
+  const ret_prop = radiusObj && Object.keys(radiusObj).length === 1 ? radiusObj.value : `${radiusObj && radiusObj.topLeft || ''} ${radiusObj && radiusObj.topRight || ''} ${radiusObj && radiusObj.bottomRight || ''} ${radiusObj && radiusObj.bottomLeft || ''}`;
+  const ret_val = {
+    borderRadius: ret_prop
+  };
+  return ret_val;
+}
+
+//マージンの設定
+function marginProperty(marginObj) {
+  const ret_prop = `${marginObj.top} ${marginObj.right} ${marginObj.bottom} ${marginObj.left}`;
+  const ret_val = {
+    margin: ret_prop
+  };
+  return ret_val;
+}
+//パディングの設定
+function paddingProperty(paddingObj) {
+  const ret_prop = `${paddingObj.top} ${paddingObj.right} ${paddingObj.bottom} ${paddingObj.left}`;
+  const ret_val = {
+    padding: ret_prop
+  };
+  return ret_val;
+}
 
 /***/ }),
 
@@ -222,7 +250,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var _borderProperty__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./borderProperty */ "./src/borderProperty.js");
+/* harmony import */ var _styleProperty__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./styleProperty */ "./src/styleProperty.js");
 
 
 /**
@@ -379,7 +407,7 @@ const withInspectorControl = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_3__.
             lineHeight: val
           }),
           withInputField: true
-        }))), props.name === 'core/list' || props.name === 'core/quote' && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
+        }))), (props.name === 'core/list' || props.name === 'core/quote') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_5__.PanelBody, {
           title: "\u30DC\u30FC\u30C0\u30FC\u8A2D\u5B9A",
           initialOpen: false,
           className: "border_design_ctrl"
@@ -450,7 +478,7 @@ const applyExtraAttributesInEditor = (0,_wordpress_compose__WEBPACK_IMPORTED_MOD
           if (name === 'core/list' || name === 'core/quote') {
             //角丸の設定
             const list_radius_prm = radius_list && Object.keys(radius_list).length === 1 ? radius_list.value : `${radius_list && radius_list.topLeft || ''} ${radius_list && radius_list.topRight || ''} ${radius_list && radius_list.bottomRight || ''} ${radius_list && radius_list.bottomLeft || ''}`;
-            const list_border = (0,_borderProperty__WEBPACK_IMPORTED_MODULE_6__["default"])(border_list);
+            const list_border = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_6__.borderProperty)(border_list);
             extraStyle = {
               ...extraStyle,
               borderRadius: list_radius_prm,
@@ -521,7 +549,7 @@ const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
         //角丸の設定
         const list_radius_prm = radius_list && Object.keys(radius_list).length === 1 ? radius_list.value : `${radius_list && radius_list.topLeft || ''} ${radius_list && radius_list.topRight || ''} ${radius_list && radius_list.bottomRight || ''} ${radius_list && radius_list.bottomLeft || ''}`;
         //ボーダーの設定
-        const list_border = (0,_borderProperty__WEBPACK_IMPORTED_MODULE_6__["default"])(border_list);
+        const list_border = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_6__.borderProperty)(border_list);
         extraStyle = {
           ...extraStyle,
           borderRadius: list_radius_prm,

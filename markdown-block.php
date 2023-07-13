@@ -27,18 +27,17 @@ function itmar_markdown_block_block_init() {
 add_action( 'init', 'itmar_markdown_block_block_init' );
 
 function itmar_markdown_block_add_plugin() {
-	wp_enqueue_script( 
-		'markdown_plugin_handle', 
-		plugins_url( '/assets/front_rendering.js?'.date('YmdHis'), __FILE__ ), 
-		array('jquery'), 
-		'1.0.0',
-		true
-	);
-
-	//nonceの生成
-	wp_localize_script( 'markdown_plugin_handle', 'itmar_option', array(
-		'nonce' => wp_create_nonce('wp_rest'),
-	));
+	//管理画面以外（フロントエンド側でのみ読み込む）
+	if (!is_admin()) {
+		wp_enqueue_script( 
+			'markdown_plugin_handle', 
+			plugins_url( '/assets/front_rendering.js?'.date('YmdHis'), __FILE__ ), 
+			array('jquery'), 
+			'1.0.0',
+			true
+		);
+	}
+	
 
 	//コアブロックカスタマイズスクリプトのエンキュー
 	wp_enqueue_script(
@@ -54,6 +53,11 @@ function itmar_markdown_block_add_plugin() {
 				'wp-compose'
 		)
 	);
+
+	//nonceの生成
+	wp_localize_script( 'itmar-gutenberg-extensions-script', 'itmar_option', array(
+		'nonce' => wp_create_nonce('wp_rest'),
+	));
 }
 
 	

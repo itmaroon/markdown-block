@@ -150,13 +150,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
 
 const TocRender = ({
-  attributes
+  attributes,
+  style
 }) => {
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "toc_section"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("h2", null, "Table of Content", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "btn_open"
-  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", null, attributes.filter(attr => attr[0] === "itmar/design-title").map(attribute => {
+  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("ul", {
+    style: style
+  }, attributes.filter(attr => attr[0] === "itmar/design-title").map(attribute => {
     // Get the level from the headingType.
     const level = attribute[1].headingType.slice(1);
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("li", null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("a", {
@@ -201,7 +204,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
+/* harmony import */ var _styleProperty__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! ./styleProperty */ "./src/styleProperty.js");
+/* harmony import */ var _editor_scss__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! ./editor.scss */ "./src/editor.scss");
+
 
 
 
@@ -256,9 +261,57 @@ function Edit({
     mdContent,
     blockArray,
     element_style_obj,
+    backgroundColor,
+    backgroundGradient,
+    margin_value,
+    padding_value,
+    radius_value,
+    border_value,
     is_toc,
     toc_set_array
   } = attributes;
+
+  //単色かグラデーションかの選択
+  const bgColor = backgroundColor || backgroundGradient;
+
+  //ブロックのスタイル設定
+  const margin_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_12__.marginProperty)(margin_value);
+  const padding_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_12__.paddingProperty)(padding_value);
+  const radius_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_12__.radiusProperty)(radius_value);
+  const border_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_12__.borderProperty)(border_value);
+  const blockStyle = {
+    background: bgColor,
+    ...margin_obj,
+    ...padding_obj,
+    ...radius_obj,
+    ...border_obj
+  };
+
+  //スペースのリセットバリュー
+  const padding_resetValues = {
+    top: '10px',
+    left: '10px',
+    right: '10px',
+    bottom: '10px'
+  };
+
+  //ボーダーのリセットバリュー
+  const border_resetValues = {
+    top: '0px',
+    left: '0px',
+    right: '0px',
+    bottom: '0px'
+  };
+  const units = [{
+    value: 'px',
+    label: 'px'
+  }, {
+    value: 'em',
+    label: 'em'
+  }, {
+    value: 'rem',
+    label: 'rem'
+  }];
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.useBlockProps)();
 
   //エディタの参照を取得
@@ -442,20 +495,20 @@ function Edit({
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (!mdContent) return; //mdContent文書がなければ処理しない
 
-    //const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation', 'splitQuoteBlocks'] });
-    //const html = converter.makeHtml(mdContent);
-    // marked.use({//markedのオプション設定
-    // 	breaks: true,
-    // 	gfm: true,
-    // 	mangle: false,
-    // 	headerIds: false
-    // });
-    // const html = marked.parse(mdContent);
-    const converter = new (markdown_it__WEBPACK_IMPORTED_MODULE_6___default())({
-      breaks: true // これにより、単一の改行が <br> に変換されるようになります
+    // const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation'] });
+    // const html = converter.makeHtml(mdContent);
+    marked__WEBPACK_IMPORTED_MODULE_5__.marked.use({
+      //markedのオプション設定
+      breaks: true,
+      gfm: true,
+      mangle: false,
+      headerIds: false
     });
-
-    const html = converter.render(mdContent);
+    const html = marked__WEBPACK_IMPORTED_MODULE_5__.marked.parse(mdContent);
+    // const converter = new MarkdownIt({
+    // 	breaks: true,  // これにより、単一の改行が <br> に変換されるようになります
+    // });
+    // const html = converter.render(mdContent);
     const parser = new DOMParser();
     const doc = parser.parseFromString(html, 'text/html');
     const newblockArray = [];
@@ -611,6 +664,26 @@ function Edit({
     }
   }, [tempBlockArray, innerBlockIds.length]);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.InspectorControls, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Set Styel HTML Tag', 'block-location'),
+    initialOpen: false
+  }, Object.keys(element_style_obj).map(style_elm => {
+    const actions = [{
+      label: '×',
+      onClick: () => {
+        const newElementStyleObj = {
+          ...element_style_obj
+        };
+        delete newElementStyleObj[style_elm];
+        setAttributes({
+          element_style_obj: newElementStyleObj
+        });
+      }
+    }];
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Notice, {
+      actions: actions,
+      isDismissible: false
+    }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, style_elm));
+  })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
     title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Table of Content', 'block-location'),
     initialOpen: true
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToggleControl, {
@@ -633,6 +706,71 @@ function Edit({
       value: 'sidebar'
     }],
     setAttributes: setAttributes
+  }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
+    title: "\u30B9\u30BF\u30A4\u30EB\u8A2D\u5B9A",
+    initialOpen: false,
+    className: "style_ctrl"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.__experimentalPanelColorGradientSettings, {
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Background Color Setting"),
+    settings: [{
+      colorValue: backgroundColor,
+      gradientValue: backgroundGradient,
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Choose Background color"),
+      onColorChange: newValue => setAttributes({
+        backgroundColor: newValue
+      }),
+      onGradientChange: newValue => setAttributes({
+        backgroundGradient: newValue
+      })
+    }]
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBoxControl, {
+    label: "\u30DE\u30FC\u30B8\u30F3\u8A2D\u5B9A",
+    values: margin_value,
+    onChange: value => setAttributes({
+      margin_value: value
+    }),
+    units: units // 許可する単位
+    ,
+    allowReset: true // リセットの可否
+    ,
+    resetValues: padding_resetValues // リセット時の値
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBoxControl, {
+    label: "\u30D1\u30C6\u30A3\u30F3\u30B0\u8A2D\u5B9A",
+    values: padding_value,
+    onChange: value => setAttributes({
+      padding_value: value
+    }),
+    units: units // 許可する単位
+    ,
+    allowReset: true // リセットの可否
+    ,
+    resetValues: padding_resetValues // リセット時の値
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
+    title: "\u30DC\u30FC\u30C0\u30FC\u8A2D\u5B9A",
+    initialOpen: false,
+    className: "border_design_ctrl"
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBorderBoxControl, {
+    colors: [{
+      color: '#72aee6'
+    }, {
+      color: '#000'
+    }, {
+      color: '#fff'
+    }],
+    onChange: newValue => setAttributes({
+      border_value: newValue
+    }),
+    value: border_value,
+    allowReset: true // リセットの可否
+    ,
+    resetValues: border_resetValues // リセット時の値
+  }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.__experimentalBorderRadiusControl, {
+    values: radius_value,
+    onChange: newBrVal => setAttributes({
+      radius_value: typeof newBrVal === 'string' ? {
+        "value": newBrVal
+      } : newBrVal
+    })
   })))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", blockProps, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "area_wrapper"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
@@ -648,7 +786,8 @@ function Edit({
     }),
     options: autoUploadImage
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "previw_area"
+    className: "previw_area",
+    style: blockStyle
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.InnerBlocks, {
     template: blockArray
     //templateLock="all"
@@ -709,28 +848,67 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
 /* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var _TocRender__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./TocRender */ "./src/TocRender.js");
+/* harmony import */ var _styleProperty__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./styleProperty */ "./src/styleProperty.js");
+
 
 
 
 function save({
   attributes
 }) {
-  const titles_num = attributes.blockArray.filter(attr => attr[0] === "itmar/design-title").length; //タイトルがブロックに含まれているか
+  const {
+    mdContent,
+    blockArray,
+    element_style_obj,
+    backgroundColor,
+    backgroundGradient,
+    margin_value,
+    padding_value,
+    radius_value,
+    border_value,
+    is_toc,
+    toc_set_array
+  } = attributes;
 
-  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), titles_num > 0 && attributes.is_toc && attributes.toc_set_array.includes('header') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "table-of-contents header"
+  //タイトルがブロックに含まれているか
+  const titles_num = blockArray.filter(attr => attr[0] === "itmar/design-title").length;
+
+  //単色かグラデーションかの選択
+  const bgColor = backgroundColor || backgroundGradient;
+
+  //ブロックのスタイル設定
+  const margin_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_3__.marginProperty)(margin_value);
+  const padding_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_3__.paddingProperty)(padding_value);
+  const radius_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_3__.radiusProperty)(radius_value);
+  const border_obj = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_3__.borderProperty)(border_value);
+  const blockStyle = {
+    background: bgColor,
+    ...margin_obj,
+    ...padding_obj,
+    ...radius_obj,
+    ...border_obj
+  };
+  return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.useBlockProps.save(), titles_num > 0 && is_toc && toc_set_array.includes('header') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+    className: "table-of-contents header",
+    style: {
+      background: bgColor
+    }
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    attributes: attributes.blockArray
+    attributes: blockArray
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: "md_block_content"
+    className: "md_block_content",
+    style: blockStyle
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "main_md_content"
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null)), titles_num > 0 && attributes.is_toc && attributes.toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_1__.InnerBlocks.Content, null)), titles_num > 0 && is_toc && toc_set_array.includes('sidebar') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "side_md_content"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     className: "table-of-contents sidebar"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_TocRender__WEBPACK_IMPORTED_MODULE_2__["default"], {
-    attributes: attributes.blockArray
+    attributes: blockArray,
+    style: {
+      background: bgColor
+    }
   }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
     class: "drawer_icon",
     id: "itmar_mdBlock_hanberger"
@@ -746,6 +924,92 @@ function save({
     class: "drawer_background",
     id: "itmar_mdBlock_drawer_background"
   })));
+}
+
+/***/ }),
+
+/***/ "./src/styleProperty.js":
+/*!******************************!*\
+  !*** ./src/styleProperty.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   borderProperty: () => (/* binding */ borderProperty),
+/* harmony export */   marginProperty: () => (/* binding */ marginProperty),
+/* harmony export */   paddingProperty: () => (/* binding */ paddingProperty),
+/* harmony export */   radiusProperty: () => (/* binding */ radiusProperty)
+/* harmony export */ });
+// sideの最初の文字を大文字にする関数
+const capitalizeFirstLetter = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+function borderProperty(borderObj) {
+  if (borderObj) {
+    //borderObjがundefinedでない
+    let keys = ['top', 'bottom', 'left', 'right'];
+    let ret_prop = null;
+    let doesKeyExist = keys.some(key => key in borderObj);
+    if (doesKeyExist) {
+      //'top', 'bottom', 'left', 'right'が別設定
+      let cssObj = {};
+      for (let side in borderObj) {
+        const sideData = borderObj[side];
+        const startsWithZero = String(sideData.width || '').match(/^0/);
+        if (startsWithZero) {
+          //widthが０ならCSS設定しない
+          continue;
+        }
+        const border_style = sideData.style || 'solid';
+        let camelCaseSide = `border${capitalizeFirstLetter(side)}`;
+        cssObj[camelCaseSide] = `${sideData.width} ${border_style} ${sideData.color}`;
+      }
+      ret_prop = cssObj;
+      return ret_prop;
+    } else {
+      //同一のボーダー
+      const startsWithZero = String(borderObj.width || '').match(/^0/);
+      if (startsWithZero) {
+        //widthが０ならnullを返す
+        return null;
+      }
+      const border_style = borderObj.style || 'solid';
+      ret_prop = {
+        border: `${borderObj.width} ${border_style} ${borderObj.color}`
+      };
+      return ret_prop;
+    }
+  } else {
+    return null;
+  }
+}
+
+//角丸の設定
+function radiusProperty(radiusObj) {
+  const ret_prop = radiusObj && Object.keys(radiusObj).length === 1 ? radiusObj.value : `${radiusObj && radiusObj.topLeft || ''} ${radiusObj && radiusObj.topRight || ''} ${radiusObj && radiusObj.bottomRight || ''} ${radiusObj && radiusObj.bottomLeft || ''}`;
+  const ret_val = {
+    borderRadius: ret_prop
+  };
+  return ret_val;
+}
+
+//マージンの設定
+function marginProperty(marginObj) {
+  const ret_prop = `${marginObj.top} ${marginObj.right} ${marginObj.bottom} ${marginObj.left}`;
+  const ret_val = {
+    margin: ret_prop
+  };
+  return ret_val;
+}
+//パディングの設定
+function paddingProperty(paddingObj) {
+  const ret_prop = `${paddingObj.top} ${paddingObj.right} ${paddingObj.bottom} ${paddingObj.left}`;
+  const ret_val = {
+    padding: ret_prop
+  };
+  return ret_val;
 }
 
 /***/ }),
@@ -37757,7 +38021,7 @@ module.exports = JSON.parse('{"Aacute":"Á","aacute":"á","Abreve":"Ă","abreve"
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","description":"マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}},"is_toc":{"type":"boolean","default":true},"toc_set_array":{"type":"array","default":["header","sidebar"]}},"textdomain":"markdown-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","description":"マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}},"backgroundColor":{"type":"string"},"backgroundGradient":{"type":"string"},"margin_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"padding_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"radius_value":{"type":"object","default":{"topLeft":"0px","topRight":"0px","bottomRight":"0px","bottomLeft":"0px","value":"0px"}},"border_value":{"type":"object"},"is_toc":{"type":"boolean","default":true},"toc_set_array":{"type":"array","default":["header","sidebar"]}},"textdomain":"markdown-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
 
 /***/ })
 

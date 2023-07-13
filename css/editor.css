@@ -19,16 +19,20 @@
 .wp-block-itmar-markdown-block .area_wrapper .previw_area {
   box-sizing: border-box;
   width: 48%;
-  padding: 0.5em 1.5em;
   max-height: 78vh;
   overflow: scroll;
+}
+.wp-block-itmar-markdown-block .area_wrapper .edit_area {
+  padding: 0.5em 1.5em;
   border: 1px #000 solid;
-  background-color: #fff;
   border-radius: 10px;
 }
-.wp-block-itmar-markdown-block .area_wrapper .edit_area .input_area {
-  font-size: 1.2em;
-  height: 100%;
-  border: rgb(7, 7, 7) 1px solid;
+
+.components-notice {
+  background-color: #dbf5f1;
+}
+.components-notice .components-notice__content {
+  display: flex;
+  justify-content: space-between;
 }
 /*# sourceMappingURL=editor.css.map */
