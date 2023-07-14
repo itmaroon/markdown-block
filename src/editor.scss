@@ -3,7 +3,7 @@
  *
  * Replace them with your own styles or remove the file completely.
  */
-
+@use "./reset.scss" as reset;
 
 .wp-block-itmar-markdown-block {
 	border: 1px dotted #f00;
@@ -11,25 +11,59 @@
 	width: 100%;
 	padding: 0;
 
+	div {
+		box-sizing: border-box;
+	}
+
 	.area_wrapper {
 		width: 100%;
 		display: flex;
 		justify-content: space-around;
 		padding: 0.5em;
 
+		@include reset.mq(sp) {
+			display: block;
+		}
+
 		.edit_area,
-		.previw_area {
+		.preview_area {
 			box-sizing: border-box;
 			width: 48%;
 			max-height: 78vh;
 			overflow: scroll;
+
+			@include reset.mq(sp) {
+				width: 100%;
+			}
+
 		}
 
 		.edit_area {
 			padding: 0.5em 1.5em;
 			border: 1px #000 solid;
 			border-radius: 10px;
+
+			@include reset.mq(sp) {
+				padding: 0.5em;
+			}
 		}
+
+		.preview_area {
+			@include reset.mq(sp) {
+				transition: all 0.5s ease 0s;
+				position: absolute;
+				left: 0;
+				top: 0;
+				transform: translateX(100%);
+			}
+
+			&.isShow {
+				@include reset.mq(sp) {
+					transform: translateX(0);
+				}
+			}
+		}
+
 	}
 }
 

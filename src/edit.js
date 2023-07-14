@@ -12,14 +12,16 @@ import MultiSelect from './MultiSelect';
 
 import {
 	Button,
-	Panel,
 	PanelBody,
 	PanelRow,
 	ToggleControl,
 	RangeControl,
 	RadioControl,
 	TextControl,
+	Modal,
 	Notice,
+	ToolbarGroup,
+	ToolbarButton,
 	__experimentalBoxControl as BoxControl,
 	__experimentalBorderBoxControl as BorderBoxControl
 } from '@wordpress/components';
@@ -27,12 +29,14 @@ import {
 	useBlockProps,
 	InnerBlocks,
 	InspectorControls,
+	BlockControls,
 	__experimentalPanelColorGradientSettings as PanelColorGradientSettings,
 	__experimentalBorderRadiusControl as BorderRadiusControl
 } from '@wordpress/block-editor';
 
 import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
 import { borderProperty, radiusProperty, marginProperty, paddingProperty } from './styleProperty';
+import { useIsMobile } from "./CustomFooks"
 
 import './editor.scss';
 
@@ -74,7 +78,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		radius_value,
 		border_value,
 		is_toc,
-		toc_set_array
+		toc_set_array,
+		isEditMode
 	} = attributes;
 
 	//単色かグラデーションかの選択
@@ -111,6 +116,9 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 
 	const blockProps = useBlockProps();
+
+	//モバイルのフラグ
+	const isMobile = useIsMobile();
 
 
 	//エディタの参照を取得
@@ -252,7 +260,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					...stockStyle
 				};
 			}
-
 			//ブロック属性に登録
 			setAttributes({
 				element_style_obj: newAttributes
@@ -261,8 +268,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	}, [innerBlocks]);
 
+
 	//ブロックのテンプレート要素の変化を検証する配列
 	const [tempBlockArray, setTempBlockArray] = useState([]);
+
 	// useRefを使用して前回のblockArrayを保持します
 	const prevBlockArrayRef = useRef();
 	useEffect(() => {
@@ -270,7 +279,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	}, [blockArray]);
 	const prevBlockArray = prevBlockArrayRef.current;
 
-	//DOM要素の再生成
+	//DOM要素の再生成(マークダウンテキストの変更とelement_style_objがクリア・再生成されたときに発火)
 	useEffect(() => {
 		if (!mdContent) return;//mdContent文書がなければ処理しない
 
@@ -409,10 +418,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 		});
 
-		if (!equal(newblockArray, prevBlockArray)) {
-			setTempBlockArray(newblockArray);
+		if (!equal(newblockArray, prevBlockArray)) {//マークダウン文書が変わっても既存のblockArrayに影響を与えなければ書き換えない
+			setTempBlockArray(newblockArray);//tempBlockArrayを書き換え
 		}
-	}, [mdContent])
+	}, [mdContent, Object.keys(element_style_obj).length])
 
 	//tempBlockArrayに変化があればブロックを一旦削除
 	useEffect(() => {
@@ -428,6 +437,15 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		}
 	}, [tempBlockArray, innerBlockIds.length]);
 
+	//確認モーダルの表示フラグ
+	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [selectedStyleElm, setSelectedStyleElm] = useState(null);
+	const openModal = (style_elm) => {
+		setSelectedStyleElm(style_elm);
+		setIsModalOpen(true);
+	}
+	const closeModal = () => setIsModalOpen(false);
+
 	return (
 		<>
 			<InspectorControls>
@@ -439,11 +457,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						const actions = [
 							{
 								label: '×',
-								onClick: () => {
-									const newElementStyleObj = { ...element_style_obj };
-									delete newElementStyleObj[style_elm];
-									setAttributes({ element_style_obj: newElementStyleObj });
-								}
+								onClick: () => openModal(style_elm)
 							},
 						];
 						return (
@@ -526,6 +540,43 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					</PanelBody>
 				</PanelBody>
 			</InspectorControls>
+			{isModalOpen && (
+				<Modal
+					title="スタイルの消去"
+					onRequestClose={closeModal}
+				>
+					<p>設定されたDOM要素のスタイルを削除します。<br />デフォルトのスタイルにもどります。<br />元に戻せません。よろしいですか？<br /></p>
+					<Button
+						onClick={() => {
+							const newElementStyleObj = { ...element_style_obj };
+							delete newElementStyleObj[selectedStyleElm];
+							setAttributes({ element_style_obj: newElementStyleObj });
+							// モーダルを閉じる
+							closeModal();
+						}}
+					>
+						削除する
+					</Button>
+					<Button onClick={closeModal}>キャンセル</Button>
+				</Modal>
+			)}
+			{isMobile &&
+				<BlockControls>
+					<ToolbarGroup>
+						<ToolbarButton
+							//属性 isEditMode の値により表示するラベルを切り替え
+							label={isEditMode ? "Preview" : "Edit"}
+							//属性 isEditMode の値により表示するアイコンを切り替え
+							icon={isEditMode ? "format-image" : "edit"}
+							className="edit_mode"
+							//setAttributes を使って属性の値を更新（真偽値を反転）
+							onClick={() => {
+								setAttributes({ isEditMode: !isEditMode })
+							}}
+						/>
+					</ToolbarGroup>
+				</BlockControls>
+			}
 
 			<div {...blockProps}>
 				<div className='area_wrapper'>
@@ -537,7 +588,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							options={autoUploadImage}
 						/>
 					</div>
-					<div className='previw_area' style={blockStyle}>
+
+					<div className={`preview_area ${!isEditMode ? 'isShow' : ''}`} style={blockStyle}>
 						<InnerBlocks
 							template={blockArray}
 						//templateLock="all"

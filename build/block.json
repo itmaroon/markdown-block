@@ -68,6 +68,10 @@
         "header",
         "sidebar"
       ]
+    },
+    "isEditMode": {
+      "type": "boolean",
+      "default": true
     }
   },
   "textdomain": "markdown-block",

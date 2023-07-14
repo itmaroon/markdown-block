@@ -1,3 +1,7 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@300;400;500;600;700;900&family=Zen+Maru+Gothic:wght@400;500;700;900&family=M+PLUS+1+Code:wght@300;400;500;600;700&display=swap");
+/* リセットCSS
+  ===================================== */
 /**
  * The following styles get applied inside the editor only.
  *
@@ -9,23 +13,56 @@
   width: 100%;
   padding: 0;
 }
+.wp-block-itmar-markdown-block div {
+  box-sizing: border-box;
+}
 .wp-block-itmar-markdown-block .area_wrapper {
   width: 100%;
   display: flex;
   justify-content: space-around;
   padding: 0.5em;
 }
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .area_wrapper {
+    display: block;
+  }
+}
 .wp-block-itmar-markdown-block .area_wrapper .edit_area,
-.wp-block-itmar-markdown-block .area_wrapper .previw_area {
+.wp-block-itmar-markdown-block .area_wrapper .preview_area {
   box-sizing: border-box;
   width: 48%;
   max-height: 78vh;
   overflow: scroll;
 }
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .area_wrapper .edit_area,
+.wp-block-itmar-markdown-block .area_wrapper .preview_area {
+    width: 100%;
+  }
+}
 .wp-block-itmar-markdown-block .area_wrapper .edit_area {
   padding: 0.5em 1.5em;
   border: 1px #000 solid;
   border-radius: 10px;
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .area_wrapper .edit_area {
+    padding: 0.5em;
+  }
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .area_wrapper .preview_area {
+    transition: all 0.5s ease 0s;
+    position: absolute;
+    left: 0;
+    top: 0;
+    transform: translateX(100%);
+  }
+}
+@media (max-width: 767px) {
+  .wp-block-itmar-markdown-block .area_wrapper .preview_area.isShow {
+    transform: translateX(0);
+  }
 }
 
 .components-notice {
