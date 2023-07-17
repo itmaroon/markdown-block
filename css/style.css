@@ -11,14 +11,12 @@
 .wp-block-itmar-markdown-block {
   font-size: clamp(4.5px, 1.67vw, 16px);
   background-color: transparent;
-  padding: 0 4em;
   /*************
    ドロワーアイコン
    **************/
 }
 @media (max-width: 767px) {
   .wp-block-itmar-markdown-block {
-    padding: 0 1em;
     font-size: clamp(4.5px, 4.1vw, 16px);
   }
 }
@@ -28,6 +26,35 @@
   width: -moz-fit-content;
   width: fit-content;
   margin-left: auto;
+  font-style: italic;
+}
+.wp-block-itmar-markdown-block ul.itmar_md_block {
+  list-style: disc;
+}
+.wp-block-itmar-markdown-block ul.itmar_md_block li {
+  list-style: disc;
+}
+.wp-block-itmar-markdown-block ol.itmar_md_block {
+  list-style: decimal;
+}
+.wp-block-itmar-markdown-block ol.itmar_md_block li {
+  list-style: decimal;
+}
+.wp-block-itmar-markdown-block .itmar_md_block ul,
+.wp-block-itmar-markdown-block .itmar_md_block ol {
+  padding-left: 1.5em;
+}
+.wp-block-itmar-markdown-block .itmar_md_block ul {
+  list-style: disc;
+}
+.wp-block-itmar-markdown-block .itmar_md_block ul li {
+  list-style: disc;
+}
+.wp-block-itmar-markdown-block .itmar_md_block ol {
+  list-style: decimal;
+}
+.wp-block-itmar-markdown-block .itmar_md_block ol li {
+  list-style: decimal;
 }
 .wp-block-itmar-markdown-block .table-of-contents {
   padding: 1.5em 0.5em;
@@ -36,6 +63,7 @@
 .wp-block-itmar-markdown-block .table-of-contents ul {
   list-style-type: none !important;
   position: relative;
+  padding-left: 2em;
 }
 .wp-block-itmar-markdown-block .table-of-contents li {
   position: relative;
@@ -44,29 +72,29 @@
   width: fit-content;
 }
 .wp-block-itmar-markdown-block .table-of-contents li:not(:first-child) {
-  margin-top: 1.2em;
+  margin-top: 1.5em;
 }
 .wp-block-itmar-markdown-block .table-of-contents a {
   display: block;
   text-decoration: none;
   color: #000000;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header {
   margin-bottom: 3em;
   border: #000 2px solid;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header ul {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header ul {
   counter-reset: number;
   /*数字をリセット*/
   margin-top: 2em;
   display: none;
 }
 @media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .table-of-contents.header ul {
+  .wp-block-itmar-markdown-block .table-of-contents.md_toc_header ul {
     padding-left: 1em;
   }
 }
-.wp-block-itmar-markdown-block .table-of-contents.header ul::after {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header ul::after {
   content: "";
   position: absolute;
   width: 90%;
@@ -76,24 +104,24 @@
   top: -1em;
   background-color: #bdc0ce;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2::after, .wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::after {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-2::after, .wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3::after {
   content: "";
   position: absolute;
   width: 0;
-  height: 1px;
-  left: 0;
+  height: 2px;
+  left: 2em;
   bottom: 0em;
   background-color: #bdc0ce;
   transition: 0.3s;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2:hover::after, .wp-block-itmar-markdown-block .table-of-contents.header a.lv-3:hover::after {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-2:hover::after, .wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3:hover::after {
   width: 100%;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-2 {
   font-size: 1.2em;
   padding-left: 2.5em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-2::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-2::before {
   position: absolute;
   counter-increment: number;
   content: counter(number);
@@ -114,11 +142,11 @@
   top: 50%;
   transform: translateY(-50%);
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3 {
   font-size: 1em;
   margin-left: 4em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3::before {
   content: "\f0da";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -132,24 +160,25 @@
   line-height: 1.2em;
   text-align: center;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3::after {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3::after {
   left: 2em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header a.lv-3:hover::after {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header a.lv-3:hover::after {
   width: calc(100% - 2em);
 }
-.wp-block-itmar-markdown-block .table-of-contents.header h2 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 {
   position: relative;
   padding-left: 3em;
   margin-left: 1em;
+  font-size: 1.5em;
 }
 @media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .table-of-contents.header h2 {
+  .wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 {
     padding-left: 2.3em;
     margin-left: 0;
   }
 }
-.wp-block-itmar-markdown-block .table-of-contents.header h2::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2::before {
   content: "\f0c9";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -165,11 +194,11 @@
   border-radius: 50%;
 }
 @media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .table-of-contents.header h2::before {
+  .wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2::before {
     left: 0em;
   }
 }
-.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 .btn_open::before {
   content: "\f107";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -187,32 +216,32 @@
   transition: all 0.3s ease 0s;
 }
 @media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open::before {
+  .wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 .btn_open::before {
     right: 0em;
   }
 }
-.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open:hover {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 .btn_open:hover {
   cursor: pointer;
 }
-.wp-block-itmar-markdown-block .table-of-contents.header h2 .btn_open.is_open::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_header h2 .btn_open.is_open::before {
   transform: translateY(-50%) rotate(180deg);
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar {
   position: -webkit-sticky;
   position: sticky;
-  top: 5em;
+  top: 8em;
   margin-top: 3em;
   box-sizing: border-box;
   padding: 0;
 }
 @media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .table-of-contents.sidebar {
+  .wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar {
     position: relative;
     top: 0;
-    margin-top: 2rem;
+    margin-top: 2em;
   }
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar h2 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar h2 {
   top: 0;
   position: -webkit-sticky;
   position: sticky;
@@ -222,13 +251,13 @@
   width: fit-content;
   left: -2px;
   font-size: 1.2em;
-  padding: 0.5em 1rem 0.5rem 3.5rem;
+  padding: 0.5em 1em 0.5em 3.5em;
   margin: 0;
   background-color: rgba(3, 39, 105, 0.5215686275);
   border-radius: 10px 10px 0 0;
   color: #fff;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar h2::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar h2::before {
   content: "\f0c9";
   font-family: "Font Awesome 5 Free";
   font-weight: 900;
@@ -243,27 +272,27 @@
   border: 1px #fff solid;
   border-radius: 50%;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar ul {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar ul {
   position: relative;
-  max-height: 80vh;
+  max-height: 70vh;
   overflow-y: scroll;
   border-radius: 0 10px 10px 10px;
   border: #000 2px solid;
   margin: 0;
   padding: 1.5em 3em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2, .wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-2, .wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-3 {
   font-size: 1em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2::before, .wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-2::before, .wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-3::before {
   content: "";
   position: absolute;
   display: block;
   top: 50%;
   transform: translateY(-50%);
   left: -2.2em;
-  width: 1.5rem;
-  height: 1.5rem;
+  width: 1.5em;
+  height: 1.5em;
   border-radius: 50%;
   cursor: pointer;
   box-shadow: hsla(0deg, 0%, 100%, 0.15) 0 1px 1px, inset hsla(0deg, 0%, 0%, 0.5) 0 0 0 1px;
@@ -274,28 +303,28 @@
   transition: background-position 0.15s cubic-bezier(0.8, 0, 1, 1), transform 0.25s cubic-bezier(0.8, 0, 1, 1);
   outline: none;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-2 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-2 {
   font-weight: 600;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3 {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-3 {
   margin-left: 1.5em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li a.lv-3::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li a.lv-3::before {
   left: -0.5em;
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.2em;
+  height: 1.2em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li.ready a::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li.ready a::before {
   background-size: 100%;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li.check_prev a::before {
-  background-position: 0 3rem;
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li.check_prev a::before {
+  background-position: 0 3em;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li.checked a::before {
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li.checked a::before {
   background-position: 0 0;
 }
-.wp-block-itmar-markdown-block .table-of-contents.sidebar li.check_next a::before {
-  background-position: 0 -3rem;
+.wp-block-itmar-markdown-block .table-of-contents.md_toc_sidebar li.check_next a::before {
+  background-position: 0 -3em;
 }
 .wp-block-itmar-markdown-block .md_block_content {
   display: flex;

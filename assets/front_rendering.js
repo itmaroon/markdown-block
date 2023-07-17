@@ -46,9 +46,9 @@ jQuery(function ($) {
 
     if (topElement.length) {
       var elementId = topElement.attr('id');
-      var anchorElement = $('.sidebar a[href="#' + elementId + '"]').parents('li');
+      var anchorElement = $('.md_toc_sidebar a[href="#' + elementId + '"]').parents('li');
 
-      $('.sidebar li').removeClass('checked check_prev check_next');//全ての要素からクラスを外す
+      $('.md_toc_sidebar li').removeClass('checked check_prev check_next');//全ての要素からクラスを外す
       anchorElement.addClass('checked ready')//チェックされた要素
       anchorElement.prevAll('li').addClass('check_prev');//それより前の要素
       anchorElement.nextAll('li').addClass('check_next');//それより後の要素

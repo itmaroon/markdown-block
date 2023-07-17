@@ -35,7 +35,7 @@ export default function save({ attributes }) {
 	return (
 		<div {...useBlockProps.save()}>
 			{(titles_num > 0 && is_toc && toc_set_array.includes('header')) &&
-				<div className='table-of-contents header' style={{ background: bgColor }} >
+				<div className='table-of-contents md_toc_header' style={{ background: bgColor }} >
 					<TocRender
 						attributes={blockArray}
 					/>
@@ -49,7 +49,7 @@ export default function save({ attributes }) {
 
 				{(titles_num > 0 && is_toc && toc_set_array.includes('sidebar')) &&
 					<div className='side_md_content'>
-						<div className='table-of-contents sidebar' >
+						<div className='table-of-contents md_toc_sidebar' >
 							<TocRender
 								attributes={blockArray}
 								style={{ background: bgColor }}
