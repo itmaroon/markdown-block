@@ -160,7 +160,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			uploadImage: true,
 			imageUploadFunction,
 			maxHeight: '60vh',
-			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "unordered-list", "ordered-list", "table", "|", "guide"]
+			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "image", "unordered-list", "ordered-list", "table", "|", "guide"]
 		};
 	}, []);
 	//スクロールイベントの登録（クリーンアップも含む）
