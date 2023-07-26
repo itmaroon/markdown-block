@@ -406,13 +406,14 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				const tableHead = extractRows(element.querySelector("thead"), 'tr', 'th');
 				const tableBody = extractRows(element.querySelector("tbody"), 'tr', 'td');
 				const tablefoot = extractRows(element.querySelector("tfoot"), 'tr', 'td');
+
 				// 抽出したデータを使ってcore/tableブロックを初期化
 				const blockArray =
-					['core/table', { ...attributes, className: 'itmar_md_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }]
-					;
+					['core/table', { ...attributes, className: 'itmar_md_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }];
 				newblockArray.push(
 					blockArray
 				);
+				console.log(newblockArray)
 			}
 
 
