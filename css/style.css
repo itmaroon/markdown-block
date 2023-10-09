@@ -28,32 +28,32 @@
   margin-left: auto;
   font-style: italic;
 }
-.wp-block-itmar-markdown-block ul.itmar_md_block {
+.wp-block-itmar-markdown-block ul.itmar_ex_block {
   list-style: disc;
 }
-.wp-block-itmar-markdown-block ul.itmar_md_block li {
+.wp-block-itmar-markdown-block ul.itmar_ex_block li {
   list-style: disc;
 }
-.wp-block-itmar-markdown-block ol.itmar_md_block {
+.wp-block-itmar-markdown-block ol.itmar_ex_block {
   list-style: decimal;
 }
-.wp-block-itmar-markdown-block ol.itmar_md_block li {
+.wp-block-itmar-markdown-block ol.itmar_ex_block li {
   list-style: decimal;
 }
-.wp-block-itmar-markdown-block .itmar_md_block ul,
-.wp-block-itmar-markdown-block .itmar_md_block ol {
+.wp-block-itmar-markdown-block .itmar_ex_block ul,
+.wp-block-itmar-markdown-block .itmar_ex_block ol {
   padding-left: 1.5em;
 }
-.wp-block-itmar-markdown-block .itmar_md_block ul {
+.wp-block-itmar-markdown-block .itmar_ex_block ul {
   list-style: disc;
 }
-.wp-block-itmar-markdown-block .itmar_md_block ul li {
+.wp-block-itmar-markdown-block .itmar_ex_block ul li {
   list-style: disc;
 }
-.wp-block-itmar-markdown-block .itmar_md_block ol {
+.wp-block-itmar-markdown-block .itmar_ex_block ol {
   list-style: decimal;
 }
-.wp-block-itmar-markdown-block .itmar_md_block ol li {
+.wp-block-itmar-markdown-block .itmar_ex_block ol li {
   list-style: decimal;
 }
 .wp-block-itmar-markdown-block .table-of-contents {

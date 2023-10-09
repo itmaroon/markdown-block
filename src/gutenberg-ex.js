@@ -2,6 +2,7 @@
  * コアブロックカスタマイズ高階コンポーネント
  *
  */
+import { __ } from '@wordpress/i18n';
 import { addFilter } from '@wordpress/hooks';
 import { createHigherOrderComponent } from '@wordpress/compose';
 import {
@@ -29,9 +30,11 @@ import { borderProperty } from './styleProperty';
 const allowedBlocks = ['core/paragraph', 'core/list', 'core/image', 'core/quote', 'core/table'];
 
 //block登録フック（カスタム属性の追加）
-function addLineHeightAttribute(settings, name) {
+function addExSettings(settings, name) {
   if (allowedBlocks.includes(name)) {
     let newAttributes = {};
+    let newStyles = [];
+
     newAttributes = {
       margin_val: {
         type: "object",
@@ -63,7 +66,7 @@ function addLineHeightAttribute(settings, name) {
       };
     }
 
-    if (name === 'core/list' || name === 'core/quote') {
+    if (name === 'core/list' || name === 'core/quote' || name === 'core/table') {
       newAttributes = {
         ...newAttributes,
         radius_list: {
@@ -93,19 +96,37 @@ function addLineHeightAttribute(settings, name) {
       };
     }
 
-    return lodash.assign({}, settings, {
-      attributes: lodash.assign({}, settings.attributes, newAttributes),
-    });
+    if (name === 'core/table') {
+
+      newStyles = [
+        ...(settings.styles || []), // 既存のスタイルを保持
+        {
+          name: 'gradient',
+          label: __('Gradient', 'itmar_block_collections'),
+          isDefault: false,
+        },
+      ];
+    }
+
+    return {
+      ...settings,
+      attributes: {
+        ...settings.attributes,
+        ...newAttributes,
+      },
+      styles: newStyles.length ? newStyles : settings.styles, // 新しいスタイルがある場合にのみ上書き
+    };
+
   }
 
   //その他のブロック
-  return settings;;
+  return settings;
 }
 
 addFilter(
   'blocks.registerBlockType',
-  'block-collections/add-attribute',
-  addLineHeightAttribute
+  'itmar-ex-block/add-setting',
+  addExSettings
 );
 
 //BlockEditカスタムフック（インスペクターの追加）
@@ -125,7 +146,10 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
   ];
 
   return (props) => {
-    if (props.attributes.className === 'itmar_md_block') {//markdown-block内のブロックに限定
+    const classNames = props.attributes.className ? props.attributes.className.split(' ') : [];
+    const hasItmarBlockClass = classNames.includes('itmar_ex_block');
+    if (hasItmarBlockClass) {//itmar_ex_blockをクラス名に持つブロックに限定
+
       if (allowedBlocks.includes(props.name)) {
         const {
           lineHeight,
@@ -178,7 +202,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
 
                 </>
               }
-              {(props.name === 'core/list' || props.name === 'core/quote') &&
+              {(props.name === 'core/list' || props.name === 'core/quote' || props.name === 'core/table') &&
                 <PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
                   <BorderBoxControl
                     colors={[{ color: '#72aee6' }, { color: '#000' }, { color: '#fff' }]}
@@ -204,7 +228,7 @@ const withInspectorControl = createHigherOrderComponent((BlockEdit) => {
   };
 }, 'withInspectorControl');
 
-addFilter('editor.BlockEdit', 'block-collections/with-inspector-control', withInspectorControl);
+addFilter('editor.BlockEdit', 'itmar-ex-block/with-inspector-control', withInspectorControl);
 
 //BlockListBlockフック（編集画面のブロックの外観等の反映）
 const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock) => {
@@ -217,7 +241,9 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
       wrapperProps
     } = props;
 
-    if (attributes.className === 'itmar_md_block') {//markdown-block内のブロックに限定
+    const classNames = props.attributes.className ? props.attributes.className.split(' ') : [];
+    const hasItmarBlockClass = classNames.includes('itmar_ex_block');
+    if (hasItmarBlockClass) {//itmar_ex_blockをクラス名に持つブロックに限定
       if (allowedBlocks.includes(name)) {
         if (isValid) {
           //属性の取り出し
@@ -259,6 +285,13 @@ const applyExtraAttributesInEditor = createHigherOrderComponent((BlockListBlock)
             }
           }
 
+          if (name === 'core/table') {
+            const list_border = borderProperty(border_list);
+            extraStyle = {
+              ...extraStyle, borderCollapse: 'collapse', ...list_border
+            }
+          }
+
           //既存スタイルとマージ
           let blockWrapperProps = wrapperProps;
           blockWrapperProps = {
@@ -294,7 +327,7 @@ addFilter(
 
 //blocks.getSaveContent.extraPropsフック（フロントエンドへの反映）
 const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
-  if (props.className?.match(/itmar_md_block/)) {//markdown-block内のブロックに限定
+  if (props.className?.match(/itmar_ex_block/)) {//markdown-block内のブロックに限定
     if (allowedBlocks.includes(blockType.name)) {
       //属性の取り出し
       const {

@@ -361,10 +361,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				if (element.children[0]?.tagName.match(/^IMG$/)) {
 					elementType = element.children[0].tagName;
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/image', { ...attributes, className: 'itmar_md_block', url: element.children[0].src }]);
+					newblockArray.push(['core/image', { ...attributes, className: 'itmar_ex_block', url: element.children[0].src }]);
 				} else {
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/paragraph', { ...attributes, className: 'itmar_md_block', content: element.innerHTML }]);
+					newblockArray.push(['core/paragraph', { ...attributes, className: 'itmar_ex_block', content: element.innerHTML }]);
 				}
 			} else if (elementType.match(/^PRE$/)) {
 				block_count++;
@@ -379,7 +379,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				const ordered = elementType === 'OL';//順序付きか
 				const attributes = element_style_obj[elementType];
 				const list_Array = listDOMToBlocks(element);
-				newblockArray.push(['core/list', { ...attributes, ordered: ordered, className: 'itmar_md_block', list_type: element.tagName }, list_Array,]);
+				newblockArray.push(['core/list', { ...attributes, ordered: ordered, className: 'itmar_ex_block', list_type: element.tagName }, list_Array,]);
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
@@ -392,7 +392,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				newblockArray.push(
 					[
 						'core/quote',
-						{ ...attributes, className: 'itmar_md_block', citation: citation },
+						{ ...attributes, className: 'itmar_ex_block', citation: citation },
 						[
 							['core/paragraph', { content: quote_str }]
 						]
@@ -409,7 +409,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 				// 抽出したデータを使ってcore/tableブロックを初期化
 				const blockArray =
-					['core/table', { ...attributes, className: 'itmar_md_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }];
+					['core/table', { ...attributes, className: 'itmar_ex_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }];
 				newblockArray.push(
 					blockArray
 				);
