@@ -21,6 +21,8 @@
  *
  * @see https://developer.wordpress.org/reference/functions/register_block_type/
  */
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 function itmar_markdown_block_block_init() {
 	register_block_type( __DIR__ . '/build' );
 }
