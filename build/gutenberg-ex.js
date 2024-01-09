@@ -1,1 +1,624 @@
-(()=>{"use strict";function e(){return e=Object.assign?Object.assign.bind():function(e){for(var t=1;t<arguments.length;t++){var r=arguments[t];for(var o in r)Object.prototype.hasOwnProperty.call(r,o)&&(e[o]=r[o])}return e},e.apply(this,arguments)}const t=window.wp.element,r=window.wp.i18n,o=window.wp.hooks,l=window.wp.compose,a=window.wp.blockEditor,i=window.wp.components;function n(e){if(e){let r=null;if(["top","bottom","left","right"].some((t=>t in e))){let o={};for(let r in e){const l=e[r];if(String(l.width||"").match(/^0/))continue;const a=l.style||"solid";o[`border${t=r,t.charAt(0).toUpperCase()+t.slice(1)}`]=`${l.width} ${a} ${l.color}`}return r=o,r}{if(String(e.width||"").match(/^0/))return null;const t=e.style||"solid";return r={border:`${e.width} ${t} ${e.color}`},r}}return null;var t}const s=["core/paragraph","core/list","core/image","core/quote","core/table"];(0,o.addFilter)("blocks.registerBlockType","itmar-ex-block/add-setting",(function(e,t){if(s.includes(t)){let o={},l=[];return o={margin_val:{type:"object",default:{top:"1em",left:"1em",bottom:"1em",right:"1em"}},padding_val:{type:"object",default:{top:"1em",left:"1em",bottom:"1em",right:"1em"}}},"core/paragraph"!==t&&"core/list"!==t&&"core/quote"!==t||(o={...o,lineHeight:{type:"number",default:1.6}}),"core/list"!==t&&"core/quote"!==t&&"core/table"!==t||(o={...o,radius_list:{type:"object",default:{topLeft:"0px",topRight:"0px",bottomRight:"0px",bottomLeft:"0px",value:"0px"}},border_list:{type:"object"}}),"core/list"===t&&(o={...o,list_type:{type:"string",default:"UL"}}),"core/table"===t&&(l=[...e.styles||[],{name:"gradient",label:(0,r.__)("Gradient","itmar_block_collections"),isDefault:!1}]),{...e,attributes:{...e.attributes,...o},styles:l.length?l:e.styles}}return e}));const c=(0,l.createHigherOrderComponent)((e=>{const r={top:"1em",left:"1em",right:"1em",bottom:"1em"},o=[{value:"px",label:"px"},{value:"em",label:"em"},{value:"rem",label:"rem"}];return l=>{if((l.attributes.className?l.attributes.className.split(" "):[]).includes("itmar_ex_block")&&s.includes(l.name)){const{lineHeight:n,margin_val:s,padding_val:c,border_list:m,radius_list:p}=l.attributes,u=l.setAttributes;return(0,t.createElement)(t.Fragment,null,(0,t.createElement)(e,l),(0,t.createElement)(a.InspectorControls,{group:"styles"},(0,t.createElement)(i.PanelBody,{title:"間隔設定",initialOpen:!1},(0,t.createElement)(i.__experimentalBoxControl,{label:"マージン設定",values:s,onChange:e=>u({margin_val:e}),units:o,allowReset:!0,resetValues:r}),(0,t.createElement)(i.__experimentalBoxControl,{label:"パティング設定",values:c,onChange:e=>u({padding_val:e}),units:o,allowReset:!0,resetValues:r})),("core/paragraph"===l.name||"core/list"===l.name||"core/quote"===l.name)&&(0,t.createElement)(t.Fragment,null,(0,t.createElement)(i.PanelBody,{title:"行間設定"},(0,t.createElement)(i.RangeControl,{value:n,label:"lineHeight",max:3,min:1,step:.1,onChange:e=>u({lineHeight:e}),withInputField:!0}))),("core/list"===l.name||"core/quote"===l.name||"core/table"===l.name)&&(0,t.createElement)(i.PanelBody,{title:"ボーダー設定",initialOpen:!1,className:"border_design_ctrl"},(0,t.createElement)(i.__experimentalBorderBoxControl,{colors:[{color:"#72aee6"},{color:"#000"},{color:"#fff"}],onChange:e=>u({border_list:e}),value:m}),(0,t.createElement)(a.__experimentalBorderRadiusControl,{values:p,onChange:e=>u({radius_list:"string"==typeof e?{value:e}:e})}))))}return(0,t.createElement)(e,l)}}),"withInspectorControl");(0,o.addFilter)("editor.BlockEdit","itmar-ex-block/with-inspector-control",c);const m=(0,l.createHigherOrderComponent)((r=>o=>{const{attributes:l,name:a,isValid:i,wrapperProps:c}=o;if((o.attributes.className?o.attributes.className.split(" "):[]).includes("itmar_ex_block")&&s.includes(a)&&i){const{lineHeight:i,margin_val:s,padding_val:m,radius_list:p,border_list:u}=l;let d={};if(d={margin:`${s.top} ${s.right} ${s.bottom} ${s.left}`,padding:`${m.top} ${m.right} ${m.bottom} ${m.left}`},"core/paragraph"!==a&&"core/list"!==a&&"core/quote"!==a||(d={...d,lineHeight:i}),"core/list"===a||"core/quote"===a){const e=p&&1===Object.keys(p).length?p.value:`${p&&p.topLeft||""} ${p&&p.topRight||""} ${p&&p.bottomRight||""} ${p&&p.bottomLeft||""}`,t=n(u);d={...d,borderRadius:e,...t}}if("core/image"===a&&"center"===l.align&&(d={...d,margin:`${s.top} auto ${s.bottom}`}),"core/table"===a){const e=n(u);d={...d,borderCollapse:"collapse",...e}}let g=c;return g={...g,style:{...g&&{...g.style},...d}},(0,t.createElement)(r,e({},o,{wrapperProps:g}))}return(0,t.createElement)(r,o)}),"applyExtraAttributesInEditor");(0,o.addFilter)("editor.BlockListBlock","block-collections/extra-attributes-in-editor",m),(0,o.addFilter)("blocks.getSaveContent.extraProps","block-collections/-extra-attributes-in-front-end",((e,t,r)=>{if(e.className?.match(/itmar_ex_block/)&&s.includes(t.name)){const{lineHeight:o,margin_val:l,padding_val:a,radius_list:i,border_list:s}=r;let c={};if(c={margin:`${l.top} ${l.right} ${l.bottom} ${l.left}`,padding:`${a.top} ${a.right} ${a.bottom} ${a.left}`},"core/paragraph"!==t.name&&"core/list"!==t.name&&"core/quote"!==t.name||(c={...c,lineHeight:o}),"core/list"===t.name||"core/quote"===t.name){const e=i&&1===Object.keys(i).length?i.value:`${i&&i.topLeft||""} ${i&&i.topRight||""} ${i&&i.bottomRight||""} ${i&&i.bottomLeft||""}`,t=n(s);c={...c,borderRadius:e,...t}}return"core/image"===t.name&&"center"===r.align&&(c={...c,margin:`${l.top} auto ${l.bottom}`}),Object.assign(e,{style:{...e.style,...c}})}return e}))})();
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/styleProperty.js":
+/*!******************************!*\
+  !*** ./src/styleProperty.js ***!
+  \******************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   borderProperty: () => (/* binding */ borderProperty),
+/* harmony export */   marginProperty: () => (/* binding */ marginProperty),
+/* harmony export */   paddingProperty: () => (/* binding */ paddingProperty),
+/* harmony export */   radiusProperty: () => (/* binding */ radiusProperty)
+/* harmony export */ });
+// sideの最初の文字を大文字にする関数
+const capitalizeFirstLetter = string => {
+  return string.charAt(0).toUpperCase() + string.slice(1);
+};
+function borderProperty(borderObj) {
+  if (borderObj) {
+    //borderObjがundefinedでない
+    let keys = ['top', 'bottom', 'left', 'right'];
+    let ret_prop = null;
+    let doesKeyExist = keys.some(key => key in borderObj);
+    if (doesKeyExist) {
+      //'top', 'bottom', 'left', 'right'が別設定
+      let cssObj = {};
+      for (let side in borderObj) {
+        const sideData = borderObj[side];
+        const startsWithZero = String(sideData.width || '').match(/^0/);
+        if (startsWithZero) {
+          //widthが０ならCSS設定しない
+          continue;
+        }
+        const border_style = sideData.style || 'solid';
+        let camelCaseSide = `border${capitalizeFirstLetter(side)}`;
+        cssObj[camelCaseSide] = `${sideData.width} ${border_style} ${sideData.color}`;
+      }
+      ret_prop = cssObj;
+      return ret_prop;
+    } else {
+      //同一のボーダー
+      const startsWithZero = String(borderObj.width || '').match(/^0/);
+      if (startsWithZero) {
+        //widthが０ならnullを返す
+        return null;
+      }
+      const border_style = borderObj.style || 'solid';
+      ret_prop = {
+        border: `${borderObj.width} ${border_style} ${borderObj.color}`
+      };
+      return ret_prop;
+    }
+  } else {
+    return null;
+  }
+}
+
+//角丸の設定
+function radiusProperty(radiusObj) {
+  const ret_prop = radiusObj && Object.keys(radiusObj).length === 1 ? radiusObj.value : `${radiusObj && radiusObj.topLeft || ''} ${radiusObj && radiusObj.topRight || ''} ${radiusObj && radiusObj.bottomRight || ''} ${radiusObj && radiusObj.bottomLeft || ''}`;
+  const ret_val = {
+    borderRadius: ret_prop
+  };
+  return ret_val;
+}
+
+//マージンの設定
+function marginProperty(marginObj) {
+  const ret_prop = `${marginObj.top} ${marginObj.right} ${marginObj.bottom} ${marginObj.left}`;
+  const ret_val = {
+    margin: ret_prop
+  };
+  return ret_val;
+}
+//パディングの設定
+function paddingProperty(paddingObj) {
+  const ret_prop = `${paddingObj.top} ${paddingObj.right} ${paddingObj.bottom} ${paddingObj.left}`;
+  const ret_val = {
+    padding: ret_prop
+  };
+  return ret_val;
+}
+
+/***/ }),
+
+/***/ "@wordpress/block-editor":
+/*!*************************************!*\
+  !*** external ["wp","blockEditor"] ***!
+  \*************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["blockEditor"];
+
+/***/ }),
+
+/***/ "@wordpress/components":
+/*!************************************!*\
+  !*** external ["wp","components"] ***!
+  \************************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["components"];
+
+/***/ }),
+
+/***/ "@wordpress/compose":
+/*!*********************************!*\
+  !*** external ["wp","compose"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["compose"];
+
+/***/ }),
+
+/***/ "@wordpress/element":
+/*!*********************************!*\
+  !*** external ["wp","element"] ***!
+  \*********************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["element"];
+
+/***/ }),
+
+/***/ "@wordpress/hooks":
+/*!*******************************!*\
+  !*** external ["wp","hooks"] ***!
+  \*******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["hooks"];
+
+/***/ }),
+
+/***/ "@wordpress/i18n":
+/*!******************************!*\
+  !*** external ["wp","i18n"] ***!
+  \******************************/
+/***/ ((module) => {
+
+module.exports = window["wp"]["i18n"];
+
+/***/ }),
+
+/***/ "./node_modules/@babel/runtime/helpers/esm/extends.js":
+/*!************************************************************!*\
+  !*** ./node_modules/@babel/runtime/helpers/esm/extends.js ***!
+  \************************************************************/
+/***/ ((__unused_webpack___webpack_module__, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ _extends)
+/* harmony export */ });
+function _extends() {
+  _extends = Object.assign ? Object.assign.bind() : function (target) {
+    for (var i = 1; i < arguments.length; i++) {
+      var source = arguments[i];
+      for (var key in source) {
+        if (Object.prototype.hasOwnProperty.call(source, key)) {
+          target[key] = source[key];
+        }
+      }
+    }
+    return target;
+  };
+  return _extends.apply(this, arguments);
+}
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/compat get default export */
+/******/ 	(() => {
+/******/ 		// getDefaultExport function for compatibility with non-harmony modules
+/******/ 		__webpack_require__.n = (module) => {
+/******/ 			var getter = module && module.__esModule ?
+/******/ 				() => (module['default']) :
+/******/ 				() => (module);
+/******/ 			__webpack_require__.d(getter, { a: getter });
+/******/ 			return getter;
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!*****************************!*\
+  !*** ./src/gutenberg-ex.js ***!
+  \*****************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @babel/runtime/helpers/extends */ "./node_modules/@babel/runtime/helpers/esm/extends.js");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
+/* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @wordpress/hooks */ "@wordpress/hooks");
+/* harmony import */ var _wordpress_hooks__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__);
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @wordpress/compose */ "@wordpress/compose");
+/* harmony import */ var _wordpress_compose__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_wordpress_compose__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! @wordpress/block-editor */ "@wordpress/block-editor");
+/* harmony import */ var _wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! @wordpress/components */ "@wordpress/components");
+/* harmony import */ var _wordpress_components__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var _styleProperty__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./styleProperty */ "./src/styleProperty.js");
+
+
+/**
+ * コアブロックカスタマイズ高階コンポーネント
+ *
+ */
+
+
+
+
+
+
+
+// カスタマイズ対象とするブロック
+const allowedBlocks = ['core/paragraph', 'core/list', 'core/image', 'core/quote', 'core/table'];
+
+//block登録フック（カスタム属性の追加）
+function addExSettings(settings, name) {
+  if (allowedBlocks.includes(name)) {
+    let newAttributes = {};
+    let newStyles = [];
+    newAttributes = {
+      margin_val: {
+        type: "object",
+        default: {
+          top: "1em",
+          left: "1em",
+          bottom: "1em",
+          right: "1em"
+        }
+      },
+      padding_val: {
+        type: "object",
+        default: {
+          top: "1em",
+          left: "1em",
+          bottom: "1em",
+          right: "1em"
+        }
+      }
+    };
+    if (name === 'core/paragraph' || name === 'core/list' || name === 'core/quote') {
+      newAttributes = {
+        ...newAttributes,
+        lineHeight: {
+          type: 'number',
+          default: 1.6
+        }
+      };
+    }
+    if (name === 'core/list' || name === 'core/quote' || name === 'core/table') {
+      newAttributes = {
+        ...newAttributes,
+        radius_list: {
+          type: "object",
+          default: {
+            topLeft: "0px",
+            topRight: "0px",
+            bottomRight: "0px",
+            bottomLeft: "0px",
+            value: "0px"
+          }
+        },
+        border_list: {
+          type: "object"
+        }
+      };
+    }
+    if (name === 'core/list') {
+      newAttributes = {
+        ...newAttributes,
+        list_type: {
+          type: "string",
+          default: "UL"
+        }
+      };
+    }
+    if (name === 'core/table') {
+      newStyles = [...(settings.styles || []),
+      // 既存のスタイルを保持
+      {
+        name: 'gradient',
+        label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_2__.__)('Gradient', 'itmar_block_collections'),
+        isDefault: false
+      }];
+    }
+    return {
+      ...settings,
+      attributes: {
+        ...settings.attributes,
+        ...newAttributes
+      },
+      styles: newStyles.length ? newStyles : settings.styles // 新しいスタイルがある場合にのみ上書き
+    };
+  }
+
+  //その他のブロック
+  return settings;
+}
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__.addFilter)('blocks.registerBlockType', 'itmar-ex-block/add-setting', addExSettings);
+
+//BlockEditカスタムフック（インスペクターの追加）
+const withInspectorControl = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_4__.createHigherOrderComponent)(BlockEdit => {
+  //スペースのリセットバリュー
+  const padding_resetValues = {
+    top: '1em',
+    left: '1em',
+    right: '1em',
+    bottom: '1em'
+  };
+  const units = [{
+    value: 'px',
+    label: 'px'
+  }, {
+    value: 'em',
+    label: 'em'
+  }, {
+    value: 'rem',
+    label: 'rem'
+  }];
+  return props => {
+    const classNames = props.attributes.className ? props.attributes.className.split(' ') : [];
+    const hasItmarBlockClass = classNames.includes('itmar_ex_block');
+    if (hasItmarBlockClass) {
+      //itmar_ex_blockをクラス名に持つブロックに限定
+
+      if (allowedBlocks.includes(props.name)) {
+        const {
+          lineHeight,
+          margin_val,
+          padding_val,
+          border_list,
+          radius_list
+        } = props.attributes;
+        const setAttributes = props.setAttributes;
+        return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockEdit, props), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__.InspectorControls, {
+          group: "styles"
+        }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelBody, {
+          title: "\u9593\u9694\u8A2D\u5B9A",
+          initialOpen: false
+        }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.__experimentalBoxControl, {
+          label: "\u30DE\u30FC\u30B8\u30F3\u8A2D\u5B9A",
+          values: margin_val,
+          onChange: newValue => setAttributes({
+            margin_val: newValue
+          }),
+          units: units // 許可する単位
+          ,
+          allowReset: true // リセットの可否
+          ,
+          resetValues: padding_resetValues // リセット時の値
+        }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.__experimentalBoxControl, {
+          label: "\u30D1\u30C6\u30A3\u30F3\u30B0\u8A2D\u5B9A",
+          values: padding_val,
+          onChange: newValue => setAttributes({
+            padding_val: newValue
+          }),
+          units: units // 許可する単位
+          ,
+          allowReset: true // リセットの可否
+          ,
+          resetValues: padding_resetValues // リセット時の値
+        })), (props.name === 'core/paragraph' || props.name === 'core/list' || props.name === 'core/quote') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelBody, {
+          title: "\u884C\u9593\u8A2D\u5B9A"
+        }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.RangeControl, {
+          value: lineHeight,
+          label: "lineHeight",
+          max: 3,
+          min: 1,
+          step: .1,
+          onChange: val => setAttributes({
+            lineHeight: val
+          }),
+          withInputField: true
+        }))), (props.name === 'core/list' || props.name === 'core/quote' || props.name === 'core/table') && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.PanelBody, {
+          title: "\u30DC\u30FC\u30C0\u30FC\u8A2D\u5B9A",
+          initialOpen: false,
+          className: "border_design_ctrl"
+        }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_6__.__experimentalBorderBoxControl, {
+          colors: [{
+            color: '#72aee6'
+          }, {
+            color: '#000'
+          }, {
+            color: '#fff'
+          }],
+          onChange: newValue => setAttributes({
+            border_list: newValue
+          }),
+          value: border_list
+        }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_5__.__experimentalBorderRadiusControl, {
+          values: radius_list,
+          onChange: newBrVal => setAttributes({
+            radius_list: typeof newBrVal === 'string' ? {
+              "value": newBrVal
+            } : newBrVal
+          })
+        }))));
+      }
+    }
+    //その他のブロック
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockEdit, props);
+  };
+}, 'withInspectorControl');
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__.addFilter)('editor.BlockEdit', 'itmar-ex-block/with-inspector-control', withInspectorControl);
+
+//BlockListBlockフック（編集画面のブロックの外観等の反映）
+const applyExtraAttributesInEditor = (0,_wordpress_compose__WEBPACK_IMPORTED_MODULE_4__.createHigherOrderComponent)(BlockListBlock => {
+  return props => {
+    //propsを展開
+    const {
+      attributes,
+      name,
+      isValid,
+      wrapperProps
+    } = props;
+    const classNames = props.attributes.className ? props.attributes.className.split(' ') : [];
+    const hasItmarBlockClass = classNames.includes('itmar_ex_block');
+    if (hasItmarBlockClass) {
+      //itmar_ex_blockをクラス名に持つブロックに限定
+      if (allowedBlocks.includes(name)) {
+        if (isValid) {
+          //属性の取り出し
+          const {
+            lineHeight,
+            margin_val,
+            padding_val,
+            radius_list,
+            border_list
+          } = attributes;
+
+          //拡張したスタイル
+
+          let extraStyle = {};
+          extraStyle = {
+            margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
+            padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`
+          };
+          if (name === 'core/paragraph' || name === 'core/list' || name === 'core/quote') {
+            extraStyle = {
+              ...extraStyle,
+              lineHeight: lineHeight
+            };
+          }
+          if (name === 'core/list' || name === 'core/quote') {
+            //角丸の設定
+            const list_radius_prm = radius_list && Object.keys(radius_list).length === 1 ? radius_list.value : `${radius_list && radius_list.topLeft || ''} ${radius_list && radius_list.topRight || ''} ${radius_list && radius_list.bottomRight || ''} ${radius_list && radius_list.bottomLeft || ''}`;
+            const list_border = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_7__.borderProperty)(border_list);
+            extraStyle = {
+              ...extraStyle,
+              borderRadius: list_radius_prm,
+              ...list_border
+            };
+          }
+          if (name === 'core/image') {
+            if (attributes.align === 'center') {
+              //中央ぞろえの時
+              extraStyle = {
+                ...extraStyle,
+                margin: `${margin_val.top} auto ${margin_val.bottom}`
+              };
+            }
+          }
+          if (name === 'core/table') {
+            const list_border = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_7__.borderProperty)(border_list);
+            extraStyle = {
+              ...extraStyle,
+              borderCollapse: 'collapse',
+              ...list_border
+            };
+          }
+
+          //既存スタイルとマージ
+          let blockWrapperProps = wrapperProps;
+          blockWrapperProps = {
+            ...blockWrapperProps,
+            style: {
+              ...(blockWrapperProps && {
+                ...blockWrapperProps.style
+              }),
+              ...extraStyle
+            }
+          };
+          return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, (0,_babel_runtime_helpers_extends__WEBPACK_IMPORTED_MODULE_0__["default"])({}, props, {
+            wrapperProps: blockWrapperProps
+          }));
+        }
+      }
+    }
+
+    //デフォルト
+    return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_1__.createElement)(BlockListBlock, props);
+  };
+}, 'applyExtraAttributesInEditor');
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__.addFilter)('editor.BlockListBlock', 'block-collections/extra-attributes-in-editor', applyExtraAttributesInEditor);
+
+//blocks.getSaveContent.extraPropsフック（フロントエンドへの反映）
+const applyExtraAttributesInFrontEnd = (props, blockType, attributes) => {
+  if (props.className?.match(/itmar_ex_block/)) {
+    //markdown-block内のブロックに限定
+    if (allowedBlocks.includes(blockType.name)) {
+      //属性の取り出し
+      const {
+        lineHeight,
+        margin_val,
+        padding_val,
+        radius_list,
+        border_list
+      } = attributes;
+
+      //拡張したスタイル
+      let extraStyle = {};
+      extraStyle = {
+        margin: `${margin_val.top} ${margin_val.right} ${margin_val.bottom} ${margin_val.left}`,
+        padding: `${padding_val.top} ${padding_val.right} ${padding_val.bottom} ${padding_val.left}`
+      };
+      if (blockType.name === 'core/paragraph' || blockType.name === 'core/list' || blockType.name === 'core/quote') {
+        extraStyle = {
+          ...extraStyle,
+          lineHeight: lineHeight
+        };
+      }
+      if (blockType.name === 'core/list' || blockType.name === 'core/quote') {
+        //角丸の設定
+        const list_radius_prm = radius_list && Object.keys(radius_list).length === 1 ? radius_list.value : `${radius_list && radius_list.topLeft || ''} ${radius_list && radius_list.topRight || ''} ${radius_list && radius_list.bottomRight || ''} ${radius_list && radius_list.bottomLeft || ''}`;
+        //ボーダーの設定
+        const list_border = (0,_styleProperty__WEBPACK_IMPORTED_MODULE_7__.borderProperty)(border_list);
+        extraStyle = {
+          ...extraStyle,
+          borderRadius: list_radius_prm,
+          ...list_border
+        };
+      }
+      if (blockType.name === 'core/image') {
+        if (attributes.align === 'center') {
+          //中央ぞろえの時
+          extraStyle = {
+            ...extraStyle,
+            margin: `${margin_val.top} auto ${margin_val.bottom}`
+          };
+        }
+      }
+      return Object.assign(props, {
+        style: {
+          ...props.style,
+          ...extraStyle
+        }
+      });
+    }
+  }
+  //デフォルト
+  return props;
+};
+(0,_wordpress_hooks__WEBPACK_IMPORTED_MODULE_3__.addFilter)('blocks.getSaveContent.extraProps', 'block-collections/-extra-attributes-in-front-end', applyExtraAttributesInFrontEnd);
+})();
+
+/******/ })()
+;
+//# sourceMappingURL=gutenberg-ex.js.map

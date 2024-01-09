@@ -126,7 +126,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	//画像ファイルのアップロードとマークダウンの挿入
 	const imageUploadFunction = (file) => {
-		const nonce = itmar_option.nonce // Wordpressから取得したnonce
+		const nonce = itmar_markdown_option.nonce // Wordpressから取得したnonce
 
 		// FormDataオブジェクトを作成し、ファイルを追加
 		const formData = new FormData();
