@@ -39,22 +39,6 @@ function itmar_markdown_block_add_plugin() {
 			true
 		);
 	}
-	
-
-	//コアブロックカスタマイズスクリプトのエンキュー
-	wp_enqueue_script(
-		'itmar-gutenberg-extensions-script',
-		plugins_url('build/gutenberg-ex.js', __FILE__),
-		array(
-				'wp-blocks',
-				'wp-i18n',
-				'wp-element',
-				'wp-editor',
-				'wp-plugins',
-				'wp-edit-post',
-				'wp-compose'
-		)
-	);
 
 	//nonceの生成
 	wp_localize_script( 'itmar-gutenberg-extensions-script', 'itmar_markdown_option', array(

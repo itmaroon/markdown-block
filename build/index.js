@@ -717,7 +717,6 @@ function Edit({
           foot: tablefoot
         }];
         newblockArray.push(blockArray);
-        console.log(newblockArray);
       }
     });
     if (!fast_deep_equal__WEBPACK_IMPORTED_MODULE_8___default()(newblockArray, prevBlockArray)) {

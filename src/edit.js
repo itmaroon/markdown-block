@@ -413,7 +413,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				newblockArray.push(
 					blockArray
 				);
-				console.log(newblockArray)
 			}
 
 
