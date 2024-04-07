@@ -5,7 +5,6 @@
   "version": "0.1.0",
   "title": "Mark Down",
   "category": "widgets",
-  "description": "マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです",
   "supports": {
     "html": false
   },
@@ -75,7 +74,6 @@
     }
   },
   "textdomain": "markdown-block",
-  "editorScript": "file:./index.js",
   "editorStyle": "file:./index.css",
   "style": "file:./style-index.css"
 }

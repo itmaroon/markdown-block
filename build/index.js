@@ -361,28 +361,28 @@ function Edit({
 
   //スペースのリセットバリュー
   const padding_resetValues = {
-    top: '10px',
-    left: '10px',
-    right: '10px',
-    bottom: '10px'
+    top: "10px",
+    left: "10px",
+    right: "10px",
+    bottom: "10px"
   };
 
   //ボーダーのリセットバリュー
   const border_resetValues = {
-    top: '0px',
-    left: '0px',
-    right: '0px',
-    bottom: '0px'
+    top: "0px",
+    left: "0px",
+    right: "0px",
+    bottom: "0px"
   };
   const units = [{
-    value: 'px',
-    label: 'px'
+    value: "px",
+    label: "px"
   }, {
-    value: 'em',
-    label: 'em'
+    value: "em",
+    label: "em"
   }, {
-    value: 'rem',
-    label: 'rem'
+    value: "rem",
+    label: "rem"
   }];
   const blockProps = (0,_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.useBlockProps)();
 
@@ -398,13 +398,13 @@ function Edit({
 
     // FormDataオブジェクトを作成し、ファイルを追加
     const formData = new FormData();
-    formData.append('file', file);
+    formData.append("file", file);
 
     // fetchを使用してファイルをアップロード
-    fetch('/wp-json/wp/v2/media', {
-      method: 'POST',
+    fetch("/wp-json/wp/v2/media", {
+      method: "POST",
       headers: {
-        'X-WP-Nonce': nonce
+        "X-WP-Nonce": nonce
       },
       body: formData
     }).then(response => response.json()).then(data => {
@@ -413,7 +413,7 @@ function Edit({
         simpleMdeRef.current.codemirror.replaceSelection(markDown_img);
       }
     }).catch(error => {
-      console.error('Upload failed:', error);
+      console.error("Upload failed:", error);
     });
   };
 
@@ -422,7 +422,7 @@ function Edit({
     return {
       uploadImage: true,
       imageUploadFunction,
-      maxHeight: '60vh',
+      maxHeight: "60vh",
       toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "image", "unordered-list", "ordered-list", "table", "|", "guide"]
     };
   }, []);
@@ -431,9 +431,9 @@ function Edit({
     if (simpleMdeRef.current) {
       const editorInstance = simpleMdeRef.current;
       const codemirror = editorInstance.codemirror;
-      codemirror.on('scroll', handleScroll);
+      codemirror.on("scroll", handleScroll);
       return () => {
-        codemirror.off('scroll', handleScroll);
+        codemirror.off("scroll", handleScroll);
       };
     }
   }, [simpleMdeRef.current]);
@@ -449,26 +449,26 @@ function Edit({
   const {
     removeBlocks,
     updateBlockAttributes
-  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)('core/block-editor');
+  } = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useDispatch)("core/block-editor");
 
   //インナーブロックの監視
-  const innerBlockIds = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select('core/block-editor').getBlocks(clientId).map(block => block.clientId));
-  const innerBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select('core/block-editor').getBlocks(clientId), [clientId]);
+  const innerBlockIds = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select("core/block-editor").getBlocks(clientId).map(block => block.clientId));
+  const innerBlocks = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select("core/block-editor").getBlocks(clientId), [clientId]);
   //選択中のブロック
-  const selectedBlock = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select('core/block-editor').getSelectedBlock(), []);
+  const selectedBlock = (0,_wordpress_data__WEBPACK_IMPORTED_MODULE_7__.useSelect)(select => select("core/block-editor").getSelectedBlock(), []);
 
   //インナーブロックの変化による属性値の記録
   (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.useEffect)(() => {
     if (innerBlocks.length > 0) {
       //選択されたブロックの情報を収集
       const selectTagMap = {
-        'itmar/design-title': selectedBlock?.attributes.headingType,
-        'core/paragraph': 'P',
-        'itmar/code-highlight': 'PRE',
-        'core/image': 'IMG',
-        'core/quote': 'BLOCKQUOTE',
-        'core/list': selectedBlock?.attributes.list_type,
-        'core/table': 'TABLE'
+        "itmar/design-title": selectedBlock?.attributes.headingType,
+        "core/paragraph": "P",
+        "itmar/code-highlight": "PRE",
+        "core/image": "IMG",
+        "core/quote": "BLOCKQUOTE",
+        "core/list": selectedBlock?.attributes.list_type,
+        "core/table": "TABLE"
         // 以下同様に続く
       };
 
@@ -481,13 +481,13 @@ function Edit({
       let stockStyle = null;
       for (let block of innerBlocks) {
         const tagMap = {
-          'itmar/design-title': block.attributes.headingType,
-          'core/paragraph': 'P',
-          'itmar/code-highlight': 'PRE',
-          'core/image': 'IMG',
-          'core/quote': 'BLOCKQUOTE',
-          'core/list': block.attributes.list_type,
-          'core/table': 'TABLE'
+          "itmar/design-title": block.attributes.headingType,
+          "core/paragraph": "P",
+          "itmar/code-highlight": "PRE",
+          "core/image": "IMG",
+          "core/quote": "BLOCKQUOTE",
+          "core/list": block.attributes.list_type,
+          "core/table": "TABLE"
           // 以下同様に続く
         };
 
@@ -540,7 +540,6 @@ function Edit({
           };
         }
       }
-      ;
 
       //ストックしたスタイルがあれば上書き
       if (stockStyle) {
@@ -585,29 +584,29 @@ function Edit({
     // });
     // const html = converter.render(mdContent);
     const parser = new DOMParser();
-    const doc = parser.parseFromString(html, 'text/html');
+    const doc = parser.parseFromString(html, "text/html");
     const newblockArray = [];
     let block_count = 0; //追加されるブロックのカウント
 
     //リスト要素をgutenbergのブロックにする
     function listDOMToBlocks(element) {
-      const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === 'li'); //element要素直下のli要素を取得
+      const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === "li"); //element要素直下のli要素を取得
       const listArray = listItems.map(listItem => {
-        const nestedList = listItem.querySelector('ul, ol'); //li要素の下にul,ol要素があるか
+        const nestedList = listItem.querySelector("ul, ol"); //li要素の下にul,ol要素があるか
         let nestedBlocks = [];
         if (nestedList) {
           nestedBlocks = listDOMToBlocks(nestedList); //li要素の下にul,ol要素がある場合は再帰処理
         }
 
         const textNode = Array.from(listItem.childNodes).find(node => node.nodeType === Node.TEXT_NODE); //li要素内の最初のテキストノード
-        const listItemBlock = ['core/list-item', {
-          content: textNode ? textNode.textContent : '' // テキストノードの内容を取得
+        const listItemBlock = ["core/list-item", {
+          content: textNode ? textNode.textContent : "" // テキストノードの内容を取得
         }];
 
         if (nestedBlocks.length > 0) {
           //const { className, ...filter_class_attr } = attributes || {};
-          const ordered = nestedList.tagName === 'OL'; //順序付きか
-          listItemBlock.push([['core/list', {
+          const ordered = nestedList.tagName === "OL"; //順序付きか
+          listItemBlock.push([["core/list", {
             ordered: ordered
           }, nestedBlocks]]);
         }
@@ -632,7 +631,7 @@ function Edit({
       if (elementType.match(/^H[1-6]$/)) {
         block_count++;
         const attributes = element_style_obj[elementType];
-        newblockArray.push(['itmar/design-title', {
+        newblockArray.push(["itmar/design-title", {
           ...attributes,
           headingContent: element.textContent,
           headingType: element.tagName,
@@ -643,16 +642,16 @@ function Edit({
         if (element.children[0]?.tagName.match(/^IMG$/)) {
           elementType = element.children[0].tagName;
           const attributes = element_style_obj[elementType];
-          newblockArray.push(['core/image', {
+          newblockArray.push(["core/image", {
             ...attributes,
-            className: 'itmar_ex_block',
+            className: "itmar_ex_block",
             url: element.children[0].src
           }]);
         } else {
           const attributes = element_style_obj[elementType];
-          newblockArray.push(['core/paragraph', {
+          newblockArray.push(["core/paragraph", {
             ...attributes,
-            className: 'itmar_ex_block',
+            className: "itmar_ex_block",
             content: element.innerHTML
           }]);
         }
@@ -660,26 +659,26 @@ function Edit({
         block_count++;
         const attributes = element_style_obj[elementType];
         if (innerBlocks.length >= block_count) {
-          newblockArray.push(['itmar/code-highlight', {
+          newblockArray.push(["itmar/code-highlight", {
             ...attributes,
             codeArea: element.textContent,
             fileName: innerBlocks[block_count - 1].attributes.fileName
           }]);
         } else {
-          newblockArray.push(['itmar/code-highlight', {
+          newblockArray.push(["itmar/code-highlight", {
             ...attributes,
             codeArea: element.textContent
           }]);
         }
       } else if (elementType.match(/^UL|OL$/)) {
         block_count++;
-        const ordered = elementType === 'OL'; //順序付きか
+        const ordered = elementType === "OL"; //順序付きか
         const attributes = element_style_obj[elementType];
         const list_Array = listDOMToBlocks(element);
-        newblockArray.push(['core/list', {
+        newblockArray.push(["core/list", {
           ...attributes,
           ordered: ordered,
-          className: 'itmar_ex_block',
+          className: "itmar_ex_block",
           list_type: element.tagName
         }, list_Array]);
       } else if (elementType.match(/^BLOCKQUOTE$/)) {
@@ -690,12 +689,12 @@ function Edit({
         const match = block_content.match(/-- (.+?)(<|$)/);
         const citation = match ? match[1] : null; // 引用元のテキスト
 
-        const quote_str = element.children[0].innerHTML.replace(/-- .+?(?=<|$)/, '');
-        newblockArray.push(['core/quote', {
+        const quote_str = element.children[0].innerHTML.replace(/-- .+?(?=<|$)/, "");
+        newblockArray.push(["core/quote", {
           ...attributes,
-          className: 'itmar_ex_block',
+          className: "itmar_ex_block",
           citation: citation
-        }, [['core/paragraph', {
+        }, [["core/paragraph", {
           content: quote_str
         }]]]);
       } else if (elementType.match(/^TABLE$/)) {
@@ -703,14 +702,14 @@ function Edit({
         const attributes = element_style_obj[elementType];
 
         // テーブルヘッダーとテーブルボディを抽出
-        const tableHead = extractRows(element.querySelector("thead"), 'tr', 'th');
-        const tableBody = extractRows(element.querySelector("tbody"), 'tr', 'td');
-        const tablefoot = extractRows(element.querySelector("tfoot"), 'tr', 'td');
+        const tableHead = extractRows(element.querySelector("thead"), "tr", "th");
+        const tableBody = extractRows(element.querySelector("tbody"), "tr", "td");
+        const tablefoot = extractRows(element.querySelector("tfoot"), "tr", "td");
 
         // 抽出したデータを使ってcore/tableブロックを初期化
-        const blockArray = ['core/table', {
+        const blockArray = ["core/table", {
           ...attributes,
-          className: 'itmar_ex_block',
+          className: "itmar_ex_block",
           hasFixedLayout: true,
           head: tableHead,
           body: tableBody,
@@ -750,11 +749,11 @@ function Edit({
   };
   const closeModal = () => setIsModalOpen(false);
   return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.InspectorControls, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Set Styel HTML Tag', 'block-location'),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Set Styel HTML Tag", "markdown-block"),
     initialOpen: false
   }, Object.keys(element_style_obj).map(style_elm => {
     const actions = [{
-      label: '×',
+      label: "×",
       onClick: () => openModal(style_elm)
     }];
     return (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Notice, {
@@ -762,10 +761,10 @@ function Edit({
       isDismissible: false
     }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, style_elm));
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Table of Content', 'block-location'),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Table of Content", "markdown-block"),
     initialOpen: true
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelRow, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToggleControl, {
-    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)('Table of Content Render', 'block-location'),
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Table of Content Render", "markdown-block"),
     checked: is_toc,
     onChange: val => setAttributes({
       is_toc: val
@@ -777,11 +776,11 @@ function Edit({
     stokArray: toc_set_array,
     type: "checkBox",
     option: [{
-      title: 'ヘッダー部分',
-      value: 'header'
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("header part", "markdown-block"),
+      value: "header"
     }, {
-      title: 'サイドバー部分',
-      value: 'sidebar'
+      title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("sidebar part", "markdown-block"),
+      value: "sidebar"
     }],
     setAttributes: setAttributes
   }))), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
@@ -789,11 +788,11 @@ function Edit({
     initialOpen: false,
     className: "style_ctrl"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.__experimentalPanelColorGradientSettings, {
-    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Background Color Setting"),
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Background Color Setting", "markdown-block"),
     settings: [{
       colorValue: backgroundColor,
       gradientValue: backgroundGradient,
-      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Choose Background color"),
+      label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Choose Background color", "markdown-block"),
       onColorChange: newValue => setAttributes({
         backgroundColor: newValue
       }),
@@ -802,7 +801,7 @@ function Edit({
       })
     }]
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBoxControl, {
-    label: "\u30DE\u30FC\u30B8\u30F3\u8A2D\u5B9A",
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Margin settings(desk top)", "markdown-block"),
     values: margin_value,
     onChange: value => setAttributes({
       margin_value: value
@@ -813,7 +812,7 @@ function Edit({
     ,
     resetValues: padding_resetValues // リセット時の値
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBoxControl, {
-    label: "\u30D1\u30C6\u30A3\u30F3\u30B0\u8A2D\u5B9A",
+    label: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Padding settings(desk top)", "markdown-block"),
     values: padding_value,
     onChange: value => setAttributes({
       padding_value: value
@@ -824,16 +823,16 @@ function Edit({
     ,
     resetValues: padding_resetValues // リセット時の値
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.PanelBody, {
-    title: "\u30DC\u30FC\u30C0\u30FC\u8A2D\u5B9A",
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Border settings", "markdown-block"),
     initialOpen: false,
     className: "border_design_ctrl"
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.__experimentalBorderBoxControl, {
     colors: [{
-      color: '#72aee6'
+      color: "#72aee6"
     }, {
-      color: '#000'
+      color: "#000"
     }, {
-      color: '#fff'
+      color: "#fff"
     }],
     onChange: newValue => setAttributes({
       border_value: newValue
@@ -845,14 +844,14 @@ function Edit({
   }), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.__experimentalBorderRadiusControl, {
     values: radius_value,
     onChange: newBrVal => setAttributes({
-      radius_value: typeof newBrVal === 'string' ? {
-        "value": newBrVal
+      radius_value: typeof newBrVal === "string" ? {
+        value: newBrVal
       } : newBrVal
     })
   })))), isModalOpen && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Modal, {
-    title: "\u30B9\u30BF\u30A4\u30EB\u306E\u6D88\u53BB",
+    title: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Erase styles", "markdown-block"),
     onRequestClose: closeModal
-  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, "\u8A2D\u5B9A\u3055\u308C\u305FDOM\u8981\u7D20\u306E\u30B9\u30BF\u30A4\u30EB\u3092\u524A\u9664\u3057\u307E\u3059\u3002", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), "\u30C7\u30D5\u30A9\u30EB\u30C8\u306E\u30B9\u30BF\u30A4\u30EB\u306B\u3082\u3069\u308A\u307E\u3059\u3002", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), "\u5143\u306B\u623B\u305B\u307E\u305B\u3093\u3002\u3088\u308D\u3057\u3044\u3067\u3059\u304B\uFF1F", (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Button, {
+  }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("p", null, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Removes the style of a DOM element that has been set.", "markdown-block"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Return to default style.", "markdown-block"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null), (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("It cannot be undone. Is it OK?", "markdown-block"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("br", null)), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Button, {
     onClick: () => {
       const newElementStyleObj = {
         ...element_style_obj
@@ -866,7 +865,7 @@ function Edit({
     }
   }, "\u524A\u9664\u3059\u308B"), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.Button, {
     onClick: closeModal
-  }, "\u30AD\u30E3\u30F3\u30BB\u30EB")), isMobile && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.BlockControls, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToolbarGroup, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToolbarButton
+  }, (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("Cancel", "markdown-block"))), isMobile && (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.BlockControls, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToolbarGroup, null, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_components__WEBPACK_IMPORTED_MODULE_10__.ToolbarButton
   //属性 isEditMode の値により表示するラベルを切り替え
   , {
     label: isEditMode ? "Preview" : "Edit"
@@ -896,7 +895,7 @@ function Edit({
     }),
     options: autoUploadImage
   })), (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)("div", {
-    className: `preview_area ${!isEditMode ? 'isShow' : ''}`,
+    className: `preview_area ${!isEditMode ? "isShow" : ""}`,
     style: blockStyle
   }, (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_wordpress_block_editor__WEBPACK_IMPORTED_MODULE_11__.InnerBlocks, {
     template: blockArray
@@ -916,13 +915,16 @@ function Edit({
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! @wordpress/element */ "@wordpress/element");
 /* harmony import */ var _wordpress_element__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_wordpress_element__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
-/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _markdown_svg__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./markdown.svg */ "./src/markdown.svg");
-/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
-/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
-/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./save */ "./src/save.js");
-/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @wordpress/i18n */ "@wordpress/i18n");
+/* harmony import */ var _wordpress_i18n__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @wordpress/blocks */ "@wordpress/blocks");
+/* harmony import */ var _wordpress_blocks__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _markdown_svg__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./markdown.svg */ "./src/markdown.svg");
+/* harmony import */ var _style_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./style.scss */ "./src/style.scss");
+/* harmony import */ var _edit__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./edit */ "./src/edit.js");
+/* harmony import */ var _save__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./save */ "./src/save.js");
+/* harmony import */ var _block_json__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ./block.json */ "./src/block.json");
+
 
 
 
@@ -934,10 +936,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_1__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_6__.name, {
-  icon: (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_markdown_svg__WEBPACK_IMPORTED_MODULE_2__.ReactComponent, null),
-  edit: _edit__WEBPACK_IMPORTED_MODULE_4__["default"],
-  save: _save__WEBPACK_IMPORTED_MODULE_5__["default"]
+(0,_wordpress_blocks__WEBPACK_IMPORTED_MODULE_2__.registerBlockType)(_block_json__WEBPACK_IMPORTED_MODULE_7__.name, {
+  icon: (0,_wordpress_element__WEBPACK_IMPORTED_MODULE_0__.createElement)(_markdown_svg__WEBPACK_IMPORTED_MODULE_3__.ReactComponent, null),
+  description: (0,_wordpress_i18n__WEBPACK_IMPORTED_MODULE_1__.__)("This is a block that converts a text file written in markdown notation into HTML and displays it.", "markdown-block"),
+  edit: _edit__WEBPACK_IMPORTED_MODULE_5__["default"],
+  save: _save__WEBPACK_IMPORTED_MODULE_6__["default"]
 });
 
 /***/ }),
@@ -41321,7 +41324,7 @@ module.exports = JSON.parse('{"Aacute":"Á","aacute":"á","Abreve":"Ă","abreve"
 /***/ ((module) => {
 
 "use strict";
-module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","description":"マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}},"backgroundColor":{"type":"string"},"backgroundGradient":{"type":"string"},"margin_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"padding_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"radius_value":{"type":"object","default":{"topLeft":"0px","topRight":"0px","bottomRight":"0px","bottomLeft":"0px","value":"0px"}},"border_value":{"type":"object"},"is_toc":{"type":"boolean","default":true},"toc_set_array":{"type":"array","default":["header","sidebar"]},"isEditMode":{"type":"boolean","default":true}},"textdomain":"markdown-block","editorScript":"file:./index.js","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
+module.exports = JSON.parse('{"$schema":"https://schemas.wp.org/trunk/block.json","apiVersion":2,"name":"itmar/markdown-block","version":"0.1.0","title":"Mark Down","category":"widgets","supports":{"html":false},"attributes":{"mdContent":{"type":"string"},"blockArray":{"type":"array","default":[]},"element_style_obj":{"type":"object","default":{}},"backgroundColor":{"type":"string"},"backgroundGradient":{"type":"string"},"margin_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"padding_value":{"type":"object","default":{"top":"10px","left":"10px","bottom":"10px","right":"10px"}},"radius_value":{"type":"object","default":{"topLeft":"0px","topRight":"0px","bottomRight":"0px","bottomLeft":"0px","value":"0px"}},"border_value":{"type":"object"},"is_toc":{"type":"boolean","default":true},"toc_set_array":{"type":"array","default":["header","sidebar"]},"isEditMode":{"type":"boolean","default":true}},"textdomain":"markdown-block","editorStyle":"file:./index.css","style":"file:./style-index.css"}');
 
 /***/ })
 

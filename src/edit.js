@@ -1,14 +1,13 @@
-
-import { __ } from '@wordpress/i18n';
+import { __ } from "@wordpress/i18n";
 
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import showdown from 'showdown';
-import { marked } from 'marked';
-import MarkdownIt from 'markdown-it';
-import { useDispatch, useSelect } from '@wordpress/data';
-import equal from 'fast-deep-equal';
-import MultiSelect from './MultiSelect';
+import showdown from "showdown";
+import { marked } from "marked";
+import MarkdownIt from "markdown-it";
+import { useDispatch, useSelect } from "@wordpress/data";
+import equal from "fast-deep-equal";
+import MultiSelect from "./MultiSelect";
 
 import {
 	Button,
@@ -23,22 +22,27 @@ import {
 	ToolbarGroup,
 	ToolbarButton,
 	__experimentalBoxControl as BoxControl,
-	__experimentalBorderBoxControl as BorderBoxControl
-} from '@wordpress/components';
+	__experimentalBorderBoxControl as BorderBoxControl,
+} from "@wordpress/components";
 import {
 	useBlockProps,
 	InnerBlocks,
 	InspectorControls,
 	BlockControls,
 	__experimentalPanelColorGradientSettings as PanelColorGradientSettings,
-	__experimentalBorderRadiusControl as BorderRadiusControl
-} from '@wordpress/block-editor';
+	__experimentalBorderRadiusControl as BorderRadiusControl,
+} from "@wordpress/block-editor";
 
-import { useState, useEffect, useMemo, useRef } from '@wordpress/element';
-import { borderProperty, radiusProperty, marginProperty, paddingProperty } from './styleProperty';
-import { useIsMobile } from "./CustomFooks"
+import { useState, useEffect, useMemo, useRef } from "@wordpress/element";
+import {
+	borderProperty,
+	radiusProperty,
+	marginProperty,
+	paddingProperty,
+} from "./styleProperty";
+import { useIsMobile } from "./CustomFooks";
 
-import './editor.scss';
+import "./editor.scss";
 
 // エクステンションの定義(引用元の表現)
 // showdown.extension('quoteCitation', function () {
@@ -54,16 +58,16 @@ import './editor.scss';
 // HTMLからセルを抽出する関数
 function extractCells(rowElement, cellTagName) {
 	const cells = Array.from(rowElement.querySelectorAll(cellTagName));
-	return cells.map(cell => ({ content: cell.textContent, tag: cellTagName }));
+	return cells.map((cell) => ({ content: cell.textContent, tag: cellTagName }));
 }
 
 // HTMLから行を抽出する関数
 function extractRows(sectionElement, rowTagName, cellTagName) {
 	if (!sectionElement) {
-		return []
+		return [];
 	}
 	const rows = Array.from(sectionElement.querySelectorAll(rowTagName));
-	return rows.map(row => ({ cells: extractCells(row, cellTagName) }));
+	return rows.map((row) => ({ cells: extractCells(row, cellTagName) }));
 }
 
 export default function Edit({ attributes, setAttributes, clientId }) {
@@ -79,7 +83,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		border_value,
 		is_toc,
 		toc_set_array,
-		isEditMode
+		isEditMode,
 	} = attributes;
 
 	//単色かグラデーションかの選択
@@ -90,77 +94,96 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const padding_obj = paddingProperty(padding_value);
 	const radius_obj = radiusProperty(radius_value);
 	const border_obj = borderProperty(border_value);
-	const blockStyle = { background: bgColor, ...margin_obj, ...padding_obj, ...radius_obj, ...border_obj };
+	const blockStyle = {
+		background: bgColor,
+		...margin_obj,
+		...padding_obj,
+		...radius_obj,
+		...border_obj,
+	};
 
 	//スペースのリセットバリュー
 	const padding_resetValues = {
-		top: '10px',
-		left: '10px',
-		right: '10px',
-		bottom: '10px',
-	}
+		top: "10px",
+		left: "10px",
+		right: "10px",
+		bottom: "10px",
+	};
 
 	//ボーダーのリセットバリュー
 	const border_resetValues = {
-		top: '0px',
-		left: '0px',
-		right: '0px',
-		bottom: '0px',
-	}
+		top: "0px",
+		left: "0px",
+		right: "0px",
+		bottom: "0px",
+	};
 
 	const units = [
-		{ value: 'px', label: 'px' },
-		{ value: 'em', label: 'em' },
-		{ value: 'rem', label: 'rem' },
+		{ value: "px", label: "px" },
+		{ value: "em", label: "em" },
+		{ value: "rem", label: "rem" },
 	];
-
 
 	const blockProps = useBlockProps();
 
 	//モバイルのフラグ
 	const isMobile = useIsMobile();
 
-
 	//エディタの参照を取得
 	const simpleMdeRef = useRef();
 
 	//画像ファイルのアップロードとマークダウンの挿入
 	const imageUploadFunction = (file) => {
-		const nonce = itmar_markdown_option.nonce // Wordpressから取得したnonce
+		const nonce = itmar_markdown_option.nonce; // Wordpressから取得したnonce
 
 		// FormDataオブジェクトを作成し、ファイルを追加
 		const formData = new FormData();
-		formData.append('file', file);
+		formData.append("file", file);
 
 		// fetchを使用してファイルをアップロード
-		fetch('/wp-json/wp/v2/media', {
-			method: 'POST',
+		fetch("/wp-json/wp/v2/media", {
+			method: "POST",
 			headers: {
-				'X-WP-Nonce': nonce
+				"X-WP-Nonce": nonce,
 			},
-			body: formData
+			body: formData,
 		})
-			.then(response => response.json())
-			.then(data => {
+			.then((response) => response.json())
+			.then((data) => {
 				const markDown_img = `\n![image](${data.source_url})`;
 				if (simpleMdeRef.current) {
 					simpleMdeRef.current.codemirror.replaceSelection(markDown_img);
 				}
-
 			})
-			.catch(error => {
-				console.error('Upload failed:', error);
+			.catch((error) => {
+				console.error("Upload failed:", error);
 			});
-
-	}
+	};
 
 	// エディタの設定
 	const autoUploadImage = useMemo(() => {
 		return {
 			uploadImage: true,
 			imageUploadFunction,
-			maxHeight: '60vh',
-			toolbar: ["undo", "redo", "|", "bold", "italic", "heading", "|", "code", "quote", "link", "image", "unordered-list", "ordered-list", "table", "|", "guide"]
+			maxHeight: "60vh",
+			toolbar: [
+				"undo",
+				"redo",
+				"|",
+				"bold",
+				"italic",
+				"heading",
+				"|",
+				"code",
+				"quote",
+				"link",
+				"image",
+				"unordered-list",
+				"ordered-list",
+				"table",
+				"|",
+				"guide",
+			],
 		};
 	}, []);
 	//スクロールイベントの登録（クリーンアップも含む）
@@ -169,10 +192,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			const editorInstance = simpleMdeRef.current;
 			const codemirror = editorInstance.codemirror;
 
-			codemirror.on('scroll', handleScroll);
+			codemirror.on("scroll", handleScroll);
 
 			return () => {
-				codemirror.off('scroll', handleScroll);
+				codemirror.off("scroll", handleScroll);
 			};
 		}
 	}, [simpleMdeRef.current]);
@@ -185,19 +208,22 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	};
 
 	//removeBlocks関数の取得
-	const { removeBlocks, updateBlockAttributes } = useDispatch('core/block-editor');
+	const { removeBlocks, updateBlockAttributes } =
+		useDispatch("core/block-editor");
 
 	//インナーブロックの監視
 	const innerBlockIds = useSelect((select) =>
-		select('core/block-editor').getBlocks(clientId).map((block) => block.clientId)
+		select("core/block-editor")
+			.getBlocks(clientId)
+			.map((block) => block.clientId)
 	);
 	const innerBlocks = useSelect(
-		(select) => select('core/block-editor').getBlocks(clientId),
+		(select) => select("core/block-editor").getBlocks(clientId),
 		[clientId]
 	);
 	//選択中のブロック
 	const selectedBlock = useSelect(
-		(select) => select('core/block-editor').getSelectedBlock(),
+		(select) => select("core/block-editor").getSelectedBlock(),
 		[]
 	);
 
@@ -206,68 +232,92 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		if (innerBlocks.length > 0) {
 			//選択されたブロックの情報を収集
 			const selectTagMap = {
-				'itmar/design-title': selectedBlock?.attributes.headingType,
-				'core/paragraph': 'P',
-				'itmar/code-highlight': 'PRE',
-				'core/image': 'IMG',
-				'core/quote': 'BLOCKQUOTE',
-				'core/list': selectedBlock?.attributes.list_type,
-				'core/table': 'TABLE',
+				"itmar/design-title": selectedBlock?.attributes.headingType,
+				"core/paragraph": "P",
+				"itmar/code-highlight": "PRE",
+				"core/image": "IMG",
+				"core/quote": "BLOCKQUOTE",
+				"core/list": selectedBlock?.attributes.list_type,
+				"core/table": "TABLE",
 				// 以下同様に続く
 			};
-			const select_key = selectTagMap[selectedBlock?.name]
+			const select_key = selectTagMap[selectedBlock?.name];
 
 			//登録済みのスタイルを展開
 			let newAttributes = { ...element_style_obj };
 			let stockStyle = null;
 			for (let block of innerBlocks) {
 				const tagMap = {
-					'itmar/design-title': block.attributes.headingType,
-					'core/paragraph': 'P',
-					'itmar/code-highlight': 'PRE',
-					'core/image': 'IMG',
-					'core/quote': 'BLOCKQUOTE',
-					'core/list': block.attributes.list_type,
-					'core/table': 'TABLE',
+					"itmar/design-title": block.attributes.headingType,
+					"core/paragraph": "P",
+					"itmar/code-highlight": "PRE",
+					"core/image": "IMG",
+					"core/quote": "BLOCKQUOTE",
+					"core/list": block.attributes.list_type,
+					"core/table": "TABLE",
 					// 以下同様に続く
 				};
 				const key = tagMap[block.name];
 				//スタイル以外の属性を削除
-				const { headingContent, content, url, headingID, codeArea, fileName, citation, head, body, foot, ...styleAttributes } = block.attributes;
+				const {
+					headingContent,
+					content,
+					url,
+					headingID,
+					codeArea,
+					fileName,
+					citation,
+					head,
+					body,
+					foot,
+					...styleAttributes
+				} = block.attributes;
 				// 更新対象のブロックが選択中のブロックでなく、
 				// かつ、更新対象のブロックが選択中のブロックと同じkeyを持つ場合
-				if (block.clientId !== selectedBlock?.clientId && key === select_key
-				) {
-					const { headingContent, content, url, headingID, codeArea, fileName, citation, head, body, foot, ...selectAttributes } = selectedBlock.attributes;
-					if (styleAttributes !== selectAttributes) { // 既に更新されたブロックを再度更新しないようにする
-						updateBlockAttributes(block.clientId, { ...block.attributes, ...selectAttributes });
+				if (block.clientId !== selectedBlock?.clientId && key === select_key) {
+					const {
+						headingContent,
+						content,
+						url,
+						headingID,
+						codeArea,
+						fileName,
+						citation,
+						head,
+						body,
+						foot,
+						...selectAttributes
+					} = selectedBlock.attributes;
+					if (styleAttributes !== selectAttributes) {
+						// 既に更新されたブロックを再度更新しないようにする
+						updateBlockAttributes(block.clientId, {
+							...block.attributes,
+							...selectAttributes,
+						});
 					}
 				}
 
 				//新しいスタイルを上書き
 				newAttributes[key] = styleAttributes;
 				//選択中のブロックのスタイルをストック
-				if (selectedBlock && (block.clientId === selectedBlock.clientId)) {
+				if (selectedBlock && block.clientId === selectedBlock.clientId) {
 					stockStyle = { [key]: styleAttributes };
 				}
-
-			};
+			}
 
 			//ストックしたスタイルがあれば上書き
 			if (stockStyle) {
 				newAttributes = {
 					...newAttributes,
-					...stockStyle
+					...stockStyle,
 				};
 			}
 			//ブロック属性に登録
 			setAttributes({
-				element_style_obj: newAttributes
+				element_style_obj: newAttributes,
 			});
 		}
-
 	}, [innerBlocks]);
-
 
 	//ブロックのテンプレート要素の変化を検証する配列
 	const [tempBlockArray, setTempBlockArray] = useState([]);
@@ -281,15 +331,16 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	//DOM要素の再生成(マークダウンテキストの変更とelement_style_objがクリア・再生成されたときに発火)
 	useEffect(() => {
-		if (!mdContent) return;//mdContent文書がなければ処理しない
+		if (!mdContent) return; //mdContent文書がなければ処理しない
 
 		// const converter = new showdown.Converter({ simpleLineBreaks: true, extensions: ['quoteCitation'] });
 		// const html = converter.makeHtml(mdContent);
-		marked.use({//markedのオプション設定
+		marked.use({
+			//markedのオプション設定
 			breaks: true,
 			gfm: true,
 			mangle: false,
-			headerIds: false
+			headerIds: false,
 		});
 		const html = marked.parse(mdContent);
 		// const converter = new MarkdownIt({
@@ -297,47 +348,47 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		// });
 		// const html = converter.render(mdContent);
 		const parser = new DOMParser();
-		const doc = parser.parseFromString(html, 'text/html');
+		const doc = parser.parseFromString(html, "text/html");
 		const newblockArray = [];
-		let block_count = 0;//追加されるブロックのカウント
+		let block_count = 0; //追加されるブロックのカウント
 
 		//リスト要素をgutenbergのブロックにする
 		function listDOMToBlocks(element) {
-			const listItems = Array.from(element.children).filter(child => child.tagName.toLowerCase() === 'li');//element要素直下のli要素を取得
-			const listArray = listItems.map(listItem => {
-				const nestedList = listItem.querySelector('ul, ol');//li要素の下にul,ol要素があるか
+			const listItems = Array.from(element.children).filter(
+				(child) => child.tagName.toLowerCase() === "li"
+			); //element要素直下のli要素を取得
+			const listArray = listItems.map((listItem) => {
+				const nestedList = listItem.querySelector("ul, ol"); //li要素の下にul,ol要素があるか
 				let nestedBlocks = [];
 
 				if (nestedList) {
-					nestedBlocks = listDOMToBlocks(nestedList);//li要素の下にul,ol要素がある場合は再帰処理
+					nestedBlocks = listDOMToBlocks(nestedList); //li要素の下にul,ol要素がある場合は再帰処理
 				}
 
-				const textNode = Array.from(listItem.childNodes).find(node => node.nodeType === Node.TEXT_NODE);//li要素内の最初のテキストノード
+				const textNode = Array.from(listItem.childNodes).find(
+					(node) => node.nodeType === Node.TEXT_NODE
+				); //li要素内の最初のテキストノード
 				const listItemBlock = [
-					'core/list-item',
+					"core/list-item",
 					{
-						content: textNode ? textNode.textContent : '', // テキストノードの内容を取得
+						content: textNode ? textNode.textContent : "", // テキストノードの内容を取得
 					},
 				];
 
 				if (nestedBlocks.length > 0) {
 					//const { className, ...filter_class_attr } = attributes || {};
-					const ordered = nestedList.tagName === 'OL';//順序付きか
+					const ordered = nestedList.tagName === "OL"; //順序付きか
 					listItemBlock.push([
-						['core/list',
-							{ ordered: ordered },
-							nestedBlocks]
+						["core/list", { ordered: ordered }, nestedBlocks],
 					]);
 				}
 				return listItemBlock;
-			})
-			return listArray
-
+			});
+			return listArray;
 		}
 
-
 		const traverseDOM = (() => {
-			let counter = 0;//走査されるDOM要素のカウント
+			let counter = 0; //走査されるDOM要素のカウント
 			return (element, callback) => {
 				callback(element, counter++);
 
@@ -349,79 +400,138 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 			};
 		})();
 
-		traverseDOM(doc.body, (element, count) => {//body直下のDOMのみ走査
+		traverseDOM(doc.body, (element, count) => {
+			//body直下のDOMのみ走査
 			let elementType = element.tagName;
 
 			if (elementType.match(/^H[1-6]$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
-				newblockArray.push(['itmar/design-title', { ...attributes, headingContent: element.textContent, headingType: element.tagName, headingID: `toc-${count}` }]);
+				newblockArray.push([
+					"itmar/design-title",
+					{
+						...attributes,
+						headingContent: element.textContent,
+						headingType: element.tagName,
+						headingID: `toc-${count}`,
+					},
+				]);
 			} else if (elementType.match(/^P$/)) {
 				block_count++;
 				if (element.children[0]?.tagName.match(/^IMG$/)) {
 					elementType = element.children[0].tagName;
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/image', { ...attributes, className: 'itmar_ex_block', url: element.children[0].src }]);
+					newblockArray.push([
+						"core/image",
+						{
+							...attributes,
+							className: "itmar_ex_block",
+							url: element.children[0].src,
+						},
+					]);
 				} else {
 					const attributes = element_style_obj[elementType];
-					newblockArray.push(['core/paragraph', { ...attributes, className: 'itmar_ex_block', content: element.innerHTML }]);
+					newblockArray.push([
+						"core/paragraph",
+						{
+							...attributes,
+							className: "itmar_ex_block",
+							content: element.innerHTML,
+						},
+					]);
 				}
 			} else if (elementType.match(/^PRE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
 				if (innerBlocks.length >= block_count) {
-					newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent, fileName: innerBlocks[block_count - 1].attributes.fileName }]);
+					newblockArray.push([
+						"itmar/code-highlight",
+						{
+							...attributes,
+							codeArea: element.textContent,
+							fileName: innerBlocks[block_count - 1].attributes.fileName,
+						},
+					]);
 				} else {
-					newblockArray.push(['itmar/code-highlight', { ...attributes, codeArea: element.textContent }]);
+					newblockArray.push([
+						"itmar/code-highlight",
+						{ ...attributes, codeArea: element.textContent },
+					]);
 				}
 			} else if (elementType.match(/^UL|OL$/)) {
 				block_count++;
-				const ordered = elementType === 'OL';//順序付きか
+				const ordered = elementType === "OL"; //順序付きか
 				const attributes = element_style_obj[elementType];
 				const list_Array = listDOMToBlocks(element);
-				newblockArray.push(['core/list', { ...attributes, ordered: ordered, className: 'itmar_ex_block', list_type: element.tagName }, list_Array,]);
+				newblockArray.push([
+					"core/list",
+					{
+						...attributes,
+						ordered: ordered,
+						className: "itmar_ex_block",
+						list_type: element.tagName,
+					},
+					list_Array,
+				]);
 			} else if (elementType.match(/^BLOCKQUOTE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
 				const block_content = element.children[0].innerHTML;
 				//引用元（cite）の文字列を取得
 				const match = block_content.match(/-- (.+?)(<|$)/);
-				const citation = match ? match[1] : null;  // 引用元のテキスト
+				const citation = match ? match[1] : null; // 引用元のテキスト
 
-				const quote_str = element.children[0].innerHTML.replace(/-- .+?(?=<|$)/, '');
-				newblockArray.push(
-					[
-						'core/quote',
-						{ ...attributes, className: 'itmar_ex_block', citation: citation },
-						[
-							['core/paragraph', { content: quote_str }]
-						]
-					]
+				const quote_str = element.children[0].innerHTML.replace(
+					/-- .+?(?=<|$)/,
+					""
 				);
+				newblockArray.push([
+					"core/quote",
+					{ ...attributes, className: "itmar_ex_block", citation: citation },
+					[["core/paragraph", { content: quote_str }]],
+				]);
 			} else if (elementType.match(/^TABLE$/)) {
 				block_count++;
 				const attributes = element_style_obj[elementType];
 
 				// テーブルヘッダーとテーブルボディを抽出
-				const tableHead = extractRows(element.querySelector("thead"), 'tr', 'th');
-				const tableBody = extractRows(element.querySelector("tbody"), 'tr', 'td');
-				const tablefoot = extractRows(element.querySelector("tfoot"), 'tr', 'td');
+				const tableHead = extractRows(
+					element.querySelector("thead"),
+					"tr",
+					"th"
+				);
+				const tableBody = extractRows(
+					element.querySelector("tbody"),
+					"tr",
+					"td"
+				);
+				const tablefoot = extractRows(
+					element.querySelector("tfoot"),
+					"tr",
+					"td"
+				);
 
 				// 抽出したデータを使ってcore/tableブロックを初期化
-				const blockArray =
-					['core/table', { ...attributes, className: 'itmar_ex_block', hasFixedLayout: true, head: tableHead, body: tableBody, foot: tablefoot }];
-				newblockArray.push(
-					blockArray
-				);
+				const blockArray = [
+					"core/table",
+					{
+						...attributes,
+						className: "itmar_ex_block",
+						hasFixedLayout: true,
+						head: tableHead,
+						body: tableBody,
+						foot: tablefoot,
+					},
+				];
+				newblockArray.push(blockArray);
 			}
-
-
 		});
 
-		if (!equal(newblockArray, prevBlockArray)) {//マークダウン文書が変わっても既存のblockArrayに影響を与えなければ書き換えない
-			setTempBlockArray(newblockArray);//tempBlockArrayを書き換え
+		if (!equal(newblockArray, prevBlockArray)) {
+			//マークダウン文書が変わっても既存のblockArrayに影響を与えなければ書き換えない
+			setTempBlockArray(newblockArray); //tempBlockArrayを書き換え
 		}
-	}, [mdContent, Object.keys(element_style_obj).length])
+	}, [mdContent, Object.keys(element_style_obj).length]);
 
 	//tempBlockArrayに変化があればブロックを一旦削除
 	useEffect(() => {
@@ -443,21 +553,21 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const openModal = (style_elm) => {
 		setSelectedStyleElm(style_elm);
 		setIsModalOpen(true);
-	}
+	};
 	const closeModal = () => setIsModalOpen(false);
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={__('Set Styel HTML Tag', 'block-location')}
+					title={__("Set Styel HTML Tag", "markdown-block")}
 					initialOpen={false}
 				>
-					{Object.keys(element_style_obj).map(style_elm => {
+					{Object.keys(element_style_obj).map((style_elm) => {
 						const actions = [
 							{
-								label: '×',
-								onClick: () => openModal(style_elm)
+								label: "×",
+								onClick: () => openModal(style_elm),
 							},
 						];
 						return (
@@ -466,86 +576,122 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							</Notice>
 						);
 					})}
-
 				</PanelBody>
 				<PanelBody
-					title={__('Table of Content', 'block-location')}
+					title={__("Table of Content", "markdown-block")}
 					initialOpen={true}
 				>
 					<PanelRow>
 						<ToggleControl
-							label={__('Table of Content Render', 'block-location')}
+							label={__("Table of Content Render", "markdown-block")}
 							checked={is_toc}
 							onChange={(val) => setAttributes({ is_toc: val })}
 						/>
 					</PanelRow>
-					{is_toc &&  //上記が true の場合に表示
+					{is_toc && ( //上記が true の場合に表示
 						<PanelRow>
 							<MultiSelect
 								stockArrayName="toc_set_array"
 								stokArray={toc_set_array}
-								type='checkBox'
-								option={[{ title: 'ヘッダー部分', value: 'header' }, { title: 'サイドバー部分', value: 'sidebar' }]}
+								type="checkBox"
+								option={[
+									{
+										title: __("header part", "markdown-block"),
+										value: "header",
+									},
+									{
+										title: __("sidebar part", "markdown-block"),
+										value: "sidebar",
+									},
+								]}
 								setAttributes={setAttributes}
 							/>
 						</PanelRow>
-					}
+					)}
 				</PanelBody>
-				<PanelBody title="スタイル設定" initialOpen={false} className="style_ctrl">
+				<PanelBody
+					title="スタイル設定"
+					initialOpen={false}
+					className="style_ctrl"
+				>
 					<PanelColorGradientSettings
-						title={__("Background Color Setting")}
+						title={__("Background Color Setting", "markdown-block")}
 						settings={[
 							{
 								colorValue: backgroundColor,
 								gradientValue: backgroundGradient,
 
-								label: __("Choose Background color"),
-								onColorChange: (newValue) => setAttributes({ backgroundColor: newValue }),
-								onGradientChange: (newValue) => setAttributes({ backgroundGradient: newValue }),
+								label: __("Choose Background color", "markdown-block"),
+								onColorChange: (newValue) =>
+									setAttributes({ backgroundColor: newValue }),
+								onGradientChange: (newValue) =>
+									setAttributes({ backgroundGradient: newValue }),
 							},
 						]}
 					/>
 					<BoxControl
-						label="マージン設定"
+						label={__("Margin settings(desk top)", "markdown-block")}
 						values={margin_value}
-						onChange={value => setAttributes({ margin_value: value })}
-						units={units}	// 許可する単位
-						allowReset={true}	// リセットの可否
-						resetValues={padding_resetValues}	// リセット時の値
-
+						onChange={(value) => setAttributes({ margin_value: value })}
+						units={units} // 許可する単位
+						allowReset={true} // リセットの可否
+						resetValues={padding_resetValues} // リセット時の値
 					/>
 
 					<BoxControl
-						label="パティング設定"
+						label={__("Padding settings(desk top)", "markdown-block")}
 						values={padding_value}
-						onChange={value => setAttributes({ padding_value: value })}
-						units={units}	// 許可する単位
-						allowReset={true}	// リセットの可否
-						resetValues={padding_resetValues}	// リセット時の値
-
+						onChange={(value) => setAttributes({ padding_value: value })}
+						units={units} // 許可する単位
+						allowReset={true} // リセットの可否
+						resetValues={padding_resetValues} // リセット時の値
 					/>
-					<PanelBody title="ボーダー設定" initialOpen={false} className="border_design_ctrl">
+					<PanelBody
+						title={__("Border settings", "markdown-block")}
+						initialOpen={false}
+						className="border_design_ctrl"
+					>
 						<BorderBoxControl
-							colors={[{ color: '#72aee6' }, { color: '#000' }, { color: '#fff' }]}
+							colors={[
+								{ color: "#72aee6" },
+								{ color: "#000" },
+								{ color: "#fff" },
+							]}
 							onChange={(newValue) => setAttributes({ border_value: newValue })}
 							value={border_value}
-							allowReset={true}	// リセットの可否
-							resetValues={border_resetValues}	// リセット時の値
+							allowReset={true} // リセットの可否
+							resetValues={border_resetValues} // リセット時の値
 						/>
 						<BorderRadiusControl
 							values={radius_value}
 							onChange={(newBrVal) =>
-								setAttributes({ radius_value: typeof newBrVal === 'string' ? { "value": newBrVal } : newBrVal })}
+								setAttributes({
+									radius_value:
+										typeof newBrVal === "string"
+											? { value: newBrVal }
+											: newBrVal,
+								})
+							}
 						/>
 					</PanelBody>
 				</PanelBody>
 			</InspectorControls>
 			{isModalOpen && (
 				<Modal
-					title="スタイルの消去"
+					title={__("Erase styles", "markdown-block")}
 					onRequestClose={closeModal}
 				>
-					<p>設定されたDOM要素のスタイルを削除します。<br />デフォルトのスタイルにもどります。<br />元に戻せません。よろしいですか？<br /></p>
+					<p>
+						{__(
+							"Removes the style of a DOM element that has been set.",
+							"markdown-block"
+						)}
+						<br />
+						{__("Return to default style.", "markdown-block")}
+						<br />
+						{__("It cannot be undone. Is it OK?", "markdown-block")}
+						<br />
+					</p>
 					<Button
 						onClick={() => {
 							const newElementStyleObj = { ...element_style_obj };
@@ -557,10 +703,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					>
 						削除する
 					</Button>
-					<Button onClick={closeModal}>キャンセル</Button>
+					<Button onClick={closeModal}>{__("Cancel", "markdown-block")}</Button>
 				</Modal>
 			)}
-			{isMobile &&
+			{isMobile && (
 				<BlockControls>
 					<ToolbarGroup>
 						<ToolbarButton
@@ -571,34 +717,37 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 							className="edit_mode"
 							//setAttributes を使って属性の値を更新（真偽値を反転）
 							onClick={() => {
-								setAttributes({ isEditMode: !isEditMode })
+								setAttributes({ isEditMode: !isEditMode });
 							}}
 						/>
 					</ToolbarGroup>
 				</BlockControls>
-			}
+			)}
 
 			<div {...blockProps}>
-				<div className='area_wrapper'>
-					<div className='edit_area' onScroll={handleScroll}>
+				<div className="area_wrapper">
+					<div className="edit_area" onScroll={handleScroll}>
 						<SimpleMDE
-							getMdeInstance={instance => { simpleMdeRef.current = instance; }}
+							getMdeInstance={(instance) => {
+								simpleMdeRef.current = instance;
+							}}
 							value={mdContent}
 							onChange={(value) => setAttributes({ mdContent: value })}
 							options={autoUploadImage}
 						/>
 					</div>
 
-					<div className={`preview_area ${!isEditMode ? 'isShow' : ''}`} style={blockStyle}>
+					<div
+						className={`preview_area ${!isEditMode ? "isShow" : ""}`}
+						style={blockStyle}
+					>
 						<InnerBlocks
 							template={blockArray}
-						//templateLock="all"
+							//templateLock="all"
 						/>
-
 					</div>
 				</div>
 			</div>
 		</>
-
 	);
 }
