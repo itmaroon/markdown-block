@@ -27,29 +27,29 @@ if (!defined('ABSPATH')) exit;
 // 1. ブロックの登録
 function itmar_markdown_block_block_init()
 {
-	$script_handle = 'itmar-handle-markdown-block';
-	$script_file = plugin_dir_path(__FILE__) . 'build/index.js';
-	wp_register_script(
-		$script_handle,
-		plugins_url('build/index.js', __FILE__),
-		array('wp-blocks', 'wp-element', 'wp-i18n', 'wp-block-editor'),
-		filemtime($script_file)
-	);
-	register_block_type(
-		__DIR__ . '/build',
-		array(
-			'editor_script' => $script_handle
-		)
-	);
-	// その後、このハンドルを使用してスクリプトの翻訳をセット
-	wp_set_script_translations($script_handle, 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
-
+	// $script_handle = 'itmar-handle-markdown-block';
+	// $script_file = plugin_dir_path(__FILE__) . 'build/index.js';
+	// wp_register_script(
+	// 	$script_handle,
+	// 	plugins_url('build/index.js', __FILE__),
+	// 	array('wp-blocks', 'wp-element', 'wp-i18n', 'wp-block-editor'),
+	// 	filemtime($script_file)
+	// );
 	// register_block_type(
 	// 	__DIR__ . '/build',
+	// 	array(
+	// 		'editor_script' => $script_handle
+	// 	)
 	// );
-	// // register_block_typeで生成されるハンドルを使用してスクリプトの翻訳をセット
-	// wp_set_script_translations('itmar-markdown-block-editor-script', 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
+	// // その後、このハンドルを使用してスクリプトの翻訳をセット
+	// wp_set_script_translations($script_handle, 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
 
+	$block_type = register_block_type(__DIR__ . '/build');
+	if ($block_type instanceof WP_Block_Type) {
+		$block_handle = str_replace("/", "-", $block_type->name);
+		// register_block_typeで生成されるハンドルを使用してスクリプトの翻訳をセット
+		wp_set_script_translations($block_handle . '-editor-script', 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
+	}
 	//PHP用のテキストドメインの読込（国際化）
 	load_plugin_textdomain('markdown-block', false, basename(dirname(__FILE__)) . '/languages');
 }
