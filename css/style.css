@@ -330,15 +330,6 @@
   display: flex;
   flex-wrap: nowrap;
 }
-@media (max-width: 767px) {
-  .wp-block-itmar-markdown-block .md_block_content {
-    display: block;
-    margin-right: 0 !important;
-    margin-left: 0 !important;
-    padding-right: 0 !important;
-    padding-left: 0 !important;
-  }
-}
 .wp-block-itmar-markdown-block .md_block_content .main_md_content {
   flex: 1 1 0;
 }

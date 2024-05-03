@@ -2,9 +2,7 @@ import { __ } from "@wordpress/i18n";
 
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
-import showdown from "showdown";
 import { marked } from "marked";
-import MarkdownIt from "markdown-it";
 import { useDispatch, useSelect } from "@wordpress/data";
 import equal from "fast-deep-equal";
 import MultiSelect from "./MultiSelect";
@@ -14,9 +12,6 @@ import {
 	PanelBody,
 	PanelRow,
 	ToggleControl,
-	RangeControl,
-	RadioControl,
-	TextControl,
 	Modal,
 	Notice,
 	ToolbarGroup,
@@ -39,8 +34,8 @@ import {
 	radiusProperty,
 	marginProperty,
 	paddingProperty,
-} from "./styleProperty";
-import { useIsMobile } from "./CustomFooks";
+	useIsIframeMobile,
+} from "itmar-block-packages";
 
 import "./editor.scss";
 
@@ -77,8 +72,8 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		element_style_obj,
 		backgroundColor,
 		backgroundGradient,
-		margin_value,
-		padding_value,
+		default_val,
+		mobile_val,
 		radius_value,
 		border_value,
 		is_toc,
@@ -89,7 +84,12 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	//単色かグラデーションかの選択
 	const bgColor = backgroundColor || backgroundGradient;
 
+	//モバイルのフラグ
+	const isMobile = useIsIframeMobile();
+
 	//ブロックのスタイル設定
+	const margin_value = !isMobile ? default_val.margin : mobile_val.margin;
+	const padding_value = !isMobile ? default_val.padding : mobile_val.padding;
 	const margin_obj = marginProperty(margin_value);
 	const padding_obj = paddingProperty(padding_value);
 	const radius_obj = radiusProperty(radius_value);
@@ -125,9 +125,6 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	];
 
 	const blockProps = useBlockProps();
-
-	//モバイルのフラグ
-	const isMobile = useIsMobile();
 
 	//エディタの参照を取得
 	const simpleMdeRef = useRef();
@@ -215,16 +212,16 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 	const innerBlockIds = useSelect((select) =>
 		select("core/block-editor")
 			.getBlocks(clientId)
-			.map((block) => block.clientId)
+			.map((block) => block.clientId),
 	);
 	const innerBlocks = useSelect(
 		(select) => select("core/block-editor").getBlocks(clientId),
-		[clientId]
+		[clientId],
 	);
 	//選択中のブロック
 	const selectedBlock = useSelect(
 		(select) => select("core/block-editor").getSelectedBlock(),
-		[]
+		[],
 	);
 
 	//インナーブロックの変化による属性値の記録
@@ -355,7 +352,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		//リスト要素をgutenbergのブロックにする
 		function listDOMToBlocks(element) {
 			const listItems = Array.from(element.children).filter(
-				(child) => child.tagName.toLowerCase() === "li"
+				(child) => child.tagName.toLowerCase() === "li",
 			); //element要素直下のli要素を取得
 			const listArray = listItems.map((listItem) => {
 				const nestedList = listItem.querySelector("ul, ol"); //li要素の下にul,ol要素があるか
@@ -366,7 +363,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				}
 
 				const textNode = Array.from(listItem.childNodes).find(
-					(node) => node.nodeType === Node.TEXT_NODE
+					(node) => node.nodeType === Node.TEXT_NODE,
 				); //li要素内の最初のテキストノード
 				const listItemBlock = [
 					"core/list-item",
@@ -483,7 +480,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 				const quote_str = element.children[0].innerHTML.replace(
 					/-- .+?(?=<|$)/,
-					""
+					"",
 				);
 				newblockArray.push([
 					"core/quote",
@@ -498,17 +495,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 				const tableHead = extractRows(
 					element.querySelector("thead"),
 					"tr",
-					"th"
+					"th",
 				);
 				const tableBody = extractRows(
 					element.querySelector("tbody"),
 					"tr",
-					"td"
+					"td",
 				);
 				const tablefoot = extractRows(
 					element.querySelector("tfoot"),
 					"tr",
-					"td"
+					"td",
 				);
 
 				// 抽出したデータを使ってcore/tableブロックを初期化
@@ -630,18 +627,46 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						]}
 					/>
 					<BoxControl
-						label={__("Margin settings(desk top)", "markdown-block")}
-						values={margin_value}
-						onChange={(value) => setAttributes({ margin_value: value })}
+						label={
+							!isMobile
+								? __("Margin settings(desk top)", "markdown-block")
+								: __("Margin settings(mobile)", "markdown-block")
+						}
+						values={!isMobile ? default_val.margin : mobile_val.margin}
+						onChange={(value) => {
+							if (!isMobile) {
+								setAttributes({
+									default_val: { ...default_val, margin: value },
+								});
+							} else {
+								setAttributes({
+									mobile_val: { ...mobile_val, margin: value },
+								});
+							}
+						}}
 						units={units} // 許可する単位
 						allowReset={true} // リセットの可否
 						resetValues={padding_resetValues} // リセット時の値
 					/>
 
 					<BoxControl
-						label={__("Padding settings(desk top)", "markdown-block")}
-						values={padding_value}
-						onChange={(value) => setAttributes({ padding_value: value })}
+						label={
+							!isMobile
+								? __("Padding settings(desk top)", "markdown-block")
+								: __("Padding settings(mobile)", "markdown-block")
+						}
+						values={!isMobile ? default_val.padding : mobile_val.padding}
+						onChange={(value) => {
+							if (!isMobile) {
+								setAttributes({
+									default_val: { ...default_val, padding: value },
+								});
+							} else {
+								setAttributes({
+									mobile_val: { ...mobile_val, padding: value },
+								});
+							}
+						}}
 						units={units} // 許可する単位
 						allowReset={true} // リセットの可否
 						resetValues={padding_resetValues} // リセット時の値
@@ -684,7 +709,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					<p>
 						{__(
 							"Removes the style of a DOM element that has been set.",
-							"markdown-block"
+							"markdown-block",
 						)}
 						<br />
 						{__("Return to default style.", "markdown-block")}

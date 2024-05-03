@@ -5,7 +5,7 @@
  * Plugin URI:        https://itmaroon.net
  * Description:       This is a block that converts a text file written in markdown notation into HTML and displays it.
  * Requires at least: 6.3
- * Requires PHP:      8.0.22
+ * Requires PHP:      8.1.22
  * Version:           0.1.0
  * Author:            Web Creator ITmaroon
  * License:           GPL-2.0-or-later
@@ -15,63 +15,55 @@
  * @package           itmar
  */
 
-/**
- * Registers the block using the metadata loaded from the `block.json` file.
- * Behind the scenes, it registers also all assets so they can be enqueued
- * through the block editor in the corresponding context.
- *
- * @see https://developer.wordpress.org/reference/functions/register_block_type/
- */
+
+//PHPファイルに対する直接アクセスを禁止
 if (!defined('ABSPATH')) exit;
 
-// 1. ブロックの登録
-function itmar_markdown_block_block_init()
-{
-	// $script_handle = 'itmar-handle-markdown-block';
-	// $script_file = plugin_dir_path(__FILE__) . 'build/index.js';
-	// wp_register_script(
-	// 	$script_handle,
-	// 	plugins_url('build/index.js', __FILE__),
-	// 	array('wp-blocks', 'wp-element', 'wp-i18n', 'wp-block-editor'),
-	// 	filemtime($script_file)
-	// );
-	// register_block_type(
-	// 	__DIR__ . '/build',
-	// 	array(
-	// 		'editor_script' => $script_handle
-	// 	)
-	// );
-	// // その後、このハンドルを使用してスクリプトの翻訳をセット
-	// wp_set_script_translations($script_handle, 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
-
-	$block_type = register_block_type(__DIR__ . '/build');
-	if ($block_type instanceof WP_Block_Type) {
-		$block_handle = str_replace("/", "-", $block_type->name);
-		// register_block_typeで生成されるハンドルを使用してスクリプトの翻訳をセット
-		wp_set_script_translations($block_handle . '-editor-script', 'markdown-block', plugin_dir_path(__FILE__) . 'languages');
-	}
-	//PHP用のテキストドメインの読込（国際化）
-	load_plugin_textdomain('markdown-block', false, basename(dirname(__FILE__)) . '/languages');
+// プラグイン情報取得に必要なファイルを読み込む
+if (!function_exists('get_plugin_data')) {
+	require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 }
-add_action('init', 'itmar_markdown_block_block_init');
+
+//composerによるリモートリポジトリからの読み込みを要求
+require_once __DIR__ . '/vendor/autoload.php';
+
+$block_entry = new \Itmar\BlockClassPakage\ItmarEntryClass();
+
+//ブロックの初期登録
+add_action('init', function () use ($block_entry) {
+	$plugin_data = get_plugin_data(__FILE__);
+	$block_entry->block_init($plugin_data['TextDomain'], __FILE__);
+	//nonceのローカライズ
+	wp_localize_script('itmar-script-handle', 'itmar_markdown_option', array(
+		'nonce' => wp_create_nonce('wp_rest'),
+	));
+});
+
+// 依存するプラグインが有効化されているかのアクティベーションフック
+register_activation_hook(__FILE__, function () use ($block_entry) {
+	$plugin_data = get_plugin_data(__FILE__);
+	$block_entry->activation_check($plugin_data, ['block-collections']); // ここでメソッドを呼び出し
+});
+
+// 管理画面での通知フック
+add_action('admin_notices', function () use ($block_entry) {
+	$plugin_data = get_plugin_data(__FILE__);
+	$block_entry->show_admin_dependency_notices($plugin_data, ['block-collections']);
+});
 
 function itmar_markdown_block_add_plugin()
 {
 	//管理画面以外（フロントエンド側でのみ読み込む）
 	if (!is_admin()) {
+		$script_path = plugin_dir_path(__FILE__) . 'assets/front_rendering.js';
 		wp_enqueue_script(
 			'markdown_plugin_handle',
-			plugins_url('/assets/front_rendering.js?' . date('YmdHis'), __FILE__),
+			plugins_url('/assets/front_rendering.js?', __FILE__),
 			array('jquery'),
-			'1.0.0',
+			filemtime($script_path),
 			true
 		);
 	}
-
-	//nonceの生成
-	wp_localize_script('itmar-gutenberg-extensions-script', 'itmar_markdown_option', array(
-		'nonce' => wp_create_nonce('wp_rest'),
-	));
 }
 
 add_action('enqueue_block_assets', 'itmar_markdown_block_add_plugin');

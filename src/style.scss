@@ -404,14 +404,6 @@
 		display: flex;
 		flex-wrap: nowrap; // flexアイテムを折り返さないように指定
 
-		@include reset.mq(sp) {
-			display: block;
-			margin-right: 0 !important;
-			margin-left: 0 !important;
-			padding-right: 0 !important;
-			padding-left: 0 !important;
-		}
-
 		.main_md_content {
 			flex: 1 1 0; // 必要に応じて伸縮し、元のサイズは0%にすることで全幅を占有するようにする
 		}

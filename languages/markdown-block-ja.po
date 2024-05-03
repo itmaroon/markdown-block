@@ -4,8 +4,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Mark Down Block 0.1.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markdown-block\n"
-"POT-Creation-Date: 2024-04-06T12:13:39+02:00\n"
-"PO-Revision-Date: 2024-04-06 19:23+0900\n"
+"POT-Creation-Date: 2024-05-01T10:49:06+02:00\n"
+"PO-Revision-Date: 2024-05-01 18:49+0900\n"
 "Last-Translator: \n"
 "Language-Team: \n"
 "Language: ja\n"
@@ -17,20 +17,20 @@ msgstr ""
 
 #. Plugin Name of the plugin
 #: C:\Users\itmaroon\Local
-#: Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "Mark Down Block"
 msgstr ""
 
 #. Plugin URI of the plugin
 #: C:\Users\itmaroon\Local
-#: Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "https://itmaroon.net"
 msgstr ""
 
 #. Description of the plugin
 #: C:\Users\itmaroon\Local
-#: Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
-#: build/index.js:938 src/index.js:15 build/index.js:963
+#: Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: build/index.js:941 src/index.js:17 build/index.js:965
 msgid ""
 "This is a block that converts a text file written in markdown notation into "
 "HTML and displays it."
@@ -40,9 +40,29 @@ msgstr ""
 
 #. Author of the plugin
 #: C:\Users\itmaroon\Local
-#: Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "Web Creator ITmaroon"
 msgstr "WebクリエイターITmaroon"
+
+#: markdown-block.php
+msgid "Activate Plugin"
+msgstr "プラグインの有効化"
+
+#: markdown-block.php
+msgid "Required plugin is not active."
+msgstr "必要なプラグインが有効化されていません。"
+
+#: markdown-block.php
+msgid "Install Plugin"
+msgstr "プラグインのインストールサイト"
+
+#: markdown-block.php
+msgid "Required plugin is not installed."
+msgstr "プラグインのインストールが必要です。"
+
+#: markdown-block.php
+msgid "Return to Plugins Setting"
+msgstr "プラグイン設定画面へ戻る"
 
 #: build/index.js:752 src/edit.js:563 build/index.js:757
 msgid "Set Styel HTML Tag"

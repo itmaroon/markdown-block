@@ -9,32 +9,52 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2024-04-06T12:13:39+02:00\n"
+"POT-Creation-Date: 2024-05-01T10:49:06+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.10.0\n"
 "X-Domain: markdown-block\n"
 
 #. Plugin Name of the plugin
-#: C:\Users\itmaroon\Local Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: C:\Users\itmaroon\Local Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "Mark Down Block"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: C:\Users\itmaroon\Local Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: C:\Users\itmaroon\Local Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "https://itmaroon.net"
 msgstr ""
 
 #. Description of the plugin
-#: C:\Users\itmaroon\Local Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
-#: build/index.js:938
-#: src/index.js:15
-#: build/index.js:963
+#: C:\Users\itmaroon\Local Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: build/index.js:941
+#: src/index.js:17
+#: build/index.js:965
 msgid "This is a block that converts a text file written in markdown notation into HTML and displays it."
 msgstr ""
 
 #. Author of the plugin
-#: C:\Users\itmaroon\Local Sites\blocktest-6-4\app\public\wp-content\plugins\markdown-block\markdown-block.php
+#: C:\Users\itmaroon\Local Sites\block-test\app\public\wp-content\plugins\markdown-block\markdown-block.php
 msgid "Web Creator ITmaroon"
+msgstr ""
+
+#: markdown-block.php
+msgid "Activate Plugin"
+msgstr ""
+
+#: markdown-block.php
+msgid "Required plugin is not active."
+msgstr ""
+
+#: markdown-block.php
+msgid "Install Plugin"
+msgstr ""
+
+#: markdown-block.php
+msgid "Required plugin is not installed."
+msgstr ""
+
+#: markdown-block.php
+msgid "Return to Plugins Setting"
 msgstr ""
 
 #: build/index.js:752

@@ -21,6 +21,7 @@
   display: flex;
   justify-content: space-around;
   padding: 0.5em;
+  overflow: hidden;
 }
 @media (max-width: 767px) {
   .wp-block-itmar-markdown-block .area_wrapper {
