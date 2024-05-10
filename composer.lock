@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2aa0e1bf8c2f0fd19fbfb327c5aa815f",
+    "content-hash": "7cf7e1d19affed2e7de1597b7f62f54f",
     "packages": [
         {
             "name": "itmar/block-class-package",
-            "version": "v1.0.4",
+            "version": "v1.1.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/itmaroon/block-class-package.git",
-                "reference": "5540cc49f5eadb01ffb0bb3ddb2fd0c5a507a8fa"
+                "reference": "d9e642a99d6d24616b4aca89b62cdb2d1350c0cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/itmaroon/block-class-package/zipball/5540cc49f5eadb01ffb0bb3ddb2fd0c5a507a8fa",
-                "reference": "5540cc49f5eadb01ffb0bb3ddb2fd0c5a507a8fa",
+                "url": "https://api.github.com/repos/itmaroon/block-class-package/zipball/d9e642a99d6d24616b4aca89b62cdb2d1350c0cc",
+                "reference": "d9e642a99d6d24616b4aca89b62cdb2d1350c0cc",
                 "shasum": ""
             },
             "type": "library",
@@ -39,9 +39,9 @@
             "description": "Gutenberg block class package",
             "support": {
                 "issues": "https://github.com/itmaroon/block-class-package/issues",
-                "source": "https://github.com/itmaroon/block-class-package/tree/v1.0.4"
+                "source": "https://github.com/itmaroon/block-class-package/tree/v1.1.1"
             },
-            "time": "2024-05-01T06:24:32+00:00"
+            "time": "2024-05-09T11:12:33+00:00"
         }
     ],
     "packages-dev": [],

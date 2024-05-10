@@ -1,11 +1,6 @@
 import { useBlockProps, InnerBlocks } from "@wordpress/block-editor";
 import TocRender from "./TocRender";
-import {
-	borderProperty,
-	radiusProperty,
-	marginProperty,
-	paddingProperty,
-} from "itmar-block-packages";
+import { borderProperty, radiusProperty } from "itmar-block-packages";
 
 export default function save({ attributes }) {
 	const {

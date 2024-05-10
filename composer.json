@@ -12,6 +12,6 @@
         }
     ],
     "require": {
-        "itmar/block-class-package": "^1.0"
+        "itmar/block-class-package": "^1.1"
     }
 }

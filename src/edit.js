@@ -751,7 +751,10 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 			<div {...blockProps}>
 				<div className="area_wrapper">
-					<div className="edit_area" onScroll={handleScroll}>
+					<div
+						className={`edit_area${!isEditMode ? " isHide" : ""}`}
+						onScroll={handleScroll}
+					>
 						<SimpleMDE
 							getMdeInstance={(instance) => {
 								simpleMdeRef.current = instance;
@@ -763,7 +766,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					</div>
 
 					<div
-						className={`preview_area ${!isEditMode ? "isShow" : ""}`}
+						className={`preview_area${!isEditMode ? " isShow" : ""}`}
 						style={blockStyle}
 					>
 						<InnerBlocks

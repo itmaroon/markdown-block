@@ -113,6 +113,9 @@ jQuery(function ($) {
 	//レスポンシブデザイン
 	const reponsiveDesign = () => {
 		var element = $(".md_block_content");
+		//マークダウンブロックのDOM要素がない場合はリターン
+		if (element.length === 0) return;
+
 		var currentStyles = element.attr("style");
 		//元のデザインをキープ
 		var currentStylesObject = {};
