@@ -332,6 +332,7 @@
 }
 .wp-block-itmar-markdown-block .md_block_content .main_md_content {
   flex: 1 1 0;
+  min-width: 0;
 }
 .wp-block-itmar-markdown-block .md_block_content .side_md_content {
   flex: 0 0 30%;
@@ -434,5 +435,9 @@
   display: block;
   background-color: #3E3E3E;
   opacity: 0.7;
+}
+
+.wp-block-post-content {
+  width: 100%;
 }
 /*# sourceMappingURL=style.css.map */

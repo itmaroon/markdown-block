@@ -3,7 +3,7 @@ import { __ } from "@wordpress/i18n";
 import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { marked } from "marked";
-import { useDispatch, useSelect } from "@wordpress/data";
+import { useDispatch, useSelect, dispatch } from "@wordpress/data";
 import equal from "fast-deep-equal";
 import MultiSelect from "./MultiSelect";
 
@@ -30,25 +30,16 @@ import {
 
 import { useState, useEffect, useMemo, useRef } from "@wordpress/element";
 import {
+	ArchiveSelectControl,
 	borderProperty,
 	radiusProperty,
 	marginProperty,
 	paddingProperty,
 	useIsIframeMobile,
+	UpdateAllPostsBlockAttributes,
 } from "itmar-block-packages";
 
 import "./editor.scss";
-
-// エクステンションの定義(引用元の表現)
-// showdown.extension('quoteCitation', function () {
-// 	return [{
-// 		type: 'lang',
-// 		regex: /(^|\n)> --( .+?\n)/gm,
-// 		replace: function (match, prefix, citation) {
-// 			return prefix + '> <cite>' + citation.trim() + '</cite>\n';
-// 		}
-// 	}];
-// });
 
 // HTMLからセルを抽出する関数
 function extractCells(rowElement, cellTagName) {
@@ -204,7 +195,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		//console.log('Scroll Position:', scrollInfo.top);
 	};
 
-	//removeBlocks関数の取得
+	//関数の取得
 	const { removeBlocks, updateBlockAttributes } =
 		useDispatch("core/block-editor");
 
@@ -552,14 +543,28 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 		setIsModalOpen(true);
 	};
 	const closeModal = () => setIsModalOpen(false);
+	//処理進捗のモーダルの表示フラグ
+	const [isProgressModal, setIsProgressOpen] = useState(false);
+	const [isStart, setIsStart] = useState(false);
+	const openProgress = () => setIsProgressOpen(true);
+	const closeProgress = () => setIsProgressOpen(false);
+	const startProgress = () => setIsStart(true);
+	//スタイル属性をコピーする対象の投稿タイプ
+	const [selectedSlug, setPostTypeSlug] = useState({});
 
 	return (
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={__("Set Styel HTML Tag", "markdown-block")}
+					title={__("Manage Styel HTML Tag", "markdown-block")}
 					initialOpen={false}
 				>
+					<p>
+						{__(
+							"Clears the styles applied to each HTML element.",
+							"markdown-block",
+						)}
+					</p>
 					{Object.keys(element_style_obj).map((style_elm) => {
 						const actions = [
 							{
@@ -607,7 +612,7 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 					)}
 				</PanelBody>
 				<PanelBody
-					title="スタイル設定"
+					title={__("Style Setting", "markdown-block")}
 					initialOpen={false}
 					className="style_ctrl"
 				>
@@ -700,6 +705,30 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						/>
 					</PanelBody>
 				</PanelBody>
+				<PanelBody
+					title={__("Copy styles to other posts", "markdown-block")}
+					initialOpen={true}
+				>
+					<p>
+						{__(
+							"Copy the same styles to posts of the selected post type.",
+							"markdown-block",
+						)}
+					</p>
+					<ArchiveSelectControl
+						selectedSlug={selectedSlug.slug}
+						label={__("Select Post Type", "markdown-block")}
+						homeUrl={markdown_block.home_url}
+						onChange={(postInfo) => {
+							if (postInfo) {
+								setPostTypeSlug(postInfo);
+							}
+						}}
+					/>
+					<Button variant="primary" onClick={openProgress}>
+						{__("Apply Style", "markdown-block")}
+					</Button>
+				</PanelBody>
 			</InspectorControls>
 			{isModalOpen && (
 				<Modal
@@ -717,18 +746,64 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 						{__("It cannot be undone. Is it OK?", "markdown-block")}
 						<br />
 					</p>
-					<Button
-						onClick={() => {
-							const newElementStyleObj = { ...element_style_obj };
-							delete newElementStyleObj[selectedStyleElm];
-							setAttributes({ element_style_obj: newElementStyleObj });
-							// モーダルを閉じる
-							closeModal();
+					<div style={{ width: "fit-content", margin: "20px auto 0" }}>
+						<Button
+							variant="primary"
+							onClick={() => {
+								const newElementStyleObj = { ...element_style_obj };
+								delete newElementStyleObj[selectedStyleElm];
+								setAttributes({ element_style_obj: newElementStyleObj });
+								// モーダルを閉じる
+								closeModal();
+							}}
+						>
+							{__("Delete", "markdown-block")}
+						</Button>
+						<Button
+							variant="secondary"
+							onClick={closeModal}
+							style={{ marginLeft: "10px" }}
+						>
+							{__("Cancel", "markdown-block")}
+						</Button>
+					</div>
+				</Modal>
+			)}
+			{isProgressModal && (
+				<Modal
+					title={__("Copy Style Progress", "markdown-block")}
+					onRequestClose={closeProgress}
+				>
+					<p>
+						{isStart
+							? __("Processing, please wait.", "markdown-block")
+							: __(
+									"Please press the start processing button.",
+									"markdown-block",
+							  )}
+					</p>
+					<UpdateAllPostsBlockAttributes
+						postType={selectedSlug.rest_base}
+						blockName="itmar/markdown-block"
+						newAttributes={{
+							element_style_obj: element_style_obj,
+							backgroundColor: backgroundColor,
+							backgroundGradient: backgroundGradient,
+							default_val: default_val,
+							mobile_val: mobile_val,
+							radius_value: radius_value,
+							border_value: border_value,
 						}}
-					>
-						削除する
-					</Button>
-					<Button onClick={closeModal}>{__("Cancel", "markdown-block")}</Button>
+						onProcessStart={startProgress}
+						onProcessEnd={closeProgress}
+						onProcessCancel={() => {
+							dispatch("core/notices").createNotice(
+								"error",
+								__("Processing was interrupted.", "markdown-block"),
+								{ type: "snackbar" },
+							);
+						}}
+					/>
 				</Modal>
 			)}
 			{isMobile && (

@@ -78,4 +78,8 @@
   display: flex;
   justify-content: space-between;
 }
+
+.markdown_copy_progress {
+  width: 100% !important;
+}
 /*# sourceMappingURL=editor.css.map */

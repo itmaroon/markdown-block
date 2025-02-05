@@ -406,6 +406,7 @@
 
 		.main_md_content {
 			flex: 1 1 0; // 必要に応じて伸縮し、元のサイズは0%にすることで全幅を占有するようにする
+			min-width: 0;
 		}
 
 		.side_md_content {
@@ -528,4 +529,7 @@
 			opacity: 0.7;
 		}
 	}
+}
+.wp-block-post-content{
+	width: 100%;
 }
