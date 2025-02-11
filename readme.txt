@@ -3,47 +3,63 @@ Contributors:      itmaroon
 Tags:              block, markdown, post, blog
 Requires at least: 6.3
 Tested up to:      6.7.1
-Stable tag:        1.0.2
+Stable tag:        0.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP: 8.2.10
 
-マークダウン記法で書かれたテキストファイルをHTML化して表示するブロックです配偶者
+This block converts Markdown documents into blocks for styling web pages.
 
 == Description ==
 
-This is the long description. No limit, and you can use Markdown (as well as in the following sections).
+This block has the function of editing Markdown documents using SimpleMDE, and by parsing Markdown documents using marked, it can assign specific blocks to the converted HTML elements.
+This function allows users to customize Markdown documents using the styling functions of the corresponding blocks, allowing for a wide range of styling.
+The following are the blocks that are applied when Markdown documents are parsed into HTML elements.
 
-For backwards compatibility, if this section is missing, the full length of the short description will be used, and
-Markdown parsed.
+1. H element: itmar/design-title
+2. P element: core/paragraph
+3. PRE element: itmar/code-highlight
+4. IMG element: core/image
+5. BLOCKQUOTE element: core/quote
+6. LI element: core/list
+7. TABLE element: core/table
+
+The H element is also generated as a table of contents, and has the function of displaying nested items according to level.
+
+== Related Links ==
+
+* [markdown-block:Github](https://github.com/itmaroon/markdown-block)
+* [block-class-package:GitHub](https://github.com/itmaroon/block-class-package)  
+* [block-class-package:Packagist](https://packagist.org/packages/itmar/block-class-package) 
+* [itmar-block-packages:npm](https://www.npmjs.com/package/itmar-block-packages)  
+* [itmar-block-packages:GitHub](https://github.com/itmaroon/itmar-block-packages)
 
 == Installation ==
 
-This section describes how to install the plugin and get it working.
+1. From the WP admin panel, click “Plugins” -> “Add new”.
+2. In the browser input box, type “Markdown Block”.
+3. Select the “Markdown Block” plugin and click “Install”.
+4. Activate the plugin.
 
-e.g.
+OR…
 
-1. Upload the plugin files to the `/wp-content/plugins/markdown-block` directory, or install the plugin through the WordPress plugins screen directly.
-1. Activate the plugin through the 'Plugins' screen in WordPress
-
+1. Download the plugin from this page.
+2. Save the .zip file to a location on your computer.
+3. Open the WP admin panel, and click “Plugins” -> “Add new”.
+4. Click “upload”.. then browse to the .zip file downloaded from this page.
+5. Click “Install”.. and then “Activate plugin”.
 
 == Frequently Asked Questions ==
 
-= A question that someone might have =
 
-An answer to that question.
-
-= What about foo bar? =
-
-Answer to foo bar dilemma.
 
 == Screenshots ==
-
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. On the left is the Markdown document editing area, and on the right is the preview after styling and the block editing area.
+2. HTML element style management and table of contents settings screen
+3. Front-end display including table of contents
+4. Front-end display with top table of contents open
+5. Responsive design
+6. Responsive design with table of contents open
 
 == Changelog ==
 
@@ -51,7 +67,16 @@ directory take precedence. For example, `/assets/screenshot-1.png` would win ove
 * Release
 
 == Arbitrary section ==
+1. PHP class management is now done using Composer.  
+[GitHub](https://github.com/itmaroon/block-class-package)  
+[Packagist](https://packagist.org/packages/itmar/block-class-package)
+ 
+2. I decided to make functions and components common to other plugins into npm packages, and install and use them from npm.  
+[npm](https://www.npmjs.com/package/itmar-block-packages)  
+[GitHub](https://github.com/itmaroon/itmar-block-packages)
 
-You may provide arbitrary sections, in the same format as the ones above. This may be of use for extremely complicated
-plugins where more information needs to be conveyed that doesn't fit into the categories of "description" or
-"installation." Arbitrary sections will be shown below the built-in sections outlined above.
+== External services ==  
+1. This plugin uses SimpleMDE (Simple Markdown Editor) to implement the editing function of Markdown documents. This is an open source JavaScript library provided under the MIT license.
+[SimpleMDE LICENSE](https://github.com/sparksuite/simplemde-markdown-editor/blob/master/LICENSE)
+2. This plugin uses marked to parse Markdown documents and convert them to HTML elements. This is an open source JavaScript library provided under the MIT license.
+[marked LICENSE](https://github.com/markedjs/marked/blob/master/LICENSE.md)

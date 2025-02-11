@@ -1,5 +1,7 @@
 # MarkDown Block
 
+マークダウン文書をブロックに対応させWebページにスタイリングするためのブロックです。
+
 ## 概要
 このリポジトリはMarkDown BlockというWordpressのプラグインのソースコードを含んでいます。
 zipファイルをダウンロードしてWordpress管理画面からプラグインのインストールを行うとプラグインとして機能します。
@@ -11,7 +13,7 @@ zipファイルをダウンロードしてWordpress管理画面からプラグ�
 3. PRE要素・・・itmar/code-highlight
 4. IMG要素・・・core/image
 5. BLOCKQUOTE要素・・・core/quote
-6. LIST要素・・・core/list
+6. LI要素・・・core/list
 7. TABLE要素・・・core/table
 また、H要素は目次として生成され、レベルによってネストして表示するという機能を持ちます。
 
