@@ -2,7 +2,7 @@
 Contributors:      itmaroon
 Tags:              block, markdown, post, blog
 Requires at least: 6.3
-Tested up to:      6.7.1
+Tested up to:      6.7.2
 Stable tag:        0.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -76,7 +76,8 @@ OR…
 [GitHub](https://github.com/itmaroon/itmar-block-packages)
 
 == External services ==  
-1. This plugin uses SimpleMDE (Simple Markdown Editor) to implement the editing function of Markdown documents. This is an open source JavaScript library provided under the MIT license.
-[SimpleMDE LICENSE](https://github.com/sparksuite/simplemde-markdown-editor/blob/master/LICENSE)
+1. This plugin uses EasyMDE to implement the editing function of Markdown documents. This is an open source JavaScript library provided under the MIT license.
+[EasyMDE LICENSE](https://github.com/Ionaru/easy-markdown-editor/blob/master/LICENSE)
+This plugin has a spell check function as standard, but we do not use it because it references an external dictionary file.
 2. This plugin uses marked to parse Markdown documents and convert them to HTML elements. This is an open source JavaScript library provided under the MIT license.
 [marked LICENSE](https://github.com/markedjs/marked/blob/master/LICENSE.md)

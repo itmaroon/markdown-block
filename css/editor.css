@@ -57,6 +57,12 @@
     display: none;
   }
 }
+.wp-block-itmar-markdown-block .area_wrapper .EasyMDEContainer {
+  height: 100%;
+}
+.wp-block-itmar-markdown-block .area_wrapper .CodeMirror {
+  height: 90%;
+}
 @media (max-width: 767px) {
   .wp-block-itmar-markdown-block .area_wrapper .preview_area {
     transition: all 0.5s ease 0s;

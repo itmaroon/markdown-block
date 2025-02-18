@@ -51,7 +51,7 @@ add_action('admin_notices', function () use ($block_entry) {
 	$block_entry->show_admin_dependency_notices($plugin_data, ['block-collections']);
 });
 
-function itmar_markdown_block_add_plugin()
+function itmar_block_class_package_add_frontjs()
 {
 	//管理画面以外（フロントエンド側でのみ読み込む）
 	if (!is_admin()) {
@@ -66,4 +66,4 @@ function itmar_markdown_block_add_plugin()
 	}
 }
 
-add_action('enqueue_block_assets', 'itmar_markdown_block_add_plugin');
+add_action('enqueue_block_assets', 'itmar_block_class_package_add_frontjs');

@@ -1,11 +1,11 @@
 import { __ } from "@wordpress/i18n";
 
-import SimpleMDE from "react-simplemde-editor";
 import "easymde/dist/easymde.min.css";
 import { marked } from "marked";
 import { useDispatch, useSelect, dispatch } from "@wordpress/data";
 import equal from "fast-deep-equal";
 import MultiSelect from "./MultiSelect";
+import EasyMDEEditor from "./EasyMDEEditor";
 
 import {
 	Button,
@@ -28,7 +28,7 @@ import {
 	__experimentalBorderRadiusControl as BorderRadiusControl,
 } from "@wordpress/block-editor";
 
-import { useState, useEffect, useMemo, useRef } from "@wordpress/element";
+import { useState, useEffect, useRef } from "@wordpress/element";
 import {
 	ArchiveSelectControl,
 	borderProperty,
@@ -117,83 +117,49 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 	const blockProps = useBlockProps();
 
-	//エディタの参照を取得
-	const simpleMdeRef = useRef();
-
-	//画像ファイルのアップロードとマークダウンの挿入
-	const imageUploadFunction = (file) => {
-		const nonce = itmar_markdown_option.nonce; // Wordpressから取得したnonce
-
-		// FormDataオブジェクトを作成し、ファイルを追加
-		const formData = new FormData();
-		formData.append("file", file);
-
-		// fetchを使用してファイルをアップロード
-		fetch("/wp-json/wp/v2/media", {
-			method: "POST",
-			headers: {
-				"X-WP-Nonce": nonce,
-			},
-			body: formData,
-		})
-			.then((response) => response.json())
-			.then((data) => {
-				const markDown_img = `\n![image](${data.source_url})`;
-				if (simpleMdeRef.current) {
-					simpleMdeRef.current.codemirror.replaceSelection(markDown_img);
-				}
-			})
-			.catch((error) => {
-				console.error("Upload failed:", error);
-			});
-	};
-
-	// エディタの設定
-	const autoUploadImage = useMemo(() => {
-		return {
-			uploadImage: true,
-			imageUploadFunction,
-			maxHeight: "60vh",
-			toolbar: [
-				"undo",
-				"redo",
-				"|",
-				"bold",
-				"italic",
-				"heading",
-				"|",
-				"code",
-				"quote",
-				"link",
-				"image",
-				"unordered-list",
-				"ordered-list",
-				"table",
-				"|",
-				"guide",
-			],
-		};
-	}, []);
-	//スクロールイベントの登録（クリーンアップも含む）
-	useEffect(() => {
-		if (simpleMdeRef.current) {
-			const editorInstance = simpleMdeRef.current;
-			const codemirror = editorInstance.codemirror;
-
-			codemirror.on("scroll", handleScroll);
-
-			return () => {
-				codemirror.off("scroll", handleScroll);
-			};
-		}
-	}, [simpleMdeRef.current]);
+	// プレビュー用の ref
+	const previewRef = useRef(null);
+	// スクロール干渉防止フラグ
+	const isSyncingScroll = useRef(false);
+	//スクロール率の保持
+	const [scrollRatio, setScrollRatio] = useState(0);
 
 	//スクロールのハンドラ
-	const handleScroll = () => {
-		const editorInstance = simpleMdeRef.current;
-		const scrollInfo = editorInstance.codemirror.getScrollInfo();
-		//console.log('Scroll Position:', scrollInfo.top);
+	const handleScroll = (scrollRatio) => {
+		if (isSyncingScroll.current) return;
+		isSyncingScroll.current = true;
+
+		setScrollRatio(scrollRatio);
+		if (previewRef.current) {
+			const previewHeight =
+				previewRef.current.scrollHeight - previewRef.current.clientHeight; // プレビューのスクロール可能範囲
+			previewRef.current.scrollTop = previewHeight * scrollRatio; // プレビューを同期
+		}
+		requestAnimationFrame(() => {
+			isSyncingScroll.current = false;
+		});
 	};
+
+	// **プレビューのスクロール → エディタを同期**
+	useEffect(() => {
+		if (previewRef.current) {
+			const handlePreviewScroll = () => {
+				if (isSyncingScroll.current) return;
+				isSyncingScroll.current = true;
+
+				const previewScrollRatio =
+					previewRef.current.scrollTop /
+					(previewRef.current.scrollHeight - previewRef.current.clientHeight);
+				setScrollRatio(previewScrollRatio);
+				requestAnimationFrame(() => {
+					isSyncingScroll.current = false;
+				});
+			};
+			previewRef.current.addEventListener("scroll", handlePreviewScroll);
+			return () =>
+				previewRef.current.removeEventListener("scroll", handlePreviewScroll);
+		}
+	}, []);
 
 	//関数の取得
 	const { removeBlocks, updateBlockAttributes } =
@@ -826,21 +792,17 @@ export default function Edit({ attributes, setAttributes, clientId }) {
 
 			<div {...blockProps}>
 				<div className="area_wrapper">
-					<div
-						className={`edit_area${!isEditMode ? " isHide" : ""}`}
-						onScroll={handleScroll}
-					>
-						<SimpleMDE
-							getMdeInstance={(instance) => {
-								simpleMdeRef.current = instance;
-							}}
+					<div className={`edit_area${!isEditMode ? " isHide" : ""}`}>
+						<EasyMDEEditor
 							value={mdContent}
+							scrollRatio={scrollRatio} // プレビューのスクロール割合を渡す
 							onChange={(value) => setAttributes({ mdContent: value })}
-							options={autoUploadImage}
+							onScroll={(scrollRatio) => handleScroll(scrollRatio)}
 						/>
 					</div>
 
 					<div
+						ref={previewRef}
 						className={`preview_area${!isEditMode ? " isShow" : ""}`}
 						style={blockStyle}
 					>
