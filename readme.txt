@@ -2,11 +2,11 @@
 Contributors:      itmaroon
 Tags:              block, markdown, post, blog
 Requires at least: 6.3
-Tested up to:      6.7.2
-Stable tag:        0.2.0
+Tested up to:      6.7
+Stable tag:        0.3.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
-Requires PHP: 8.2.10
+Requires PHP:      8.2
 
 This block converts Markdown documents into blocks for styling web pages.
 
@@ -78,6 +78,7 @@ OR…
 == External services ==  
 1. This plugin uses EasyMDE to implement the editing function of Markdown documents. This is an open source JavaScript library provided under the MIT license.
 [EasyMDE LICENSE](https://github.com/Ionaru/easy-markdown-editor/blob/master/LICENSE)
-This plugin has a spell check function as standard, but we do not use it because it references an external dictionary file.
+EasyMDE comes with a spell check feature.   
+When using this feature, it will try to load an external file (en_US.aff / en_US.dic) from a CDN. To avoid this, this plugin sets spellChecker: false, when instantiating EasyMDE, so that the external file will not be loaded.
 2. This plugin uses marked to parse Markdown documents and convert them to HTML elements. This is an open source JavaScript library provided under the MIT license.
 [marked LICENSE](https://github.com/markedjs/marked/blob/master/LICENSE.md)

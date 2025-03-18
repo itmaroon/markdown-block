@@ -1,17 +1,5 @@
 {
-    "name": "itmaroon/markdown-block",
-    "autoload": {
-        "psr-4": {
-            "Itmaroon\\MarkdownBlock\\": "src/"
-        }
-    },
-    "authors": [
-        {
-            "name": "itmaroon",
-            "email": "itmaroon@icloud.com"
-        }
-    ],
     "require": {
-        "itmar/block-class-package": "^1.2"
+        "itmar/block-class-package": "^1.3"
     }
 }

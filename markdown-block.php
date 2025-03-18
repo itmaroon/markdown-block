@@ -5,8 +5,8 @@
  * Plugin URI:        https://itmaroon.net
  * Description:       This is a block that converts a text file written in markdown notation into HTML and displays it.
  * Requires at least: 6.3
- * Requires PHP:      8.2.10
- * Version:           0.2.0
+ * Requires PHP:      8.2
+ * Version:           0.3.0
  * Author:            Web Creator ITmaroon
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -20,7 +20,10 @@
 if (!defined('ABSPATH')) exit;
 
 //composerによるリモートリポジトリからの読み込みを要求
-require_once __DIR__ . '/vendor/autoload.php';
+if (! class_exists('ComposerAutoloaderInitab015168147af054190c06099dec3dfa', false)) {
+	//処理中のプログレスを表示するクラスの読み込み
+	require_once __DIR__ . '/vendor/autoload.php';
+}
 
 // プラグイン情報取得に必要なファイルを読み込む
 if (!function_exists('get_plugin_data')) {
