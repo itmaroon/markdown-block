@@ -25,6 +25,7 @@ The following are the blocks that are applied when Markdown documents are parsed
 7. TABLE element: core/table
 
 The H element is also generated as a table of contents, and has the function of displaying nested items according to level.
+This plugin does not require any external resources (all scripts and styles are included locally)
 
 == Related Links ==
 
