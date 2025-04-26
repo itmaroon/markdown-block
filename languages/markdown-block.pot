@@ -2,21 +2,21 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: Mark Down Block 0.1.0\n"
+"Project-Id-Version: MarkDown Block 1.0.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/markdown-block\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-02-05T06:51:50+01:00\n"
+"POT-Creation-Date: 2025-04-22T04:10:42+02:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.11.0\n"
 "X-Domain: markdown-block\n"
 
 #. Plugin Name of the plugin
 #: markdown-block.php
-msgid "Mark Down Block"
+msgid "MarkDown Block"
 msgstr ""
 
 #. Plugin URI of the plugin
@@ -26,9 +26,8 @@ msgstr ""
 
 #. Description of the plugin
 #: markdown-block.php
-#: build/index.js:941
+#: build/index.js:1
 #: src/index.js:17
-#: build/index.js:1010
 msgid "This is a block that converts a text file written in markdown notation into HTML and displays it."
 msgstr ""
 
@@ -37,178 +36,148 @@ msgstr ""
 msgid "Web Creator ITmaroon"
 msgstr ""
 
-#: build/index.js:675
-#: src/edit.js:560
-#: build/index.js:695
+#: build/index.js:1
+#: src/edit.js:525
 msgid "Manage Styel HTML Tag"
 msgstr ""
 
-#: build/index.js:677
-#: src/edit.js:564
-#: build/index.js:699
+#: build/index.js:1
+#: src/edit.js:529
 msgid "Clears the styles applied to each HTML element."
 msgstr ""
 
-#: build/index.js:687
-#: src/edit.js:584
-#: build/index.js:719
+#: build/index.js:1
+#: src/edit.js:549
 msgid "Table of Content"
 msgstr ""
 
-#: build/index.js:690
-#: src/edit.js:589
-#: build/index.js:724
+#: build/index.js:1
+#: src/edit.js:554
 msgid "Table of Content Render"
 msgstr ""
 
-#: build/index.js:702
-#: src/edit.js:602
-#: build/index.js:737
+#: build/index.js:1
+#: src/edit.js:567
 msgid "header part"
 msgstr ""
 
-#: build/index.js:705
-#: src/edit.js:606
-#: build/index.js:741
+#: build/index.js:1
+#: src/edit.js:571
 msgid "sidebar part"
 msgstr ""
 
-#: build/index.js:710
-#: src/edit.js:616
-#: build/index.js:751
+#: build/index.js:1
+#: src/edit.js:581
 msgid "Style Setting"
 msgstr ""
 
-#: build/index.js:714
-#: src/edit.js:621
-#: build/index.js:756
+#: build/index.js:1
+#: src/edit.js:586
 msgid "Background Color Setting"
 msgstr ""
 
-#: build/index.js:718
-#: src/edit.js:627
-#: build/index.js:762
+#: build/index.js:1
+#: src/edit.js:592
 msgid "Choose Background color"
 msgstr ""
 
-#: build/index.js:727
-#: src/edit.js:638
-#: build/index.js:773
-msgid "Margin settings(desk top)"
-msgstr ""
-
-#: build/index.js:727
-#: src/edit.js:639
-#: build/index.js:774
+#: build/index.js:1
+#: src/edit.js:604
 msgid "Margin settings(mobile)"
 msgstr ""
 
-#: build/index.js:752
-#: src/edit.js:661
-#: build/index.js:796
-msgid "Padding settings(desk top)"
+#: build/index.js:1
+#: src/edit.js:603
+msgid "Margin settings(desk top)"
 msgstr ""
 
-#: build/index.js:752
-#: src/edit.js:662
-#: build/index.js:797
+#: build/index.js:1
+#: src/edit.js:627
 msgid "Padding settings(mobile)"
 msgstr ""
 
-#: build/index.js:777
-#: src/edit.js:681
-#: build/index.js:816
+#: build/index.js:1
+#: src/edit.js:626
+msgid "Padding settings(desk top)"
+msgstr ""
+
+#: build/index.js:1
+#: src/edit.js:646
 msgid "Border settings"
 msgstr ""
 
-#: build/index.js:803
-#: src/edit.js:710
-#: build/index.js:845
+#: build/index.js:1
+#: src/edit.js:675
 msgid "Copy styles to other posts"
 msgstr ""
 
-#: build/index.js:805
-#: src/edit.js:714
-#: build/index.js:849
+#: build/index.js:1
+#: src/edit.js:679
 msgid "Copy the same styles to posts of the selected post type."
 msgstr ""
 
-#: build/index.js:807
-#: src/edit.js:721
-#: build/index.js:856
+#: build/index.js:1
+#: src/edit.js:686
 msgid "Select Post Type"
 msgstr ""
 
-#: build/index.js:817
-#: src/edit.js:730
-#: build/index.js:865
+#: build/index.js:1
+#: src/edit.js:695
 msgid "Apply Style"
 msgstr ""
 
-#: build/index.js:818
-#: src/edit.js:736
-#: build/index.js:871
+#: build/index.js:1
+#: src/edit.js:701
 msgid "Erase styles"
 msgstr ""
 
-#: build/index.js:820
-#: src/edit.js:740
-#: build/index.js:875
+#: build/index.js:1
+#: src/edit.js:705
 msgid "Removes the style of a DOM element that has been set."
 msgstr ""
 
-#: build/index.js:820
-#: src/edit.js:745
-#: build/index.js:880
+#: build/index.js:1
+#: src/edit.js:710
 msgid "Return to default style."
 msgstr ""
 
-#: build/index.js:820
-#: src/edit.js:747
-#: build/index.js:882
+#: build/index.js:1
+#: src/edit.js:712
 msgid "It cannot be undone. Is it OK?"
 msgstr ""
 
-#: build/index.js:838
-#: src/edit.js:761
-#: build/index.js:896
+#: build/index.js:1
+#: src/edit.js:726
 msgid "Delete"
 msgstr ""
 
-#: build/index.js:844
-#: build/index.js:10227
-#: src/edit.js:768
-#: build/index.js:903
-#: build/index.js:1128
+#: build/index.js:1
+#: build/index.js:25
+#: src/edit.js:733
 msgid "Cancel"
 msgstr ""
 
-#: build/index.js:845
-#: src/edit.js:775
-#: build/index.js:910
+#: build/index.js:1
+#: src/edit.js:740
 msgid "Copy Style Progress"
 msgstr ""
 
-#: build/index.js:847
-#: src/edit.js:780
-#: build/index.js:915
+#: build/index.js:1
+#: src/edit.js:745
 msgid "Processing, please wait."
 msgstr ""
 
-#: build/index.js:847
-#: src/edit.js:781
-#: build/index.js:916
+#: build/index.js:1
+#: src/edit.js:746
 msgid "Please press the start processing button."
 msgstr ""
 
-#: build/index.js:862
-#: src/edit.js:803
-#: build/index.js:938
+#: build/index.js:1
+#: src/edit.js:768
 msgid "Processing was interrupted."
 msgstr ""
 
-#: build/index.js:10219
-#: build/index.js:1128
+#: build/index.js:25
 msgid "Start Process"
 msgstr ""
 

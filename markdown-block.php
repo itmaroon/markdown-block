@@ -6,11 +6,12 @@
  * Description:       This is a block that converts a text file written in markdown notation into HTML and displays it.
  * Requires at least: 6.3
  * Requires PHP:      8.2
- * Version:           0.3.0
+ * Version:           1.0.0
  * Author:            Web Creator ITmaroon
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       markdown-block
+ * Domain Path:       /languages
  *
  * @package           itmar
  */
@@ -19,18 +20,15 @@
 //PHPファイルに対する直接アクセスを禁止
 if (!defined('ABSPATH')) exit;
 
-//composerによるリモートリポジトリからの読み込みを要求
-if (! class_exists('ComposerAutoloaderInitab015168147af054190c06099dec3dfa', false)) {
-	//処理中のプログレスを表示するクラスの読み込み
-	require_once __DIR__ . '/vendor/autoload.php';
-}
-
 // プラグイン情報取得に必要なファイルを読み込む
 if (!function_exists('get_plugin_data')) {
 	require_once(ABSPATH . 'wp-admin/includes/plugin.php');
 }
 
-$block_entry = new \Itmar\BlockClassPakage\ItmarEntryClass();
+
+
+require_once __DIR__ . '\vendor\itmar\loader-package\src\register_autoloader.php';
+$block_entry = new \Itmar\BlockClassPackage\ItmarEntryClass();
 
 //ブロックの初期登録
 add_action('init', function () use ($block_entry) {
@@ -41,6 +39,7 @@ add_action('init', function () use ($block_entry) {
 		'nonce' => wp_create_nonce('wp_rest'),
 	));
 });
+
 
 // 依存するプラグインが有効化されているかのアクティベーションフック
 register_activation_hook(__FILE__, function () use ($block_entry) {
@@ -56,6 +55,7 @@ add_action('admin_notices', function () use ($block_entry) {
 
 function itmar_block_class_package_add_frontjs()
 {
+
 	//管理画面以外（フロントエンド側でのみ読み込む）
 	if (!is_admin()) {
 		$script_path = plugin_dir_path(__FILE__) . 'assets/front_rendering.js';

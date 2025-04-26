@@ -3,7 +3,7 @@ Contributors:      itmaroon
 Tags:              block, markdown, post, blog
 Requires at least: 6.3
 Tested up to:      6.7
-Stable tag:        0.3.0
+Stable tag:        1.0.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP:      8.2
@@ -64,7 +64,7 @@ OR…
 
 == Changelog ==
 
-= 0.1.0 =
+= 1.0.0 =
 * Release
 
 == Arbitrary section ==
