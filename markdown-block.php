@@ -52,21 +52,3 @@ add_action('admin_notices', function () use ($block_entry) {
 	$plugin_data = get_plugin_data(__FILE__);
 	$block_entry->show_admin_dependency_notices($plugin_data, ['block-collections']);
 });
-
-function itmar_block_class_package_add_frontjs()
-{
-
-	//管理画面以外（フロントエンド側でのみ読み込む）
-	if (!is_admin()) {
-		$script_path = plugin_dir_path(__FILE__) . 'assets/front_rendering.js';
-		wp_enqueue_script(
-			'markdown_plugin_handle',
-			plugins_url('/assets/front_rendering.js?', __FILE__),
-			array('jquery'),
-			filemtime($script_path),
-			true
-		);
-	}
-}
-
-add_action('enqueue_block_assets', 'itmar_block_class_package_add_frontjs');
