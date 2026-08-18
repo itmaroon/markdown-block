@@ -1,4 +1,7 @@
 @charset "UTF-8";
+
+@use "sass:map";
+
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Noto+Serif+JP:wght@300;400;500;600;700;900&family=Zen+Maru+Gothic:wght@400;500;700;900&family=M+PLUS+1+Code:wght@300;400;500;600;700&display=swap');
 
 
@@ -42,7 +45,7 @@ $breakpoints: (
 
 // メディアクエリー
 @mixin mq($breakpoint: sp) {
-  @media #{map-get($breakpoints, $breakpoint)} {
+  @media #{map.get($breakpoints, $breakpoint)} {
     @content;
   }
 }
