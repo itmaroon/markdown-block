@@ -3,7 +3,7 @@ Contributors:      itmaroon
 Tags:              block, markdown, post, blog
 Requires at least: 6.4
 Tested up to:      7.1
-Stable tag:        2.0.2
+Stable tag:        2.1.0
 License:           GPL-2.0-or-later
 License URI:       https://www.gnu.org/licenses/gpl-2.0.html
 Requires PHP:      8.2
@@ -63,6 +63,9 @@ OR…
 6. Responsive design with table of contents open
 
 == Changelog ==
+= 2.1.0 =
+- Rebuilt with the latest shared packages; colors read the `--itmar-*` role variables.
+
 = 2.0.2 =
 - Composer component fixed.
 
@@ -75,6 +78,10 @@ OR…
 
 = 1.0.0 =
 * Release
+
+== Upgrade Notice ==
+= 2.1.0 =
+Rebuilt with the latest shared packages; colors follow the active theme. No configuration changes are required.
 
 == Arbitrary section ==
 1. PHP class management is now done using Composer.  
