@@ -139,6 +139,7 @@ export default function Edit( {
 }: BlockEditProps ) {
 	const {
 		mdContent,
+		mdLocked,
 		blockArray,
 		element_style_obj,
 		backgroundColor,
@@ -358,11 +359,17 @@ export default function Edit( {
 		};
 	}, [ element_style_obj, innerBlocks, blockArray ] );
 
+	// 翻訳した投稿のブロックは、Markdownを編集するまで再生成しない（翻訳した内容を守る）
+	const lockedMdContent = useRef( mdContent );
+
 	// Markdown変更をデバウンスし、InnerBlocksを一度のdispatchで置き換える
 	useEffect( () => {
 		let cancelled = false;
 		const timerId = window.setTimeout( () => {
 			if ( cancelled ) {
+				return;
+			}
+			if ( mdLocked && mdContent === lockedMdContent.current ) {
 				return;
 			}
 
@@ -391,7 +398,10 @@ export default function Edit( {
 
 			replaceInnerBlocks( clientId, nextBlocks, false );
 			markdownSourceRefs.current.blockArray = nextBlockArray;
-			setAttributes( { blockArray: nextBlockArray } );
+			setAttributes( {
+				blockArray: nextBlockArray,
+				...( mdLocked ? { mdLocked: false } : {} ),
+			} );
 		}, 300 );
 
 		return () => {
@@ -400,6 +410,7 @@ export default function Edit( {
 		};
 	}, [
 		mdContent,
+		mdLocked,
 		markdownRevision,
 		clientId,
 		replaceInnerBlocks,

@@ -29,6 +29,7 @@ export interface ResponsiveValues {
 export interface MarkdownAttributes {
 	[ key: string ]: unknown;
 	mdContent?: string;
+	mdLocked?: boolean;
 	blockArray: BlockTemplate[];
 	element_style_obj: Record< string, AttributeRecord >;
 	backgroundColor?: string;

@@ -6,7 +6,11 @@
 	"title": "Mark Down",
 	"category": "widgets",
 	"supports": {
-		"html": false
+		"html": false,
+		"itmarTranslatable": {
+			"templates": [ "blockArray" ],
+			"lockAttribute": "mdLocked"
+		}
 	},
 	"attributes": {
 		"mdContent": {
@@ -72,6 +76,10 @@
 		},
 		"border_value": {
 			"type": "object"
+		},
+		"mdLocked": {
+			"type": "boolean",
+			"default": false
 		},
 		"is_toc": {
 			"type": "boolean",
